@@ -2,7 +2,7 @@
   "name": "quiqqer/htmltopdf",
   "type": "quiqqer-module",
   "description": "HTML to PDF converter",
-  "version": "dev-master",
+  "version": "dev-dev",
   "license": "",
   "authors": [
     {
