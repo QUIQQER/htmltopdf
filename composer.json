@@ -1,0 +1,27 @@
+{
+  "name": "quiqqer/htmltopdf",
+  "type": "quiqqer-module",
+  "description": "HTML to PDF converter",
+  "version": "dev-master",
+  "license": "",
+  "authors": [
+    {
+      "name": "Patrick Müller",
+      "email": "p.mueller@pcsg.de",
+      "homepage": "http://www.pcsg.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "support@pcsg.de",
+    "url": "http://www.pcsg.de"
+  },
+  "require": {
+    "quiqqer/quiqqer": "*@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "QUI\\HtmlToPdf\\": "src/QUI/HtmlToPdf"
+    }
+  }
+}
