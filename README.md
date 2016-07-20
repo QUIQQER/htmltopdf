@@ -18,6 +18,10 @@ Installation
 
 Der Paketname ist: quiqqer/htmltopdf
 
+Abhängigkeiten
+--------------
+
+* wkhtmltopdf - wird im Paket mitgeliefert; s. http://wkhtmltopdf.org/downloads.html
 
 Mitwirken
 ----------
