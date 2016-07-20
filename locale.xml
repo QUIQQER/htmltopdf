@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+
+    <groups name="quiqqer/quiqqer" datatype="php">
+
+        <locale name="footer.page.prefix">
+            <de><![CDATA[Seite]]></de>
+            <en><![CDATA[Page]]></en>
+        </locale>
+        <locale name="exception.document.pdf.conversion.failed">
+            <de><![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+        </locale>
+        <locale name="exception.document.pdf.download.failed">
+            <de><![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+        </locale>
+        <locale name="exception.document.css.file.does.not.exist">
+            <de><![CDATA[Die CSS-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
+        </locale>
+
+    </groups>
+
+</locales>
