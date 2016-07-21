@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <locales>
 
-    <groups name="quiqqer/quiqqer" datatype="php">
+    <groups name="quiqqer/htmltopdf" datatype="php">
 
         <locale name="footer.page.prefix">
             <de><![CDATA[Seite]]></de>

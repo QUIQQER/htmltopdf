@@ -36,6 +36,13 @@ class Document extends QUI\QDOM
     protected $created = false;
 
     /**
+     * Var directory of quiqqer/htmltopdf package
+     *
+     * @var string
+     */
+    protected $varDir = null;
+
+    /**
      * Header data for PDF conversion
      *
      * @var array
@@ -92,6 +99,9 @@ class Document extends QUI\QDOM
 
         $this->documentId      = uniqid();
         $this->converterBinary = dirname(dirname(dirname(dirname(__FILE__)))) . '/lib/wkhtmltopdf/bin/wkhtmltopdf';
+
+        $Package      = QUI::getPackage('quiqqer/htmltopdf');
+        $this->varDir = $Package->getVarDir();
     }
 
     /**
@@ -229,8 +239,7 @@ class Document extends QUI\QDOM
      */
     public function createPDF()
     {
-        $Package = QUI::getPackage('quiqqer/htmltopdf');
-        $varDir  = $Package->getVarDir();
+        $varDir = $this->varDir;
 
         $cmd = $this->converterBinary . ' ';
 
@@ -245,8 +254,7 @@ class Document extends QUI\QDOM
         if (!empty($this->header['content'])) {
             $cmd .= ' --header-spacing ' . $this->getAttribute('headerSpacing');
 
-            $headerHtmlFile = $varDir . 'header_' . $this->documentId . '.html';
-            file_put_contents($headerHtmlFile, $this->buildHeaderHTML());
+            $headerHtmlFile = $this->getHeaderHTMLFile();
 
             $cmd .= ' --header-html "' . $headerHtmlFile . '"';
             $cmd .= ' --header-line';
@@ -257,16 +265,14 @@ class Document extends QUI\QDOM
         ) {
             $cmd .= ' --footer-spacing ' . $this->getAttribute('footerSpacing');
 
-            $footerHtmlFile = $varDir . 'footer_' . $this->documentId . '.html';
-            file_put_contents($footerHtmlFile, $this->buildFooterHTML());
+            $footerHtmlFile = $this->getFooterHTMLFile();
 
             $cmd .= ' --footer-html "' . $footerHtmlFile . '"';
         }
 
         $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
 
-        $bodyHtmlFile = $varDir . 'body_' . $this->documentId . '.html';
-        file_put_contents($bodyHtmlFile, $this->buildBodyHTML());
+        $bodyHtmlFile = $this->getContentHTMLFile();
 
         $pdfFile = $varDir . $this->documentId . '.pdf';
 
@@ -314,10 +320,7 @@ class Document extends QUI\QDOM
         if (!$this->created) {
             $file = $this->createPDF();
         } else {
-            $Package = QUI::getPackage('quiqqer/htmltopdf');
-            $varDir  = $Package->getVarDir();
-
-            $file = $varDir . $this->documentId . '.pdf';
+            $file = $this->varDir . $this->documentId . '.pdf';
 
             if (!file_exists($file)) {
                 $file = $this->createPDF();
@@ -349,11 +352,50 @@ class Document extends QUI\QDOM
     }
 
     /**
+     * Return HTML file with PDF header content
+     *
+     * @return string - path to file
+     */
+    public function getHeaderHTMLFile()
+    {
+        $file = $this->varDir . 'header_' . $this->documentId . '.html';
+        file_put_contents($file, $this->getHeaderHTML());
+
+        return $file;
+    }
+
+    /**
+     * Return HTML file with PDF header content
+     *
+     * @return string - path to file
+     */
+    public function getContentHTMLFile()
+    {
+        $file = $this->varDir . 'body_' . $this->documentId . '.html';
+        file_put_contents($file, $this->getContentHTML());
+
+        return $file;
+    }
+
+    /**
+     * Return HTML file with PDF header content
+     *
+     * @return string - path to file
+     */
+    public function getFooterHTMLFile()
+    {
+        $file = $this->varDir . 'footer_' . $this->documentId . '.html';
+        file_put_contents($file, $this->getFooterHTML());
+
+        return $file;
+    }
+
+    /**
      * Build header html from header settings
      *
      * @return string - complete HTML for PDF header
      */
-    protected function buildHeaderHTML()
+    public function getHeaderHTML()
     {
         $hd = $this->header;
 
@@ -381,7 +423,7 @@ class Document extends QUI\QDOM
      *
      * @return string - complete HTML for PDF body
      */
-    protected function buildBodyHTML()
+    public function getContentHTML()
     {
         $hd = $this->body;
 
@@ -409,7 +451,7 @@ class Document extends QUI\QDOM
      *
      * @return string - complete HTML for PDF footer
      */
-    protected function buildFooterHTML()
+    public function getFooterHTML()
     {
         $hd = $this->footer;
 
