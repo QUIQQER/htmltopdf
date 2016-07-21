@@ -16,6 +16,12 @@
         <locale name="exception.document.css.file.does.not.exist">
             <de><![CDATA[Die CSS-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
         </locale>
+        <locale name="exception.events.onpackagesetup.missing.wkhtmltopdf">
+            <de><![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
+        </locale>
+        <locale name="exception.events.onpackagesetup.wkhtmltopdf.not.executable" html="true">
+            <de><![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
+        </locale>
 
     </groups>
 
