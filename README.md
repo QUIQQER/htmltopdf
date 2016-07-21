@@ -21,7 +21,12 @@ Der Paketname ist: quiqqer/htmltopdf
 Abhängigkeiten
 --------------
 
-* wkhtmltopdf - wird im Paket mitgeliefert; s. http://wkhtmltopdf.org/downloads.html
+* **wkhtmltopdf** - wird im Paket mitgeliefert; s. http://wkhtmltopdf.org/downloads.html
+* Weitere benötigte Pakete, die **wkhtmltopdf** voraussetzt:
+  * `sudo apt-get install zlib1g-dev`
+  * `sudo apt-get install fontconfig fontconfig-config`
+  * `sudo apt-get install libfreetype6`
+  * `sudo apt-get install libx11-dev libxext-dev libxrender-dev`
 
 Mitwirken
 ----------
