@@ -1,0 +1,9 @@
+body {
+    font-family: Verdana, sans-serif;
+    line-height: 1.2em;
+}
+
+#pages {
+    text-align: right;
+    width: 100%;
+}

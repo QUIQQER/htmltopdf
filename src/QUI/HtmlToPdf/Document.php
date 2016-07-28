@@ -50,7 +50,8 @@ class Document extends QUI\QDOM
     protected $header = array(
         'css'      => '',
         'cssFiles' => array(),
-        'content'  => ''
+        'content'  => '',
+        'htmlFile' => false
     );
 
     /**
@@ -105,13 +106,35 @@ class Document extends QUI\QDOM
     }
 
     /**
-     * Set HTML content for PDF header area
+     * Set HTML for PDF header area
      *
-     * @param string $html
+     * @param string $html - HTML code
      */
-    public function setHeaderContent($html)
+    public function setHeaderHTML($html)
     {
         $this->header['content'] = $html;
+    }
+
+    /**
+     * Set HTML file used for PDF header area
+     *
+     * @param string $file - path to html file
+     *
+     * @throws QUI\Exception
+     */
+    public function setHeaderHTMLFile($file)
+    {
+        if (!file_exists($file)) {
+            throw new QUI\Exception(array(
+                'quiqqer/htmltopdf',
+                'exception.document.html.file.does.not.exist',
+                array(
+                    'file' => $file
+                )
+            ));
+        }
+
+        $this->header['content'] = file_get_contents($file);
     }
 
     /**
@@ -149,11 +172,33 @@ class Document extends QUI\QDOM
     /**
      * Set HTML content for PDF body area
      *
-     * @param string $html
+     * @param string $html - HTML code
      */
-    public function setContent($html)
+    public function setContentHTML($html)
     {
         $this->body['content'] = $html;
+    }
+
+    /**
+     * Set HTML file used for PDF body area
+     *
+     * @param string $file - path to html file
+     *
+     * @throws QUI\Exception
+     */
+    public function setContentHTMLFile($file)
+    {
+        if (!file_exists($file)) {
+            throw new QUI\Exception(array(
+                'quiqqer/htmltopdf',
+                'exception.document.html.file.does.not.exist',
+                array(
+                    'file' => $file
+                )
+            ));
+        }
+
+        $this->header['content'] = file_get_contents($file);
     }
 
     /**
@@ -193,9 +238,31 @@ class Document extends QUI\QDOM
      *
      * @param string $html
      */
-    public function setFooterContent($html)
+    public function setFooterHTML($html)
     {
         $this->footer['content'] = $html;
+    }
+
+    /**
+     * Set HTML file used for PDF footer area
+     *
+     * @param string $file - path to html file
+     *
+     * @throws QUI\Exception
+     */
+    public function setFooterHTMLFile($file)
+    {
+        if (!file_exists($file)) {
+            throw new QUI\Exception(array(
+                'quiqqer/htmltopdf',
+                'exception.document.html.file.does.not.exist',
+                array(
+                    'file' => $file
+                )
+            ));
+        }
+
+        $this->header['content'] = file_get_contents($file);
     }
 
     /**
@@ -405,7 +472,14 @@ class Document extends QUI\QDOM
                             <meta charset="UTF-8">';
 
         // add css
-        $header .= '<style>' . $hd['css'] . '</style>';
+        $css = $hd['css'];
+
+        if (empty($css)) {
+            $this->addHeaderCSSFile(dirname(__FILE__) . '/default/header.css');
+            $hd = $this->header;
+        } else {
+            $header .= '<style>' . $css . '</style>';
+        }
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -433,7 +507,14 @@ class Document extends QUI\QDOM
                             <meta charset="UTF-8">';
 
         // add css
-        $header .= '<style>' . $hd['css'] . '</style>';
+        $css = $hd['css'];
+
+        if (empty($css)) {
+            $this->addContentCSSFile(dirname(__FILE__) . '/default/body.css');
+            $hd = $this->body;
+        } else {
+            $header .= '<style>' . $css . '</style>';
+        }
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -461,7 +542,14 @@ class Document extends QUI\QDOM
                             <meta charset="UTF-8">';
 
         // add css
-        $header .= '<style>' . $hd['css'] . '</style>';
+        $css = $hd['css'];
+
+        if (empty($css)) {
+            $this->addFooterCSSFile(dirname(__FILE__) . '/default/footer.css');
+            $hd = $this->footer;
+        } else {
+            $header .= '<style>' . $css . '</style>';
+        }
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
