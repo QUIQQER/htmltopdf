@@ -397,7 +397,7 @@ class Document extends QUI\QDOM
         $filename = $this->getAttribute('filename');
 
         if (empty($filename)) {
-            $filename = $this->documentId . '_' . date("d_m_Y__H_m");
+            $filename = $this->documentId . '_' . date("d_m_Y__H_m") . '.pdf';
         }
 
         try {
