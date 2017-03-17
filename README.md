@@ -1,7 +1,7 @@
 HTML zu PDF Converter
 ========
 
-
+Wandelt HTML-Code in PDF-Dateien um.
 
 Paketname:
 
@@ -11,12 +11,14 @@ Paketname:
 Features (Funktionen)
 --------
 
-Wandelt HTML-Code in PDF-Dateien um.
+- Wandelt HTML-Code in PDF-Dateien um.
+
 
 Installation
 ------------
 
 Der Paketname ist: quiqqer/htmltopdf
+
 
 Abhängigkeiten
 --------------
@@ -27,6 +29,7 @@ Abhängigkeiten
   * `sudo apt-get install fontconfig fontconfig-config`
   * `sudo apt-get install libfreetype6`
   * `sudo apt-get install libx11-dev libxext-dev libxrender-dev`
+
 
 Mitwirken
 ----------
@@ -42,18 +45,9 @@ Falls Sie ein Fehler gefunden haben, oder Verbesserungen wünschen,
 dann können Sie gerne an support@pcsg.de eine E-Mail schreiben.
 
 
-Lizenz
--------
-
-
-Entwickler
---------
-
-Patrick Müller (p.mueller@pcsg.de)
-
-
 Beispiel
 --------
+
 ```php
 $Document = new \QUI\HtmlToPdf\Document();
 
@@ -72,6 +66,7 @@ $pdfFile = $Document->createPDF();
 // Download der Datei
 $Document->download();
 ```
+
 
 Settings
 --------
