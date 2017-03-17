@@ -45,7 +45,5 @@ class Events
                 ));
             }
         }
-
-
     }
 }
