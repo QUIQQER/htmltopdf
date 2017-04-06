@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <locales>
+    <groups name="quiqqer/htmltopdf" datatype="php">
+        <locale name="package.title">
+            <de><![CDATA[QUIQQER - HTML2PDF]]></de>
+            <en><![CDATA[QUIQQER - HTML2PDF]]></en>
+        </locale>
+        <locale name="package.description" html="true">
+            <de><![CDATA[Bibliothek um HTML-Code in PDF-Dateien umzuwandeln.]]></de>
+            <en><![CDATA[Library to convert HTML code to PDF files]]></en>
+        </locale>
+    </groups>
 
     <groups name="quiqqer/htmltopdf" datatype="php">
-
         <locale name="footer.page.prefix">
             <de><![CDATA[Seite]]></de>
             <en><![CDATA[Page]]></en>
         </locale>
         <locale name="exception.document.pdf.conversion.failed">
-            <de><![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <de>
+                <![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
         </locale>
         <locale name="exception.document.pdf.download.failed">
-            <de><![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <de>
+                <![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
         </locale>
         <locale name="exception.document.html.file.does.not.exist">
             <de><![CDATA[Die HTML-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
@@ -20,12 +31,12 @@
             <de><![CDATA[Die CSS-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
         </locale>
         <locale name="exception.events.onpackagesetup.missing.wkhtmltopdf">
-            <de><![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
+            <de>
+                <![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
         </locale>
         <locale name="exception.events.onpackagesetup.wkhtmltopdf.not.executable" html="true">
-            <de><![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
+            <de>
+                <![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
         </locale>
-
     </groups>
-
 </locales>
