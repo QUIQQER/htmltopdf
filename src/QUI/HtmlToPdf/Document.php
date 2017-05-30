@@ -375,6 +375,22 @@ class Document extends QUI\QDOM
     }
 
     /**
+     * @return string
+     */
+    public function createImage()
+    {
+        $pdfFile   = $this->createPDF();
+        $imageFile = mb_substr($pdfFile, 0, -4) . '.jpg';
+
+        $command = "convert -density 300 -trim '{$pdfFile}' -quality 100 '{$imageFile}'";
+
+        system($command);
+        unlink($pdfFile);
+
+        return $imageFile;
+    }
+
+    /**
      * Download PDF file
      *
      * @param bool $deletePdfFile (optional) - delete pdf file after download
