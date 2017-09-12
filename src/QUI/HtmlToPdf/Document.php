@@ -491,11 +491,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addHeaderCSSFile(dirname(__FILE__) . '/default/header.css');
-            $hd = $this->header;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -526,11 +525,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addContentCSSFile(dirname(__FILE__) . '/default/body.css');
-            $hd = $this->body;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -561,11 +559,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addFooterCSSFile(dirname(__FILE__) . '/default/footer.css');
-            $hd = $this->footer;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
