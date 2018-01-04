@@ -93,7 +93,8 @@ class Document extends QUI\QDOM
             'marginBottom'      => 20,    // mm
             'marginLeft'        => 5,     // mm
             'headerSpacing'     => 5,     // should be 5 at minimum
-            'footerSpacing'     => 0
+            'footerSpacing'     => 0,
+            'zoom'              => 1
         ));
 
         $this->setAttributes($settings);
@@ -338,6 +339,7 @@ class Document extends QUI\QDOM
         }
 
         $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
+        $cmd .= ' --zoom ' . (float)$this->getAttribute('zoom');
 
         $bodyHtmlFile = $this->getContentHTMLFile();
 
