@@ -4,6 +4,7 @@
   "description": "HTML to PDF converter",
   "version": "dev-master",
   "license": "",
+  "homepage": "https://www.quiqqer.com",
   "authors": [
     {
       "name": "Patrick Müller",

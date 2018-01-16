@@ -93,7 +93,8 @@ class Document extends QUI\QDOM
             'marginBottom'      => 20,    // mm
             'marginLeft'        => 5,     // mm
             'headerSpacing'     => 5,     // should be 5 at minimum
-            'footerSpacing'     => 0
+            'footerSpacing'     => 0,
+            'zoom'              => 1
         ));
 
         $this->setAttributes($settings);
@@ -338,6 +339,7 @@ class Document extends QUI\QDOM
         }
 
         $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
+        $cmd .= ' --zoom ' . (float)$this->getAttribute('zoom');
 
         $bodyHtmlFile = $this->getContentHTMLFile();
 
@@ -491,11 +493,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addHeaderCSSFile(dirname(__FILE__) . '/default/header.css');
-            $hd = $this->header;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -526,11 +527,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addContentCSSFile(dirname(__FILE__) . '/default/body.css');
-            $hd = $this->body;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
@@ -561,11 +561,10 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $this->addFooterCSSFile(dirname(__FILE__) . '/default/footer.css');
-            $hd = $this->footer;
-        } else {
-            $header .= '<style>' . $css . '</style>';
+            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
         }
+
+        $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
             $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';

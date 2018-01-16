@@ -1,0 +1,26 @@
+<quiqqer>
+    <package>
+        <title>
+            <locale group="quiqqer/htmltopdf" var="package.title"/>
+        </title>
+
+        <description>
+            <locale group="quiqqer/htmltopdf" var="package.description"/>
+        </description>
+
+        <image src="URL_OPT_DIR/quiqqer/htmltopdf/bin/images/Logo.jpg"/>
+
+        <support>
+            <email><![CDATA[support@pcsg.de]]></email>
+            <forum><![CDATA[https://community.quiqqer.com]]></forum>
+            <source><![CDATA[https://dev.quiqqer.com/quiqqer/htmltopdf]]></source>
+            <issues><![CDATA[https://dev.quiqqer.com/quiqqer/htmltopdf/issues]]></issues>
+            <wiki><![CDATA[https://dev.quiqqer.com/quiqqer/htmltopdf/wikis/home]]></wiki>
+        </support>
+
+        <copyright>
+            <name><![CDATA[PCSG - Computer & Internet Service OHG]]></name>
+            <license><![CDATA[]]></license>
+        </copyright>
+    </package>
+</quiqqer>
