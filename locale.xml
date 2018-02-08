@@ -7,7 +7,7 @@
         </locale>
         <locale name="package.description" html="true">
             <de><![CDATA[Bibliothek um HTML-Code in PDF-Dateien umzuwandeln.]]></de>
-            <en><![CDATA[Library to convert HTML code to PDF files]]></en>
+            <en><![CDATA[Library to convert HTML code to PDF files.]]></en>
         </locale>
     </groups>
 
@@ -17,26 +17,28 @@
             <en><![CDATA[Page]]></en>
         </locale>
         <locale name="exception.document.pdf.conversion.failed">
-            <de>
-                <![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <de><![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <en><![CDATA[An unexpected error occurred while converting from HTML to PDF. Please contact an administrator.]]></en>
         </locale>
         <locale name="exception.document.pdf.download.failed">
-            <de>
-                <![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <de><![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
+            <en><![CDATA[An unexpected error occurred while downloading the PDF document. Please contact an administrator.]]></en>
         </locale>
         <locale name="exception.document.html.file.does.not.exist">
             <de><![CDATA[Die HTML-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
+            <en><![CDATA[The HTML file can not be added because it does not exist.]]></en>
         </locale>
         <locale name="exception.document.css.file.does.not.exist">
             <de><![CDATA[Die CSS-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
+            <en><![CDATA[The CSS file can not be added because it does not exist.]]></en>
         </locale>
         <locale name="exception.events.onpackagesetup.missing.wkhtmltopdf">
-            <de>
-                <![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
+            <de><![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
+            <en><![CDATA[The program "wkhtmltopdf" was not found. Please check if it exists in the /lib/ folder of the package.]]></en>
         </locale>
         <locale name="exception.events.onpackagesetup.wkhtmltopdf.not.executable" html="true">
-            <de>
-                <![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
+            <de><![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
+            <en><![CDATA[The program "wkhtmltopdf" is not executable and could not be made executable. Please make sure that the file <b>[path]</b> is executable.]]></en>
         </locale>
     </groups>
 </locales>
