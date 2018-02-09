@@ -67,4 +67,4 @@ We will transfer your message to the responsible developers.
 
 License
 -------
-GPL-3.0+
+PCSG QL-1.0, CC BY-NC-SA 4.0
