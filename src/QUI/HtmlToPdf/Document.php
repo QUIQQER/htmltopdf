@@ -47,43 +47,43 @@ class Document extends QUI\QDOM
      *
      * @var array
      */
-    protected $header = array(
+    protected $header = [
         'css'      => '',
-        'cssFiles' => array(),
+        'cssFiles' => [],
         'content'  => '',
         'htmlFile' => false
-    );
+    ];
 
     /**
      * Content (body) data for PDF conversion
      *
      * @var array
      */
-    protected $body = array(
+    protected $body = [
         'css'      => '',
-        'cssFiles' => array(),
+        'cssFiles' => [],
         'content'  => ''
-    );
+    ];
 
     /**
      * Footer data for PDF conversion
      *
      * @var array
      */
-    protected $footer = array(
+    protected $footer = [
         'css'      => '',
-        'cssFiles' => array(),
+        'cssFiles' => [],
         'content'  => ''
-    );
+    ];
 
     /**
      * Document constructor.
      *
      * @param array $settings (optional) -
      */
-    public function __construct($settings = array())
+    public function __construct($settings = [])
     {
-        $this->setAttributes(array(
+        $this->setAttributes([
             'showPageNumbers'   => true,
             'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
             'filename'          => '',
@@ -95,15 +95,19 @@ class Document extends QUI\QDOM
             'headerSpacing'     => 5,     // should be 5 at minimum
             'footerSpacing'     => 0,
             'zoom'              => 1
-        ));
+        ]);
 
         $this->setAttributes($settings);
 
         $this->documentId      = uniqid();
-        $this->converterBinary = dirname(dirname(dirname(dirname(__FILE__)))) . '/lib/wkhtmltopdf/bin/wkhtmltopdf';
+        $this->converterBinary = dirname(dirname(dirname(dirname(__FILE__)))).'/lib/wkhtmltopdf/bin/wkhtmltopdf';
 
-        $Package      = QUI::getPackage('quiqqer/htmltopdf');
-        $this->varDir = $Package->getVarDir();
+        try {
+            $Package      = QUI::getPackage('quiqqer/htmltopdf');
+            $this->varDir = $Package->getVarDir();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 
     /**
@@ -126,13 +130,13 @@ class Document extends QUI\QDOM
     public function setHeaderHTMLFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.html.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->header['content'] = file_get_contents($file);
@@ -158,13 +162,13 @@ class Document extends QUI\QDOM
     public function addHeaderCSSFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.css.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->header['cssFiles'][] = $file;
@@ -190,13 +194,13 @@ class Document extends QUI\QDOM
     public function setContentHTMLFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.html.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->header['content'] = file_get_contents($file);
@@ -222,13 +226,13 @@ class Document extends QUI\QDOM
     public function addContentCSSFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.css.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->body['cssFiles'][] = $file;
@@ -254,13 +258,13 @@ class Document extends QUI\QDOM
     public function setFooterHTMLFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.html.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->header['content'] = file_get_contents($file);
@@ -286,13 +290,13 @@ class Document extends QUI\QDOM
     public function addFooterCSSFile($file)
     {
         if (!file_exists($file)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.css.file.does.not.exist',
-                array(
+                [
                     'file' => $file
-                )
-            ));
+                ]
+            ]);
         }
 
         $this->footer['cssFiles'][] = $file;
@@ -309,55 +313,55 @@ class Document extends QUI\QDOM
     {
         $varDir = $this->varDir;
 
-        $cmd = $this->converterBinary . ' ';
+        $cmd = $this->converterBinary.' ';
 
-        $cmd .= ' -T ' . $this->getAttribute('marginTop') . 'mm';
-        $cmd .= ' -R ' . $this->getAttribute('marginRight') . 'mm';
-        $cmd .= ' -B ' . $this->getAttribute('marginBottom') . 'mm';
-        $cmd .= ' -L ' . $this->getAttribute('marginLeft') . 'mm';
+        $cmd .= ' -T '.$this->getAttribute('marginTop').'mm';
+        $cmd .= ' -R '.$this->getAttribute('marginRight').'mm';
+        $cmd .= ' -B '.$this->getAttribute('marginBottom').'mm';
+        $cmd .= ' -L '.$this->getAttribute('marginLeft').'mm';
 
         $headerHtmlFile = false;
         $footerHtmlFile = false;
 
         if (!empty($this->header['content'])) {
-            $cmd .= ' --header-spacing ' . $this->getAttribute('headerSpacing');
+            $cmd .= ' --header-spacing '.$this->getAttribute('headerSpacing');
 
             $headerHtmlFile = $this->getHeaderHTMLFile();
 
-            $cmd .= ' --header-html "' . $headerHtmlFile . '"';
+            $cmd .= ' --header-html "'.$headerHtmlFile.'"';
             $cmd .= ' --header-line';
         }
 
         if (!empty($this->footer['content'])
             || $this->getAttribute('showPageNumbers')
         ) {
-            $cmd .= ' --footer-spacing ' . $this->getAttribute('footerSpacing');
+            $cmd .= ' --footer-spacing '.$this->getAttribute('footerSpacing');
 
             $footerHtmlFile = $this->getFooterHTMLFile();
 
-            $cmd .= ' --footer-html "' . $footerHtmlFile . '"';
+            $cmd .= ' --footer-html "'.$footerHtmlFile.'"';
         }
 
-        $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
-        $cmd .= ' --zoom ' . (float)$this->getAttribute('zoom');
+        $cmd .= ' --dpi '.(int)$this->getAttribute('dpi');
+        $cmd .= ' --zoom '.(float)$this->getAttribute('zoom');
 
         $bodyHtmlFile = $this->getContentHTMLFile();
 
-        $pdfFile = $varDir . $this->documentId . '.pdf';
+        $pdfFile = $varDir.$this->documentId.'.pdf';
 
-        $cmd .= ' ' . $bodyHtmlFile . ' ' . $pdfFile;
+        $cmd .= ' '.$bodyHtmlFile.' '.$pdfFile;
 
         exec($cmd, $output, $exitStatus);
 
         if ($exitStatus !== 0) {
             QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF conversion failed:: ' . json_encode($output)
+                'quiqqer/htmltopdf PDF conversion failed:: '.json_encode($output)
             );
 
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.conversion.failed'
-            ));
+            ]);
         }
 
         // delete html files
@@ -377,17 +381,23 @@ class Document extends QUI\QDOM
     }
 
     /**
+     * @param bool $deletePdfFile
      * @return string
+     *
+     * @throws QUI\Exception
      */
-    public function createImage()
+    public function createImage($deletePdfFile = true)
     {
         $pdfFile   = $this->createPDF();
-        $imageFile = mb_substr($pdfFile, 0, -4) . '.jpg';
+        $imageFile = mb_substr($pdfFile, 0, -4).'.jpg';
 
         $command = "convert -density 300 -trim '{$pdfFile}' -quality 100 '{$imageFile}'";
 
         system($command);
-        unlink($pdfFile);
+
+        if ($deletePdfFile && file_exists($pdfFile)) {
+            unlink($pdfFile);
+        }
 
         return $imageFile;
     }
@@ -405,7 +415,7 @@ class Document extends QUI\QDOM
         if (!$this->created) {
             $file = $this->createPDF();
         } else {
-            $file = $this->varDir . $this->documentId . '.pdf';
+            $file = $this->varDir.$this->documentId.'.pdf';
 
             if (!file_exists($file)) {
                 $file = $this->createPDF();
@@ -415,20 +425,20 @@ class Document extends QUI\QDOM
         $filename = $this->getAttribute('filename');
 
         if (empty($filename)) {
-            $filename = $this->documentId . '_' . date("d_m_Y__H_m") . '.pdf';
+            $filename = $this->documentId.'_'.date("d_m_Y__H_m").'.pdf';
         }
 
         try {
             QUI\Utils\System\File::send($file, 0, $filename);
         } catch (\Exception $Exception) {
             QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF download failed:: ' . $Exception->getMessage()
+                'quiqqer/htmltopdf PDF download failed:: '.$Exception->getMessage()
             );
 
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.download.failed'
-            ));
+            ]);
         }
 
         if ($deletePdfFile) {
@@ -443,7 +453,7 @@ class Document extends QUI\QDOM
      */
     public function getHeaderHTMLFile()
     {
-        $file = $this->varDir . 'header_' . $this->documentId . '.html';
+        $file = $this->varDir.'header_'.$this->documentId.'.html';
         file_put_contents($file, $this->getHeaderHTML());
 
         return $file;
@@ -456,7 +466,7 @@ class Document extends QUI\QDOM
      */
     public function getContentHTMLFile()
     {
-        $file = $this->varDir . 'body_' . $this->documentId . '.html';
+        $file = $this->varDir.'body_'.$this->documentId.'.html';
         file_put_contents($file, $this->getContentHTML());
 
         return $file;
@@ -469,7 +479,7 @@ class Document extends QUI\QDOM
      */
     public function getFooterHTMLFile()
     {
-        $file = $this->varDir . 'footer_' . $this->documentId . '.html';
+        $file = $this->varDir.'footer_'.$this->documentId.'.html';
         file_put_contents($file, $this->getFooterHTML());
 
         return $file;
@@ -493,20 +503,20 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__).'/default/body.css');
         }
 
-        $header .= '<style>' . $css . '</style>';
+        $header .= '<style>'.$css.'</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            $header .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
         }
 
         $header .= '</head>';
 
-        $body = '<body>' . $hd['content'] . '</body></html>';
+        $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header . $body;
+        return $header.$body;
     }
 
     /**
@@ -527,20 +537,20 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__).'/default/body.css');
         }
 
-        $header .= '<style>' . $css . '</style>';
+        $header .= '<style>'.$css.'</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            $header .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
         }
 
         $header .= '</head>';
 
-        $body = '<body>' . $hd['content'] . '</body></html>';
+        $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header . $body;
+        return $header.$body;
     }
 
     /**
@@ -561,13 +571,13 @@ class Document extends QUI\QDOM
         $css = $hd['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__).'/default/body.css');
         }
 
-        $header .= '<style>' . $css . '</style>';
+        $header .= '<style>'.$css.'</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            $header .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
         }
 
         $header .= '</head>';
@@ -577,7 +587,7 @@ class Document extends QUI\QDOM
 
         if ($this->getAttribute('showPageNumbers')) {
             $body .= '<div id="pages">
-                        <span id="pages_prefix">' . $this->getAttribute('pageNumbersPrefix') . '</span>
+                        <span id="pages_prefix">'.$this->getAttribute('pageNumbersPrefix').'</span>
                         <span id="pages_current"></span>
                         <span id="pages_total"></span>
                     </div>';
@@ -606,6 +616,6 @@ class Document extends QUI\QDOM
 
         $body .= '</body></html>';
 
-        return $header . $body;
+        return $header.$body;
     }
 }
