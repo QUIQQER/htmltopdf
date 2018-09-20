@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <locales>
-    <groups name="quiqqer/htmltopdf" datatype="php">
+    <groups name="quiqqer/htmltopdf" datatype="php,js">
         <locale name="package.title">
             <de><![CDATA[QUIQQER - HTML2PDF]]></de>
             <en><![CDATA[QUIQQER - HTML2PDF]]></en>
@@ -9,6 +9,21 @@
             <de><![CDATA[Bibliothek um HTML-Code in PDF-Dateien umzuwandeln.]]></de>
             <en><![CDATA[Library to convert HTML code to PDF files.]]></en>
         </locale>
+
+        <!-- Cron -->
+        <locale name="cron.cleanFiles.title">
+            <de><![CDATA[HTML2PDF Dateien aufräumen]]></de>
+            <en><![CDATA[HTML2PDF clean files]]></en>
+        </locale>
+        <locale name="cron.cleanFiles.description">
+            <de><![CDATA[Löscht PDF- und HTML-Dateien aus dem var-Ordner des quiqqer/htmltopdf-Pakets die älter als die festgelegte Anzahl an Tagen sind.]]></de>
+            <en><![CDATA[Deletes PDF and HTML files from the var folder of the quiqqer/htmltopdf package that are older than the specified number of days.]]></en>
+        </locale>
+        <locale name="cron.cleanFiles.param.days">
+            <de><![CDATA[Dateien älter als]]></de>
+            <en><![CDATA[Files older than]]></en>
+        </locale>
+
     </groups>
 
     <groups name="quiqqer/htmltopdf" datatype="php">

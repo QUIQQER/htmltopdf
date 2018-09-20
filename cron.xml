@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crons>
+    <cron exec="\QUI\HtmlToPdf\Cron::cleanFiles">
+        <title>
+            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.title" />
+        </title>
+        <description>
+            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.description" />
+        </description>
+
+        <params>
+            <param name="days">
+                <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.param.days" />
+            </param>
+        </params>
+    </cron>
+</crons>
