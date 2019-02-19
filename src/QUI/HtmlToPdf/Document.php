@@ -395,6 +395,12 @@ class Document extends QUI\QDOM
 
         system($command);
 
+        if (!file_exists($imageFile)) {
+            throw new QUI\Exception(
+                'Could not create image from pdf. Command: "'.$command.'".'
+            );
+        }
+
         if ($deletePdfFile && file_exists($pdfFile)) {
             unlink($pdfFile);
         }
