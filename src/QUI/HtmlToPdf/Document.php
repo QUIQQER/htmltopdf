@@ -313,7 +313,25 @@ class Document extends QUI\QDOM
     {
         $varDir = $this->varDir;
 
-        $cmd = $this->converterBinary.' ';
+        // Determine library path
+        $cmdPrefix = '';
+
+        try {
+            $Conf    = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+            $libPath = $Conf->get('settings', 'lib_path');
+
+            if (is_string($libPath)) {
+                $libPath = trim($libPath);
+            }
+
+            if (!empty($libPath)) {
+                $cmdPrefix = 'export LD_LIBRARY_PATH='.$libPath.'; ';
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+
+        $cmd = $cmdPrefix.$this->converterBinary.' ';
 
         $cmd .= ' -T '.$this->getAttribute('marginTop').'mm';
         $cmd .= ' -R '.$this->getAttribute('marginRight').'mm';
@@ -356,6 +374,7 @@ class Document extends QUI\QDOM
         if ($exitStatus !== 0) {
             QUI\System\Log::addError(
                 'quiqqer/htmltopdf PDF conversion failed:: '.json_encode($output)
+                .' -- PDF create cmd: > '.$cmd.' <'
             );
 
             throw new QUI\Exception([
