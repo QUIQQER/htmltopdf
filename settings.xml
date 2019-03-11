@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiqqer>
+    <settings>
+
+        <config>
+
+            <section name="settings">
+                <conf name="lib_path">
+                    <type><![CDATA[string]]></type>
+                </conf>
+            </section>
+
+        </config>
+
+        <window>
+            <title>
+                <locale group="quiqqer/htmltopdf" var="settings.menu.title"/>
+            </title>
+
+            <params>
+                <icon>fa fa-file-pdf-o</icon>
+            </params>
+
+            <categories>
+                <category name="settings">
+                    <title>
+                        <locale group="quiqqer/htmltopdf" var="settings.category.title"/>
+                    </title>
+                    <settings title="settings" name="settings">
+                        <title>
+                            <locale group="quiqqer/htmltopdf" var="settings.title"/>
+                        </title>
+
+                        <input conf="settings.lib_path" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.lib_path.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.lib_path.description"/>
+                            </description>
+                        </input>
+                    </settings>
+                </category>
+
+            </categories>
+        </window>
+
+    </settings>
+</quiqqer>

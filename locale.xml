@@ -55,5 +55,28 @@
             <de><![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
             <en><![CDATA[The program "wkhtmltopdf" is not executable and could not be made executable. Please make sure that the file <b>[path]</b> is executable.]]></en>
         </locale>
+
+        <!-- Settings -->
+        <locale name="settings.menu.title">
+            <de><![CDATA[HTML zu PDF Konvertierung]]></de>
+            <en><![CDATA[HTML to PDF Converter]]></en>
+        </locale>
+        <locale name="settings.category.title">
+            <de><![CDATA[Einstellungen]]></de>
+            <en><![CDATA[Settings]]></en>
+        </locale>
+        <locale name="settings.title">
+            <de><![CDATA[Allgemeine Einstellungen]]></de>
+            <en><![CDATA[General settings]]></en>
+        </locale>
+        <locale name="settings.lib_path.title">
+            <de><![CDATA[System lib Pfad]]></de>
+            <en><![CDATA[System lib path]]></en>
+        </locale>
+        <locale name="settings.lib_path.description">
+            <de><![CDATA[Ordner im Dateisystem (absoluter Pfad), in dem sich die Bibliotheks-Dateien befinden, die bei der Generierung von PDF-Dokumenten verwendet werden sollen. Leerlassen für die Verwendung der Standard-Betriebssystem-Einstellung.]]></de>
+            <en><![CDATA[Folder in the file system (absolute path) containing the library files to be used when generating PDF documents. Leave empty to use the default operating system setting.]]></en>
+        </locale>
+
     </groups>
 </locales>
