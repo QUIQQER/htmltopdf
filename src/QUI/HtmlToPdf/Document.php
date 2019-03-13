@@ -94,7 +94,8 @@ class Document extends QUI\QDOM
             'marginLeft'        => 5,     // mm
             'headerSpacing'     => 5,     // should be 5 at minimum
             'footerSpacing'     => 0,
-            'zoom'              => 1
+            'zoom'              => 1,
+            'enableForms'      => false
         ]);
 
         $this->setAttributes($settings);
@@ -337,6 +338,10 @@ class Document extends QUI\QDOM
         $cmd .= ' -R '.$this->getAttribute('marginRight').'mm';
         $cmd .= ' -B '.$this->getAttribute('marginBottom').'mm';
         $cmd .= ' -L '.$this->getAttribute('marginLeft').'mm';
+
+        if ($this->getAttribute('enableForms') === true) {
+            $cmd .= ' --enable-forms';
+        }
 
         $headerHtmlFile = false;
         $footerHtmlFile = false;
