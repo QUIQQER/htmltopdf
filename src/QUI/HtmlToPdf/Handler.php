@@ -56,15 +56,15 @@ class Handler
         $binaryVersion = explode(' ', `$binaryPath -V`);
         $versionParts  = explode('.', $binaryVersion[1]);
 
-        if ((int)$versionParts[0] > 0) {
+        if (isset($versionParts[0]) && (int)$versionParts[0] > 0) {
             return;
         }
 
-        if ((int)$versionParts[1] > 12) {
+        if (isset($versionParts[1]) && (int)$versionParts[1] > 12) {
             return;
         }
 
-        if ((int)$versionParts[2] >= 5) {
+        if (isset($versionParts[2]) && (int)$versionParts[2] >= 5) {
             return;
         }
 
