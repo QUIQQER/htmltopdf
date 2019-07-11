@@ -79,7 +79,8 @@ class Document extends QUI\QDOM
     /**
      * Document constructor.
      *
-     * @param array $settings (optional) -
+     * @param array $settings (optional)
+     * @throws Exception
      */
     public function __construct($settings = [])
     {
@@ -95,13 +96,15 @@ class Document extends QUI\QDOM
             'headerSpacing'     => 5,     // should be 5 at minimum
             'footerSpacing'     => 0,
             'zoom'              => 1,
-            'enableForms'      => false
+            'enableForms'       => false
         ]);
 
         $this->setAttributes($settings);
 
+        Handler::checkPDFGeneratorBinary();
+
         $this->documentId      = uniqid();
-        $this->converterBinary = dirname(dirname(dirname(dirname(__FILE__)))).'/lib/wkhtmltopdf/bin/wkhtmltopdf';
+        $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
 
         try {
             $Package      = QUI::getPackage('quiqqer/htmltopdf');

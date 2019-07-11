@@ -11,6 +11,21 @@ use QUI\HtmlToPdf\Exception as HtmlToPdfException;
  */
 class Handler
 {
+    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.5';
+
+    /**
+     * Get path to the PDF generator binary
+     *
+     * @return string
+     */
+    public static function getPDFGeneratorBinaryPath()
+    {
+        $binaryPath = `which wkhtmltopdf 2> /dev/null`;
+        $binaryPath = trim($binaryPath);
+
+        return empty($binaryPath) ? false : $binaryPath;
+    }
+
     /**
      * Checks if the binary for generating PDF files from HTML is installed
      * and executable in the current PHP environment.
@@ -19,13 +34,15 @@ class Handler
      */
     public static function checkPDFGeneratorBinary()
     {
-        $binaryPath = `which wkhtmltopdf 2> /dev/null`;
-        $binaryPath = trim($binaryPath);
+        $binaryPath = self::getPDFGeneratorBinaryPath();
 
         if (empty($binaryPath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.binary_not_found'
+                'exception.Handler.checkPDFGeneratorBinary.binary_not_found',
+                [
+                    'requiredVersion' => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
+                ]
             ]);
         }
 
@@ -56,7 +73,7 @@ class Handler
             'exception.Handler.checkPDFGeneratorBinary.binary_wrong_version',
             [
                 'installedVersion' => $binaryVersion[1],
-                'requiredVersion'  => '0.12.5'
+                'requiredVersion'  => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
             ]
         ]);
     }

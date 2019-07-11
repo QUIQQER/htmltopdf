@@ -80,16 +80,16 @@
 
         <!-- Class: Handler -->
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_found">
-            <de><![CDATA[Das Programm "wkhtmltopdf" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "wkhtmltopdf" in Version 0.12.5 oder höher.]]></de>
-            <en><![CDATA[The executable "wkhtmltopdf" could not be found on the system. Please install "wkhtmltopdf" in version 0.12.5 or higher.]]></en>
+            <de><![CDATA[Das Programm "wkhtmltopdf" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
+            <en><![CDATA[The executable "wkhtmltopdf" could not be found on the system. Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
         </locale>
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_executable">
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "wkhtmltopdf". Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "wkhtmltopdf". Please configure your system so that PHP can execute it.]]></en>
         </locale>
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_wrong_version">
-            <de><![CDATA[Das Programm "wkhtmltopdf" ist in einer nicht-kompatiblen Version installiert. Bitte installieren Sie "wkhtmltopdf" in Version 0.12.5 oder höher.]]></de>
-            <en><![CDATA[The executable "wkhtmltopdf" is installed in a non-compatible version. Please install "wkhtmltopdf" in version 0.12.5 or higher.]]></en>
+            <de><![CDATA[Das Programm "wkhtmltopdf" ist in einer nicht-kompatiblen Version installiert ([installedVersion]). Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
+            <en><![CDATA[The executable "wkhtmltopdf" is installed in a non-compatible version ([installedVersion]). Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
         </locale>
         
     </groups>
