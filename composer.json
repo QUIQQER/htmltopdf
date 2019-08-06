@@ -2,7 +2,7 @@
   "name": "quiqqer/htmltopdf",
   "type": "quiqqer-plugin",
   "description": "HTML to PDF converter based on wkhtmltopdf",
-  "version": "dev-master",
+  "version": "2.1.0",
   "license": [
     "PCSG QL-1.0",
     "CC BY-NC-SA 4.0"
@@ -21,7 +21,7 @@
     "url": "http://www.pcsg.de"
   },
   "require": {
-    "quiqqer/quiqqer": "*@dev"
+    "quiqqer/quiqqer": "^1|*@dev"
   },
   "autoload": {
     "psr-4": {
