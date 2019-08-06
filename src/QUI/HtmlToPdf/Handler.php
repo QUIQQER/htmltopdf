@@ -2,6 +2,7 @@
 
 namespace QUI\HtmlToPdf;
 
+use QUI;
 use QUI\HtmlToPdf\Exception as HtmlToPdfException;
 
 /**
@@ -20,7 +21,14 @@ class Handler
      */
     public static function getPDFGeneratorBinaryPath()
     {
-        $binaryPath = `which wkhtmltopdf 2> /dev/null`;
+        try {
+            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return false;
+        }
+
+        $binaryPath = $Conf->get('settings', 'binary');
         $binaryPath = trim($binaryPath);
 
         return empty($binaryPath) ? false : $binaryPath;
