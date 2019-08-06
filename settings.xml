@@ -5,6 +5,9 @@
         <config>
 
             <section name="settings">
+                <conf name="binary">
+                    <type><![CDATA[string]]></type>
+                </conf>
                 <conf name="lib_path">
                     <type><![CDATA[string]]></type>
                 </conf>
@@ -30,6 +33,15 @@
                         <title>
                             <locale group="quiqqer/htmltopdf" var="settings.title"/>
                         </title>
+
+                        <input conf="settings.binary" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.binary.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.binary.description"/>
+                            </description>
+                        </input>
 
                         <input conf="settings.lib_path" type="text">
                             <text>
