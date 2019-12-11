@@ -1,31 +1,30 @@
 {
-  "name": "quiqqer/htmltopdf",
-  "type": "quiqqer-plugin",
-  "description": "HTML to PDF converter based on wkhtmltopdf",
-  "version": "dev-dev",
-  "license": [
-    "PCSG QL-1.0",
-    "CC BY-NC-SA 4.0"
-  ],
-  "homepage": "https://www.quiqqer.com",
-  "authors": [
-    {
-      "name": "Patrick Müller",
-      "email": "p.mueller@pcsg.de",
-      "homepage": "http://www.pcsg.de",
-      "role": "Developer"
+    "name": "quiqqer\/htmltopdf",
+    "type": "quiqqer-plugin",
+    "description": "HTML to PDF converter based on wkhtmltopdf",
+    "license": [
+        "PCSG QL-1.0",
+        "CC BY-NC-SA 4.0"
+    ],
+    "homepage": "https:\/\/www.quiqqer.com",
+    "authors": [
+        {
+            "name": "Patrick M\u00fcller",
+            "email": "p.mueller@pcsg.de",
+            "homepage": "http:\/\/www.pcsg.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@pcsg.de",
+        "url": "http:\/\/www.pcsg.de"
+    },
+    "require": {
+        "quiqqer\/quiqqer": "*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "QUI\\HtmlToPdf\\": "src\/QUI\/HtmlToPdf"
+        }
     }
-  ],
-  "support": {
-    "email": "support@pcsg.de",
-    "url": "http://www.pcsg.de"
-  },
-  "require": {
-    "quiqqer/quiqqer": "*@dev"
-  },
-  "autoload": {
-    "psr-4": {
-      "QUI\\HtmlToPdf\\": "src/QUI/HtmlToPdf"
-    }
-  }
 }
