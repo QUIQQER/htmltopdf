@@ -2,6 +2,7 @@
     "name": "quiqqer\/htmltopdf",
     "type": "quiqqer-plugin",
     "description": "HTML to PDF converter based on wkhtmltopdf",
+    "version": "2.2.0",
     "license": [
         "PCSG QL-1.0",
         "CC BY-NC-SA 4.0"
