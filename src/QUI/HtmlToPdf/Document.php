@@ -409,27 +409,75 @@ class Document extends QUI\QDOM
 
     /**
      * @param bool $deletePdfFile
-     * @return string
+     * @param array $cliParams (optional) - Additional CLI params for the "convert" command
+     * @return string|array - File to generated image or array with image files if multiple images are generated
      *
      * @throws QUI\Exception
      */
-    public function createImage($deletePdfFile = true)
+    public function createImage($deletePdfFile = true, $cliParams = [])
     {
         $pdfFile   = $this->createPDF();
-        $imageFile = mb_substr($pdfFile, 0, -4).'.jpg';
+        $imageFile = \mb_substr($pdfFile, 0, -4).'.jpg';
 
-        $command = "convert -density 300 -trim '{$pdfFile}' -quality 100 '{$imageFile}'";
+        $cliParams = \array_merge(
+            $cliParams,
+            [
+                '-density 300',
+                '-trim \''.$pdfFile.'\'',
+                '-quality 100',
+                '\''.$imageFile.'\'',
+            ]
+        );
 
-        system($command);
+        $command = 'convert';
 
-        if (!file_exists($imageFile)) {
-            throw new QUI\Exception(
-                'Could not create image from pdf. Command: "'.$command.'".'
-            );
+        foreach ($cliParams as $param) {
+            $param = \trim($param);
+
+            if (empty($param)) {
+                continue;
+            }
+
+            $command .= ' '.$param;
         }
 
-        if ($deletePdfFile && file_exists($pdfFile)) {
-            unlink($pdfFile);
+        \system($command);
+
+        // Delete source PDF
+        if ($deletePdfFile && \file_exists($pdfFile)) {
+            \unlink($pdfFile);
+        }
+
+        if (!\file_exists($imageFile)) {
+            /**
+             * Check if the PDF was split into multiple images.
+             * In this case the images need to be appended to one single image.
+             */
+            $imageFileInfo  = \pathinfo($imageFile);
+            $imageFileExt   = $imageFileInfo['extension'];
+            $imageFileDir   = $imageFileInfo['dirname'].'/';
+            $imageFileNoExt = $imageFileDir.$imageFileInfo['filename'];
+
+            if (!\file_exists($imageFileNoExt.'-0.'.$imageFileExt)) {
+                throw new QUI\Exception(
+                    'Could not create image from pdf. Command: "'.$command.'".'
+                );
+            }
+
+            $imageFiles = [];
+            $imageNo    = 0;
+
+            do {
+                $imageFileNumbered = $imageFileNoExt.'-'.$imageNo++.'.'.$imageFileExt;
+
+                if (!\file_exists($imageFileNumbered)) {
+                    break;
+                }
+
+                $imageFiles[] = $imageFileNumbered;
+            } while (true);
+
+            return $imageFiles;
         }
 
         return $imageFile;
