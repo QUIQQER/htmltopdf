@@ -409,22 +409,30 @@ class Document extends QUI\QDOM
 
     /**
      * @param bool $deletePdfFile
-     * @param array $cliParams (optional) - Additional CLI params for the "convert" command
+     * @param array $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
+     * @param bool $trim (optional) - Trim margin of PDF file before generating image [default: true]
      * @return string|array - File to generated image or array with image files if multiple images are generated
      *
      * @throws QUI\Exception
      */
-    public function createImage($deletePdfFile = true, $cliParams = [])
+    public function createImage($deletePdfFile = true, $cliParams = [], $trim = true)
     {
         $pdfFile   = $this->createPDF();
         $imageFile = \mb_substr($pdfFile, 0, -4).'.jpg';
+
+        $pdfFileLine = '\''.$pdfFile.'\'';
+
+        if ($trim) {
+            $pdfFileLine = '-trim '.$pdfFileLine;
+        }
 
         $cliParams = \array_merge(
             $cliParams,
             [
                 '-density 300',
-                '-trim \''.$pdfFile.'\'',
+                $pdfFileLine,
                 '-quality 100',
+                '-resize 2480x3508',
                 '\''.$imageFile.'\'',
             ]
         );
