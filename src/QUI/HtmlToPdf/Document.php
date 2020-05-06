@@ -101,7 +101,12 @@ class Document extends QUI\QDOM
 
         $this->setAttributes($settings);
 
-        Handler::checkPDFGeneratorBinary();
+        try {
+            Handler::checkPDFGeneratorBinary();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            Handler::sendBinaryWarningMail();
+        }
 
         $this->documentId      = uniqid();
         $this->converterBinary = Handler::getPDFGeneratorBinaryPath();

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <events>
-    <event on="onSiteSave" fire="\QUI\Tags\Site::onSave" />
+    <event on="onPackageSetup" fire="\QUI\HtmlToPdf\Events::onPackageSetup" />
 </events>
