@@ -123,7 +123,5 @@ class Handler
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
-
-
     }
 }
