@@ -610,7 +610,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -644,7 +644,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -710,6 +710,19 @@ class Document extends QUI\QDOM
 
         $body .= '</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
+    }
+
+    /**
+     * Parse all relative links and change them to absolute links
+     *
+     * This is especially relevant for images
+     *
+     * @param string $str
+     * @return string - Modified string
+     */
+    protected function parseRelativeLinks(string $str)
+    {
+        return \preg_replace('#=[\'"]\/media\/cache\/#i', '="'.CMS_DIR.'media/cache/', $str);
     }
 }
