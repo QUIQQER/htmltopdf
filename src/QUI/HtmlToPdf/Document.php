@@ -360,7 +360,7 @@ class Document extends QUI\QDOM
             $headerHtmlFile = $this->getHeaderHTMLFile();
 
             $cmd .= ' --header-html "'.$headerHtmlFile.'"';
-            $cmd .= ' --header-line';
+//            $cmd .= ' --header-line';
         }
 
         if (!empty($this->footer['content'])
