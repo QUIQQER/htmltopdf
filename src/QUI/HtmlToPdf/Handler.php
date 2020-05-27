@@ -12,7 +12,7 @@ use QUI\HtmlToPdf\Exception as HtmlToPdfException;
  */
 class Handler
 {
-    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.5';
+    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.5 (with patched qt)';
 
     /**
      * Get path to the PDF generator binary
@@ -76,6 +76,12 @@ class Handler
             return;
         }
 
+        if (!empty($binaryVersion[2]) && $binaryVersion[2] === '(with'
+            && !empty($binaryVersion[3]) && $binaryVersion[2] === 'patched'
+            && !empty($binaryVersion[4]) && $binaryVersion[2] === 'qt)') {
+            return;
+        }
+
         throw new HtmlToPdfException([
             'quiqqer/htmltopdf',
             'exception.Handler.checkPDFGeneratorBinary.binary_wrong_version',
@@ -84,5 +90,40 @@ class Handler
                 'requiredVersion'  => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
             ]
         ]);
+    }
+
+    /**
+     * Send e-mail about wrong/missing wkhtmltopdf binary to admin
+     *
+     * @param string $error - Error text
+     * @return void
+     */
+    public static function sendBinaryWarningMail(string $error)
+    {
+        $Mailer    = new QUI\Mail\Mailer();
+        $adminMail = QUI::conf('mail', 'admin_mail');
+
+        if (empty($adminMail)) {
+            return;
+        }
+
+        $Mailer->addRecipient($adminMail);
+        $Mailer->setSubject(QUI::getLocale()->get('quiqqer/htmltopdf', 'mail.warning.binary_missing.subject'));
+        $Mailer->setBody(
+            QUI::getLocale()->get(
+                'quiqqer/htmltopdf',
+                'mail.warning.binary_missing.body',
+                [
+                    'host'  => QUI::conf('globals', 'host'),
+                    'error' => $error
+                ]
+            )
+        );
+
+        try {
+            $Mailer->send();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 }

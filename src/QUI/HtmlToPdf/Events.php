@@ -18,32 +18,54 @@ class Events
      * Event: onPackageSetup
      *
      * @param QUI\Package\Package $Package
+     * @return void
+     *
      * @throws QUI\Exception
      */
-    public static function onPackageSetup($Package)
+    public static function onPackageSetup(QUI\Package\Package $Package)
     {
-        // check if wkhtmltopdf is executable
-        $wkhtmltopdfExecutable = dirname(dirname(dirname(dirname(__FILE__)))) . '/lib/wkhtmltopdf/bin/wkhtmltopdf';
-
-        if (!file_exists($wkhtmltopdfExecutable)) {
-            throw new QUI\Exception(array(
-                'pcsg/htmltopdf',
-                'exception.events.onpackagesetup.missing.wkhtmltopdf'
-            ));
+        if ($Package->getName() !== 'quiqqer/htmltopdf') {
+            return;
         }
 
-        if (!is_executable($wkhtmltopdfExecutable)) {
-            exec('chmod +x ' . $wkhtmltopdfExecutable, $output, $exitStatus);
+        $binary = Handler::getPDFGeneratorBinaryPath();
 
-            if (!is_executable($wkhtmltopdfExecutable)) {
-                throw new QUI\Exception(array(
-                    'pcsg/htmltopdf',
-                    'exception.events.onpackagesetup.wkhtmltopdf.not.executable',
-                    array(
-                        'path' => $wkhtmltopdfExecutable
-                    )
-                ));
-            }
+        if (!empty($binary)) {
+            return;
+        }
+
+        try {
+            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return;
+        }
+
+        // Try to locate "wkhtmltopdf"
+        \exec("whereis wkhtmltopdf", $output);
+
+        if (!empty($output)) {
+            $binary = \str_replace("wkhtmltopdf: ", "", $output[0]);
+            $Conf->setValue('settings', 'binary', $binary);
+            $Conf->save();
+
+            return;
+        }
+
+        // Try default
+        $binary = "/usr/local/bin/wkhtmltopdf";
+
+        if (\file_exists($binary) && \is_executable($binary)) {
+            $Conf->setValue('settings', 'binary', $binary);
+            $Conf->save();
+            return;
+        }
+
+        $binary = "/usr/bin/wkhtmltopdf";
+
+        if (\file_exists($binary) && \is_executable($binary)) {
+            $Conf->setValue('settings', 'binary', $binary);
+            $Conf->save();
         }
     }
 }

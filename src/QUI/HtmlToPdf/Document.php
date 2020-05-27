@@ -80,7 +80,6 @@ class Document extends QUI\QDOM
      * Document constructor.
      *
      * @param array $settings (optional)
-     * @throws Exception
      */
     public function __construct($settings = [])
     {
@@ -101,7 +100,12 @@ class Document extends QUI\QDOM
 
         $this->setAttributes($settings);
 
-        Handler::checkPDFGeneratorBinary();
+        try {
+            Handler::checkPDFGeneratorBinary();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            Handler::sendBinaryWarningMail($Exception->getMessage());
+        }
 
         $this->documentId      = uniqid();
         $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
@@ -355,7 +359,7 @@ class Document extends QUI\QDOM
             $headerHtmlFile = $this->getHeaderHTMLFile();
 
             $cmd .= ' --header-html "'.$headerHtmlFile.'"';
-            $cmd .= ' --header-line';
+//            $cmd .= ' --header-line';
         }
 
         if (!empty($this->footer['content'])
@@ -605,7 +609,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -639,7 +643,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -705,6 +709,19 @@ class Document extends QUI\QDOM
 
         $body .= '</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
+    }
+
+    /**
+     * Parse all relative links and change them to absolute links
+     *
+     * This is especially relevant for images
+     *
+     * @param string $str
+     * @return string - Modified string
+     */
+    protected function parseRelativeLinks(string $str)
+    {
+        return \preg_replace('#=[\'"]\/media\/cache\/#i', '="'.CMS_DIR.'media/cache/', $str);
     }
 }
