@@ -35,7 +35,8 @@
         </locale>
         <locale name="mail.warning.binary_missing.body" html="true">
             <de><![CDATA[
-<p>Es können aktuell keine PDF-Dokument auf Ihrem QUIQQER-System [host] generiert werden.</p>
+<p>Es können aktuell keine PDF-Dokument auf Ihrem QUIQQER-System [host] generiert werden. Folgender Fehler tritt auf:</p>
+<p><b>[error]</b></p>
 <p>Bitte prüfen Sie, ob das Programm <b>wkhtmltopdf</b> auf Ihrem System installiert und von PHP ausführbar ist.</p>
 <p>Sollte das Programm bereits installiert sein, prüfen Sie, ob der korrekte Pfad unter <b>Einstellungen -> HTML zu PDF Konvertierung -> wkhtmltopdf binary</b> eingetragen ist.</p>
 <p>wkhtmltopdf wird mindestens in Version <b>0.12.5 (with patched qt)</b> benötigt.</p>
@@ -43,7 +44,8 @@
 ]]></de>
             <en><![CDATA[
 <p>No PDF document can currently be generated on your QUIQQER system [host].</p>
-<p>Please check if the program <b>wkhtmltopdf</b> is installed on your system and executable by PHP.</p>
+<p><b>[error]</b></p>
+<p>Please check if the program <b>wkhtmltopdf</b> is installed on your system and executable by PHP. The following error occurs:</p>
 <p>If the program should already be installed, check that the correct path is entered under <b>Settings -> HTML to PDF conversion -> wkhtmltopdf binary</b>.</p>
 <p>wkhtmltopdf is required in least version <b>0.12.5 (with patched qt)</b>.</p>
 <p>For further information, see <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>

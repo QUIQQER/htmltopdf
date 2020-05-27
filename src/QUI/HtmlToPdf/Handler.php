@@ -95,9 +95,10 @@ class Handler
     /**
      * Send e-mail about wrong/missing wkhtmltopdf binary to admin
      *
+     * @param string $error - Error text
      * @return void
      */
-    public static function sendBinaryWarningMail()
+    public static function sendBinaryWarningMail(string $error)
     {
         $Mailer    = new QUI\Mail\Mailer();
         $adminMail = QUI::conf('mail', 'admin_mail');
@@ -113,7 +114,8 @@ class Handler
                 'quiqqer/htmltopdf',
                 'mail.warning.binary_missing.body',
                 [
-                    'host' => QUI::conf('globals', 'host')
+                    'host'  => QUI::conf('globals', 'host'),
+                    'error' => $error
                 ]
             )
         );
