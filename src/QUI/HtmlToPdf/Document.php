@@ -80,8 +80,6 @@ class Document extends QUI\QDOM
      * Document constructor.
      *
      * @param array $settings (optional)
-     *
-     * @throws \Exception
      */
     public function __construct($settings = [])
     {
@@ -107,8 +105,6 @@ class Document extends QUI\QDOM
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             Handler::sendBinaryWarningMail($Exception->getMessage());
-
-            throw $Exception;
         }
 
         $this->documentId      = uniqid();
