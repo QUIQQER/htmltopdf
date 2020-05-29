@@ -12,7 +12,7 @@ use QUI\HtmlToPdf\Exception as HtmlToPdfException;
  */
 class Handler
 {
-    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.5 (with patched qt)';
+    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.4 (with patched qt)';
 
     /**
      * Get path to the PDF generator binary
@@ -72,7 +72,7 @@ class Handler
             return;
         }
 
-        if (isset($versionParts[2]) && (int)$versionParts[2] >= 5) {
+        if (isset($versionParts[2]) && (int)$versionParts[2] >= 4) {
             return;
         }
 
