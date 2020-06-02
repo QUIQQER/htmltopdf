@@ -381,7 +381,7 @@ class Document extends QUI\QDOM
 
         $cmd .= ' '.$bodyHtmlFile.' '.$pdfFile;
 
-        exec($cmd, $output, $exitStatus);
+        exec($cmd.' 2> /dev/null', $output, $exitStatus);
 
         if ($exitStatus !== 0) {
             QUI\System\Log::addError(
