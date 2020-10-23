@@ -80,7 +80,6 @@ class Document extends QUI\QDOM
      * Document constructor.
      *
      * @param array $settings (optional)
-     * @throws Exception
      */
     public function __construct($settings = [])
     {
@@ -101,7 +100,12 @@ class Document extends QUI\QDOM
 
         $this->setAttributes($settings);
 
-        Handler::checkPDFGeneratorBinary();
+        try {
+            Handler::checkPDFGeneratorBinary();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            Handler::sendBinaryWarningMail($Exception->getMessage());
+        }
 
         $this->documentId      = uniqid();
         $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
@@ -355,7 +359,7 @@ class Document extends QUI\QDOM
             $headerHtmlFile = $this->getHeaderHTMLFile();
 
             $cmd .= ' --header-html "'.$headerHtmlFile.'"';
-            $cmd .= ' --header-line';
+//            $cmd .= ' --header-line';
         }
 
         if (!empty($this->footer['content'])
@@ -377,7 +381,7 @@ class Document extends QUI\QDOM
 
         $cmd .= ' '.$bodyHtmlFile.' '.$pdfFile;
 
-        exec($cmd, $output, $exitStatus);
+        exec($cmd.' 2> /dev/null', $output, $exitStatus);
 
         if ($exitStatus !== 0) {
             QUI\System\Log::addError(
@@ -409,27 +413,83 @@ class Document extends QUI\QDOM
 
     /**
      * @param bool $deletePdfFile
-     * @return string
+     * @param array $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
+     * @param bool $trim (optional) - Trim margin of PDF file before generating image [default: true]
+     * @return string|array - File to generated image or array with image files if multiple images are generated
      *
      * @throws QUI\Exception
      */
-    public function createImage($deletePdfFile = true)
+    public function createImage($deletePdfFile = true, $cliParams = [], $trim = true)
     {
         $pdfFile   = $this->createPDF();
-        $imageFile = mb_substr($pdfFile, 0, -4).'.jpg';
+        $imageFile = \mb_substr($pdfFile, 0, -4).'.jpg';
 
-        $command = "convert -density 300 -trim '{$pdfFile}' -quality 100 '{$imageFile}'";
+        $pdfFileLine = '\''.$pdfFile.'\'';
 
-        system($command);
-
-        if (!file_exists($imageFile)) {
-            throw new QUI\Exception(
-                'Could not create image from pdf. Command: "'.$command.'".'
-            );
+        if ($trim) {
+            $pdfFileLine = '-trim '.$pdfFileLine;
         }
 
-        if ($deletePdfFile && file_exists($pdfFile)) {
-            unlink($pdfFile);
+        $cliParams = \array_merge(
+            $cliParams,
+            [
+                '-density 300',
+                $pdfFileLine,
+                '-quality 100',
+                '-resize 2480x3508',
+                '\''.$imageFile.'\'',
+            ]
+        );
+
+        $command = 'convert';
+
+        foreach ($cliParams as $param) {
+            $param = \trim($param);
+
+            if (empty($param)) {
+                continue;
+            }
+
+            $command .= ' '.$param;
+        }
+
+        \system($command);
+
+        // Delete source PDF
+        if ($deletePdfFile && \file_exists($pdfFile)) {
+            \unlink($pdfFile);
+        }
+
+        if (!\file_exists($imageFile)) {
+            /**
+             * Check if the PDF was split into multiple images.
+             * In this case the images need to be appended to one single image.
+             */
+            $imageFileInfo  = \pathinfo($imageFile);
+            $imageFileExt   = $imageFileInfo['extension'];
+            $imageFileDir   = $imageFileInfo['dirname'].'/';
+            $imageFileNoExt = $imageFileDir.$imageFileInfo['filename'];
+
+            if (!\file_exists($imageFileNoExt.'-0.'.$imageFileExt)) {
+                throw new QUI\Exception(
+                    'Could not create image from pdf. Command: "'.$command.'".'
+                );
+            }
+
+            $imageFiles = [];
+            $imageNo    = 0;
+
+            do {
+                $imageFileNumbered = $imageFileNoExt.'-'.$imageNo++.'.'.$imageFileExt;
+
+                if (!\file_exists($imageFileNumbered)) {
+                    break;
+                }
+
+                $imageFiles[] = $imageFileNumbered;
+            } while (true);
+
+            return $imageFiles;
         }
 
         return $imageFile;
@@ -549,7 +609,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -583,7 +643,7 @@ class Document extends QUI\QDOM
 
         $body = '<body>'.$hd['content'].'</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
     }
 
     /**
@@ -649,6 +709,19 @@ class Document extends QUI\QDOM
 
         $body .= '</body></html>';
 
-        return $header.$body;
+        return $this->parseRelativeLinks($header.$body);
+    }
+
+    /**
+     * Parse all relative links and change them to absolute links
+     *
+     * This is especially relevant for images
+     *
+     * @param string $str
+     * @return string - Modified string
+     */
+    protected function parseRelativeLinks(string $str)
+    {
+        return \preg_replace('#=[\'"]\/media\/cache\/#i', '="'.CMS_DIR.'media/cache/', $str);
     }
 }
