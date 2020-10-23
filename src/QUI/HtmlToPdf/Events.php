@@ -45,14 +45,20 @@ class Events
         \exec("whereis wkhtmltopdf", $output);
 
         if (!empty($output)) {
-            $binary = \str_replace("wkhtmltopdf: ", "", $output[0]);
-            $Conf->setValue('settings', 'binary', $binary);
-            $Conf->save();
+            $output   = \str_replace("wkhtmltopdf: ", "", $output[0]);
+            $binaries = \explode(' ', $output);
 
-            return;
+            // Try all binaries and set the one that works
+            foreach ($binaries as $binary) {
+                if (\file_exists($binary) && \is_executable($binary)) {
+                    $Conf->setValue('settings', 'binary', $binary);
+                    $Conf->save();
+                    return;
+                }
+            }
         }
 
-        // Try default
+        // Try defaults
         $binary = "/usr/local/bin/wkhtmltopdf";
 
         if (\file_exists($binary) && \is_executable($binary)) {
