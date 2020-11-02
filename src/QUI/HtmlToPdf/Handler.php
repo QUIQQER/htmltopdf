@@ -15,6 +15,13 @@ class Handler
     const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.4 (with patched qt)';
 
     /**
+     * Additional wkhtmltopdf CLI parameters based on version
+     *
+     * @var array
+     */
+    public static $cliParams = [];
+
+    /**
      * Get path to the PDF generator binary
      *
      * @return string
@@ -73,6 +80,12 @@ class Handler
         }
 
         if (isset($versionParts[2]) && (int)$versionParts[2] >= 4) {
+            // --enable-local-file-access is required since version 0.12.6
+            // see also: https://stackoverflow.com/q/62315246
+            if ((int)$versionParts[2] >= 6) {
+                self::$cliParams[] = '--enable-local-file-access';
+            }
+
             return;
         }
 
