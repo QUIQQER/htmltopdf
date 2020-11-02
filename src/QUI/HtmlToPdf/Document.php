@@ -375,6 +375,11 @@ class Document extends QUI\QDOM
         $cmd .= ' --dpi '.(int)$this->getAttribute('dpi');
         $cmd .= ' --zoom '.(float)$this->getAttribute('zoom');
 
+        // Additional CLI params
+        foreach (Handler::$cliParams as $cliParam) {
+            $cmd .= ' '.$cliParam;
+        }
+
         $bodyHtmlFile = $this->getContentHTMLFile();
 
         $pdfFile = $varDir.$this->documentId.'.pdf';
@@ -403,7 +408,7 @@ class Document extends QUI\QDOM
         unlink($bodyHtmlFile);
 
         if ($footerHtmlFile) {
-            unlink($footerHtmlFile);
+//            unlink($footerHtmlFile);
         }
 
         $this->created = true;
