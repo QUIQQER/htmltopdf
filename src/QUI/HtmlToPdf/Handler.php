@@ -64,7 +64,10 @@ class Handler
         if (!\is_executable($binaryPath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.binary_not_executable'
+                'exception.Handler.checkPDFGeneratorBinary.binary_not_executable',
+                [
+                    'path' => $binaryPath
+                ]
             ]);
         }
 
