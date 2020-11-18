@@ -124,7 +124,15 @@ class Handler
         }
 
         $Mailer->addRecipient($adminMail);
-        $Mailer->setSubject(QUI::getLocale()->get('quiqqer/htmltopdf', 'mail.warning.binary_missing.subject'));
+        $Mailer->setSubject(
+            QUI::getLocale()->get(
+                'quiqqer/htmltopdf',
+                'mail.warning.binary_missing.subject',
+                [
+                    'host' => QUI::conf('globals', 'host')
+                ]
+            )
+        );
         $Mailer->setBody(
             QUI::getLocale()->get(
                 'quiqqer/htmltopdf',

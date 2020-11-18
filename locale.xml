@@ -30,8 +30,8 @@
 
         <!-- Mails -->
         <locale name="mail.warning.binary_missing.subject">
-            <de><![CDATA[quiqqer/htmltopdf - PDF-Dokumente können nicht erstellt werden]]></de>
-            <en><![CDATA[quiqqer/htmltopdf - PDF documents cannot be created]]></en>
+            <de><![CDATA[[host] - PDF-Dokumente können nicht erstellt werden]]></de>
+            <en><![CDATA[[host] - PDF documents cannot be created]]></en>
         </locale>
         <locale name="mail.warning.binary_missing.body" html="true">
             <de><![CDATA[
