@@ -211,7 +211,7 @@ class Document extends QUI\QDOM
             ]);
         }
 
-        $this->header['content'] = file_get_contents($file);
+        $this->body['content'] = file_get_contents($file);
     }
 
     /**
@@ -275,7 +275,7 @@ class Document extends QUI\QDOM
             ]);
         }
 
-        $this->header['content'] = file_get_contents($file);
+        $this->footer['content'] = file_get_contents($file);
     }
 
     /**
@@ -408,7 +408,7 @@ class Document extends QUI\QDOM
         unlink($bodyHtmlFile);
 
         if ($footerHtmlFile) {
-//            unlink($footerHtmlFile);
+            unlink($footerHtmlFile);
         }
 
         $this->created = true;
