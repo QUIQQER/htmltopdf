@@ -110,6 +110,16 @@
             <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>wkhtmltopdf</b> binary. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Absolute filesystem path to the <b>wkhtmltopdf</b> binary. Has to executable by the executing PHP process.]]></en>
         </locale>
+        <locale name="settings.testDocument.title">
+            <de><![CDATA[Einstellungen testen]]></de>
+            <en><![CDATA[Test settings]]></en>
+        </locale>
+        <locale name="settings.testDocument.description" html="true">
+            <de><![CDATA[Generiert ein Test-Dokument basierend auf den aktuellen Einstellungen (<b>Einstellungen sollten vorher gespeichert werden!</b>).<br/><br/>
+Sollte kein PDF-Dokument generiert werden, prüfen Sie bitte die <b>Fehler-Logs</b>.]]></de>
+            <en><![CDATA[Generates a test document based on the current settings (<b>settings should be saved beforehand!</b>).<br/><br/>
+If no PDF document is generated check the <b>error logs</b>.]]></en>
+        </locale>
 
         <!-- Class: Handler -->
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_found">
@@ -117,13 +127,22 @@
             <en><![CDATA[The executable "wkhtmltopdf" could not be found on the system. Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
         </locale>
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_executable">
-            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "wkhtmltopdf". Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
-            <en><![CDATA[The PHP process has no access to the executable "wkhtmltopdf". Please configure your system so that PHP can execute it.]]></en>
+            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "wkhtmltopdf" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
+            <en><![CDATA[The PHP process has no access to the executable "wkhtmltopdf" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_wrong_version">
             <de><![CDATA[Das Programm "wkhtmltopdf" ist in einer nicht-kompatiblen Version installiert ([installedVersion]). Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
             <en><![CDATA[The executable "wkhtmltopdf" is installed in a non-compatible version ([installedVersion]). Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
         </locale>
 
+    </groups>
+
+    <groups name="quiqqer/htmltopdf" datatype="js">
+        
+        <locale name="controls.TestGeneration.btn.text">
+            <de><![CDATA[Test-Dokument erstellen]]></de>
+            <en><![CDATA[Create test document]]></en>
+        </locale>
+        
     </groups>
 </locales>

@@ -51,6 +51,16 @@
                                 <locale group="quiqqer/htmltopdf" var="settings.lib_path.description"/>
                             </description>
                         </input>
+
+                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.testDocument.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.testDocument.description"/>
+                            </description>
+                        </input>
+
                     </settings>
                 </category>
 
