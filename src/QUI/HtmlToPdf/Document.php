@@ -95,7 +95,8 @@ class Document extends QUI\QDOM
             'headerSpacing'     => 5,     // should be 5 at minimum
             'footerSpacing'     => 0,
             'zoom'              => 1,
-            'enableForms'       => false
+            'enableForms'       => false,
+            'foldingMarks'      => false
         ]);
 
         $this->setAttributes($settings);
@@ -612,7 +613,51 @@ class Document extends QUI\QDOM
 
         $header .= '</head>';
 
-        $body = '<body>'.$hd['content'].'</body></html>';
+        $body = '<body>'.$hd['content'];
+
+        if ($this->getAttribute('foldingMarks')) {
+            $body .= '
+                <div class="folding-marks">
+                    <div class="folding-mark din-5008-f1"></div>
+                    <div class="folding-mark din-5008-f2"></div>
+                    <div class="folding-mark din-5008-hole"></div>
+                </div>
+                <style>
+                       .folding-marks {
+                            height: 100%;
+                            left: 0;
+                            position: fixed;
+                            top: 0;
+                            width: 100%;
+                       }
+                       
+                       .folding-mark {
+                            background: #000;
+                            height: 1px;
+                            left: 0;
+                            position: absolute;
+                            width: 40px;
+                       }
+                       
+                       .din-5008-f1 {
+                            background: #000;
+                            top: 110mm; /* 105mm */
+                       }
+                       
+                       .din-5008-f2 {
+                            background: #000;
+                            top: 240mm; /* 210 mm */
+                       }
+                       
+                       .din-5008-hole {
+                            top: 175mm; /* 148.5mm */
+                       }
+                </style>
+            ';
+        }
+
+
+        $body .= '</body></html>';
 
         return $this->parseRelativeLinks($header.$body);
     }
