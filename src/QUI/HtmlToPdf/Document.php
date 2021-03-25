@@ -427,6 +427,8 @@ class Document extends QUI\QDOM
      */
     public function createImage($deletePdfFile = true, $cliParams = [], $trim = true)
     {
+        Handler::checkConvertBinary();
+
         $pdfFile   = $this->createPDF();
         $imageFile = \mb_substr($pdfFile, 0, -4).'.jpg';
 
@@ -442,12 +444,13 @@ class Document extends QUI\QDOM
                 '-density 300',
                 $pdfFileLine,
                 '-quality 100',
-                '-resize 2480x3508',
+                '-resize 2480x3508', // DIN A4
                 '\''.$imageFile.'\'',
             ]
         );
 
-        $command = 'convert';
+        $cliParams = \array_values(\array_unique($cliParams));
+        $command   = Handler::getConvertBinaryPath();
 
         foreach ($cliParams as $param) {
             $param = \trim($param);
