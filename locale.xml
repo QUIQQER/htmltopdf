@@ -115,10 +115,16 @@
             <en><![CDATA[Test settings]]></en>
         </locale>
         <locale name="settings.testDocument.description" html="true">
-            <de><![CDATA[Generiert ein Test-Dokument basierend auf den aktuellen Einstellungen (<b>Einstellungen sollten vorher gespeichert werden!</b>).<br/><br/>
-Sollte kein PDF-Dokument generiert werden, prüfen Sie bitte die <b>Fehler-Logs</b>.]]></de>
-            <en><![CDATA[Generates a test document based on the current settings (<b>settings should be saved beforehand!</b>).<br/><br/>
-If no PDF document is generated check the <b>error logs</b>.]]></en>
+            <de><![CDATA[Generiert ein Test-Dokument basierend auf den aktuellen Einstellungen (<b>Einstellungen sollten vorher gespeichert werden!</b>).]]></de>
+            <en><![CDATA[Generates a test document based on the current settings (<b>settings should be saved beforehand!</b>).]]></en>
+        </locale>
+        <locale name="settings.binary_convert.title">
+            <de><![CDATA[convert binary (ImageMagick)]]></de>
+            <en><![CDATA[convert binary (ImageMagick)]]></en>
+        </locale>
+        <locale name="settings.binary_convert.description">
+            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> binary. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> binary. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
         </locale>
 
         <!-- Class: Handler -->
@@ -134,14 +140,42 @@ If no PDF document is generated check the <b>error logs</b>.]]></en>
             <de><![CDATA[Das Programm "wkhtmltopdf" ist in einer nicht-kompatiblen Version installiert ([installedVersion]). Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
             <en><![CDATA[The executable "wkhtmltopdf" is installed in a non-compatible version ([installedVersion]). Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
         </locale>
+        <locale name="exception.Handler.checkPDFGeneratorBinary.convert.binary_not_found">
+            <de><![CDATA[Das Programm "convert" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "convert" (Teil von ImageMagick).]]></de>
+            <en><![CDATA[The executable "convert" could not be found on the system. Please install "convert" (part of ImageMagick).]]></en>
+        </locale>
+        <locale name="exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable">
+            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "convert" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
+            <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
+        </locale>
 
     </groups>
 
     <groups name="quiqqer/htmltopdf" datatype="js">
         
-        <locale name="controls.TestGeneration.btn.text">
-            <de><![CDATA[Test-Dokument erstellen]]></de>
-            <en><![CDATA[Create test document]]></en>
+        <locale name="controls.TestGeneration.btn_pdf.text">
+            <de><![CDATA[Test PDF-Dokument erstellen]]></de>
+            <en><![CDATA[Create test PDF document]]></en>
+        </locale>
+        <locale name="controls.TestGeneration.btn_image.text">
+            <de><![CDATA[Test-Bild aus PDF erstellen]]></de>
+            <en><![CDATA[Create test image from PDF document]]></en>
+        </locale>
+        <locale name="controls.TestGeneration.error.information" html="true">
+            <de><![CDATA[<b>Fehler</b>:<br/><br/>[error]<br/><br/>Sollte der Fehler weiterhin bestehen, kontaktieren Sie bitte einen Administrator!]]></de>
+            <en><![CDATA[<b>Error</b>:<br/><br/>[error]<br/><br/>Should the error persist, please contact an administrator!]]></en>
+        </locale>
+        <locale name="controls.TestGeneration.error.title">
+            <de><![CDATA[Fehler bei Test-Dokument]]></de>
+            <en><![CDATA[Error with test document]]></en>
+        </locale>
+        <locale name="controls.TestGeneration.error.text">
+            <de><![CDATA[Das Test-Dokument kann nicht erzeugt werden!]]></de>
+            <en><![CDATA[The test document can not be generated!]]></en>
+        </locale>
+        <locale name="controls.TestGeneration.error.btn_submit">
+            <de><![CDATA[OK]]></de>
+            <en><![CDATA[OK]]></en>
         </locale>
         
     </groups>

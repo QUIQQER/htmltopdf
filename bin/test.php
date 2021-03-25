@@ -13,13 +13,18 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
+$type = $_GET['type'];
+
 try {
     $Document = new Document([
         'marginTop' => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
+//        'marginBottom'  => 10, // dies ist variabel durch quiqqerInvoicePdfCreate
         'filename'  => 'test.pdf',
-//        'marginBottom' => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
-//            'pageNumbersPrefix' => $Locale->get('quiqqer/htmltopdf', 'footer.page.prefix')
     ]);
+
+    $Document->setAttribute('marginBottom', 25);
+    $Document->setAttribute('marginLeft', 0);
+    $Document->setAttribute('marginRight', 0);
 
     $tplDir = OPT_DIR.'quiqqer/htmltopdf/template/';
     $Engine = QUI::getTemplateManager()->getEngine();
@@ -41,7 +46,27 @@ try {
         $Engine->fetch($tplDir.'test.footer.html')
     );
 
+    if ($type === 'image') {
+        $imageFile = $Document->createImage(
+            true,
+            [
+                '-transparent-color',
+                '-background white',
+                '-alpha remove',
+                '-alpha off',
+                '-bordercolor white',
+                '-border 10'
+            ]
+        );
+
+        QUI\Utils\System\File::send($imageFile, 0, 'test.jpg');
+
+        exit;
+    }
+
     $Document->download();
 } catch (\Exception $Exception) {
     QUI\System\Log::writeException($Exception);
 }
+
+exit;

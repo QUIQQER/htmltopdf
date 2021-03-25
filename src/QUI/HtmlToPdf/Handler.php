@@ -150,4 +150,49 @@ class Handler
             QUI\System\Log::writeException($Exception);
         }
     }
+
+    /**
+     * Get path to the ImageMagick `convert` command
+     *
+     * @return string
+     */
+    public static function getConvertBinaryPath()
+    {
+        try {
+            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return false;
+        }
+
+        $binaryPath = $Conf->get('settings', 'binary_convert');
+        $binaryPath = trim($binaryPath);
+
+        return empty($binaryPath) ? false : $binaryPath;
+    }
+
+    /**
+     * Checks if the binary for ImageMagick`convert` is installed
+     * and executable in the current PHP environment.
+     *
+     * @throws \QUI\HtmlToPdf\Exception
+     */
+    public static function checkConvertBinary()
+    {
+        $binaryPath = self::getConvertBinaryPath();
+
+        if (empty($binaryPath)) {
+            throw new HtmlToPdfException([
+                'quiqqer/htmltopdf',
+                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_found'
+            ]);
+        }
+
+        if (!\is_executable($binaryPath)) {
+            throw new HtmlToPdfException([
+                'quiqqer/htmltopdf',
+                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable'
+            ]);
+        }
+    }
 }
