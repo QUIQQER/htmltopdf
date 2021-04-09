@@ -11,6 +11,9 @@
                 <conf name="lib_path">
                     <type><![CDATA[string]]></type>
                 </conf>
+                <conf name="binary_convert">
+                    <type><![CDATA[string]]></type>
+                </conf>
             </section>
 
         </config>
@@ -51,6 +54,25 @@
                                 <locale group="quiqqer/htmltopdf" var="settings.lib_path.description"/>
                             </description>
                         </input>
+
+                        <input conf="settings.binary_convert" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.binary_convert.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.binary_convert.description"/>
+                            </description>
+                        </input>
+
+                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration" label="false">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.testDocument.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.testDocument.description"/>
+                            </description>
+                        </input>
+
                     </settings>
                 </category>
 

@@ -22,12 +22,12 @@ Installation
 The Package Name is: quiqqer/htmltopdf
 
 ### Dependencies
-* **wkhtmltopdf** - included in this package; s. http://wkhtmltopdf.org/downloads.html
-* Further packages that **wkhtmltopdf** requires:
-  * `sudo apt-get install zlib1g-dev`
-  * `sudo apt-get install fontconfig fontconfig-config`
-  * `sudo apt-get install libfreetype6`
-  * `sudo apt-get install libx11-dev libxext-dev libxrender-dev`
+
+**wkhtmltopdf** ist required in version **0.12.5 (with patched qt)** or higher.
+
+Download: http://wkhtmltopdf.org/downloads.html
+
+**Hint**: The required version may not be available via your OS sources list.
 
 Usage
 ----------
