@@ -85,18 +85,19 @@ class Document extends QUI\QDOM
     public function __construct($settings = [])
     {
         $this->setAttributes([
-            'showPageNumbers'   => true,
-            'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
-            'filename'          => '',
-            'dpi'               => 300,
-            'marginTop'         => 20,    // mm
-            'marginRight'       => 5,     // mm
-            'marginBottom'      => 20,    // mm
-            'marginLeft'        => 5,     // mm
-            'headerSpacing'     => 5,     // should be 5 at minimum
-            'footerSpacing'     => 0,
-            'zoom'              => 1,
-            'enableForms'       => false
+            'showPageNumbers'       => true,
+            'pageNumbersPrefix'     => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
+            'filename'              => '',
+            'dpi'                   => 300,
+            'marginTop'             => 20,    // mm
+            'marginRight'           => 5,     // mm
+            'marginBottom'          => 20,    // mm
+            'marginLeft'            => 5,     // mm
+            'headerSpacing'         => 5,     // should be 5 at minimum
+            'footerSpacing'         => 0,
+            'zoom'                  => 1,
+            'enableForms'           => false,
+            'disableSmartShrinking' => false
         ]);
 
         $this->setAttributes($settings);
@@ -119,7 +120,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html - HTML code
      */
-    public function setHeaderHTML($html)
+    public function setHeaderHTML(string $html)
     {
         $this->header['content'] = $html;
     }
@@ -131,7 +132,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setHeaderHTMLFile($file)
+    public function setHeaderHTMLFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -151,7 +152,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setHeaderCSS($css)
+    public function setHeaderCSS(string $css)
     {
         $this->header['css'] = $css;
     }
@@ -163,7 +164,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addHeaderCSSFile($file)
+    public function addHeaderCSSFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -183,7 +184,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html - HTML code
      */
-    public function setContentHTML($html)
+    public function setContentHTML(string $html)
     {
         $this->body['content'] = $html;
     }
@@ -195,7 +196,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setContentHTMLFile($file)
+    public function setContentHTMLFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -215,7 +216,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setContentCSS($css)
+    public function setContentCSS(string $css)
     {
         $this->body['css'] = $css;
     }
@@ -227,7 +228,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addContentCSSFile($file)
+    public function addContentCSSFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -247,7 +248,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html
      */
-    public function setFooterHTML($html)
+    public function setFooterHTML(string $html)
     {
         $this->footer['content'] = $html;
     }
@@ -259,7 +260,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setFooterHTMLFile($file)
+    public function setFooterHTMLFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -279,7 +280,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setFooterCSS($css)
+    public function setFooterCSS(string $css)
     {
         $this->footer['css'] = $css;
     }
@@ -291,7 +292,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addFooterCSSFile($file)
+    public function addFooterCSSFile(string $file)
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -313,7 +314,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function createPDF()
+    public function createPDF(): string
     {
         $varDir = $this->varDir;
 
@@ -344,6 +345,10 @@ class Document extends QUI\QDOM
 
         if ($this->getAttribute('enableForms') === true) {
             $cmd .= ' --enable-forms';
+        }
+
+        if ($this->getAttribute('disableSmartShrinking') === true) {
+            $cmd .= ' --disable-smart-shrinking';
         }
 
         $headerHtmlFile = false;
@@ -413,7 +418,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function createImage($deletePdfFile = true)
+    public function createImage($deletePdfFile = true): string
     {
         $pdfFile   = $this->createPDF();
         $imageFile = mb_substr($pdfFile, 0, -4).'.jpg';
@@ -484,7 +489,7 @@ class Document extends QUI\QDOM
      *
      * @return string - path to file
      */
-    public function getHeaderHTMLFile()
+    public function getHeaderHTMLFile(): string
     {
         $file = $this->varDir.'header_'.$this->documentId.'.html';
         file_put_contents($file, $this->getHeaderHTML());
@@ -497,7 +502,7 @@ class Document extends QUI\QDOM
      *
      * @return string - path to file
      */
-    public function getContentHTMLFile()
+    public function getContentHTMLFile(): string
     {
         $file = $this->varDir.'body_'.$this->documentId.'.html';
         file_put_contents($file, $this->getContentHTML());
@@ -510,7 +515,7 @@ class Document extends QUI\QDOM
      *
      * @return string - path to file
      */
-    public function getFooterHTMLFile()
+    public function getFooterHTMLFile(): string
     {
         $file = $this->varDir.'footer_'.$this->documentId.'.html';
         file_put_contents($file, $this->getFooterHTML());
@@ -523,7 +528,7 @@ class Document extends QUI\QDOM
      *
      * @return string - complete HTML for PDF header
      */
-    public function getHeaderHTML()
+    public function getHeaderHTML(): string
     {
         $hd = $this->header;
 
@@ -557,7 +562,7 @@ class Document extends QUI\QDOM
      *
      * @return string - complete HTML for PDF body
      */
-    public function getContentHTML()
+    public function getContentHTML(): string
     {
         $hd = $this->body;
 
@@ -591,7 +596,7 @@ class Document extends QUI\QDOM
      *
      * @return string - complete HTML for PDF footer
      */
-    public function getFooterHTML()
+    public function getFooterHTML(): string
     {
         $hd = $this->footer;
 
