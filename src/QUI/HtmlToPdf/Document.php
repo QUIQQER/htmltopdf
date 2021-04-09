@@ -649,16 +649,16 @@ class Document extends QUI\QDOM
                        
                        .din-5008-f1 {
                             background: #000;
-                            top: 110mm; /* 105mm */
+                            top: 105mm;
                        }
                        
                        .din-5008-f2 {
                             background: #000;
-                            top: 240mm; /* 210 mm */
+                            top: 210mm;
                        }
                        
                        .din-5008-hole {
-                            top: 175mm; /* 148.5mm */
+                            top: 148.5mm;
                        }
                 </style>
             ';
