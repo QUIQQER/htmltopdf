@@ -106,7 +106,7 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration', [
 
                     self.$BtnPdf.enable();
                     self.$BtnImage.enable();
-                }).delay(2000, self);
+                }).delay(10000, self);
             };
 
             this.$BtnPdf.disable();
