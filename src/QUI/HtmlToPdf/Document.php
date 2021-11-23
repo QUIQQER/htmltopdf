@@ -432,6 +432,29 @@ class Document extends QUI\QDOM
      */
     public function createImage($deletePdfFile = true, $cliParams = [], $trim = true)
     {
+        // TEST
+//        $html = $this->getHeaderHTML()
+//                .$this->getContentHTML()
+//                .$this->getFooterHTML(false);
+//
+//        $htmlFile  = $this->varDir.'test.html';
+//        $imageFile = $this->varDir.'text.jpg';
+//
+//        \file_put_contents($htmlFile, $html);
+//
+//        $cmd = 'wkhtmltoimage';
+//
+//        $cmd .= ' --disable-smart-width';
+//
+//        $cmd .= ' '.$htmlFile.' '.$imageFile;
+//
+//        exec($cmd.' 2> /dev/null', $output, $exitStatus);
+//
+//        \QUI\System\Log::writeRecursive($imageFile);
+//
+//        return $imageFile;
+        // /TEST
+
         Handler::checkConvertBinary();
 
         $pdfFile   = $this->createPDF();
@@ -707,34 +730,54 @@ class Document extends QUI\QDOM
     /**
      * Build body html from body settings
      *
+     * @param bool $fullHtml (optional) - Return the footer with complete HTML (including DOCTYPE and header);
+     * if this is set to false, return footer in a div only.
+     *
      * @return string - complete HTML for PDF footer
      */
-    public function getFooterHTML(): string
+    public function getFooterHTML(bool $fullHtml = true): string
     {
-        $hd = $this->footer;
+        $footer = $this->footer;
 
-        $header = '<!DOCTYPE html>
-                        <html>
-                         <head>
-                            <meta charset="UTF-8">';
-
-        // add css
-        $css = $hd['css'];
+        $css = $footer['css'];
 
         if (empty($css)) {
             $css = file_get_contents(dirname(__FILE__).'/default/body.css');
         }
 
-        $header .= '<style>'.$css.'</style>';
+        if ($fullHtml) {
+            $header = '<!DOCTYPE html>
+                        <html>
+                         <head>
+                            <meta charset="UTF-8">';
 
-        foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
+            // add css
+            $header .= '<style>'.$css.'</style>';
+
+            foreach ($footer['cssFiles'] as $file) {
+                $header .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
+            }
+
+            $header .= '</head>';
+
+            $body = '<body>';
+            $body .= $footer['content'];
+        } else {
+            $body = '<div id="document-body">';
+            $body .= '<style>'.$css.'</style>';
+
+            // Special CSS for page counter
+            $body .= '<style>
+                    #pages_current:after {
+                        counter-increment: page;
+                        content: counter(page);
+                    }                
+                </style>';
+
+            foreach ($footer['cssFiles'] as $file) {
+                $body .= '<link href="'.$file.'" rel="stylesheet" type="text/css">';
+            }
         }
-
-        $header .= '</head>';
-
-        $body = '<body>';
-        $body .= $hd['content'];
 
         if ($this->getAttribute('showPageNumbers')) {
             $body .= '<div id="pages">
@@ -743,7 +786,8 @@ class Document extends QUI\QDOM
                         <span id="pages_total"></span>
                     </div>';
 
-            $body .= '<script>
+            if ($fullHtml) {
+                $body .= '<script>
                           var parts = document.location.href.split("&");
                           var currentPage, totalPages;
 
@@ -763,11 +807,17 @@ class Document extends QUI\QDOM
                           document.getElementById("pages_current").innerHTML = currentPage + " / ";
                           document.getElementById("pages_total").innerHTML = totalPages;
                       </script>';
+            }
         }
 
-        $body .= '</body></html>';
+        if ($fullHtml) {
+            $body .= '</body></html>';
+            $body = $header.$body;
+        } else {
+            $body .= '</div>';
+        }
 
-        return $this->parseRelativeLinks($header.$body);
+        return $this->parseRelativeLinks($body);
     }
 
     /**
