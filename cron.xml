@@ -2,16 +2,25 @@
 <crons>
     <cron exec="\QUI\HtmlToPdf\Cron::cleanFiles">
         <title>
-            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.title" />
+            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.title"/>
         </title>
         <description>
-            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.description" />
+            <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.description"/>
         </description>
 
         <params>
             <param name="days">
-                <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.param.days" />
+                <locale group="quiqqer/htmltopdf" var="cron.cleanFiles.param.days"/>
             </param>
         </params>
+
+        <autocreate>
+            <interval>0 0 * * *</interval>
+            <active>1</active>
+
+            <params>
+                <param name="days">3</param>
+            </params>
+        </autocreate>
     </cron>
 </crons>
