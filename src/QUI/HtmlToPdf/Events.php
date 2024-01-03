@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains \QUI\HtmlToPdf\Events
  */
@@ -57,7 +58,7 @@ class Events
         \exec("whereis wkhtmltopdf", $output);
 
         if (!empty($output)) {
-            $output   = \str_replace("wkhtmltopdf: ", "", $output[0]);
+            $output = \str_replace("wkhtmltopdf: ", "", $output[0]);
             $binaries = \explode(' ', $output);
 
             // Try all binaries and set the one that works
@@ -112,7 +113,7 @@ class Events
         \exec("whereis convert", $output);
 
         if (!empty($output)) {
-            $output   = \str_replace("convert: ", "", $output[0]);
+            $output = \str_replace("convert: ", "", $output[0]);
             $binaries = \explode(' ', $output);
 
             // Try all binaries and set the one that works
