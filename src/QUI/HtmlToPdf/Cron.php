@@ -18,20 +18,20 @@ class Cron
     {
         if (empty($options['days'])) {
             QUI\System\Log::addWarning(
-                self::class.' :: cleanFiles() -> Cannot execute cron because no number of days have been specified.'
+                self::class . ' :: cleanFiles() -> Cannot execute cron because no number of days have been specified.'
             );
 
             return;
         }
 
-        $varDir           = QUI::getPackage('quiqqer/htmltopdf')->getVarDir();
-        $files            = File::readDir($varDir, true);
-        $days             = (int)$options['days'];
-        $DaysAgo          = new \DateTime('-'.$days.' days');
+        $varDir = QUI::getPackage('quiqqer/htmltopdf')->getVarDir();
+        $files = File::readDir($varDir, true);
+        $days = (int)$options['days'];
+        $DaysAgo = new \DateTime('-' . $days . ' days');
         $daysAgoTimestamp = $DaysAgo->getTimestamp();
 
         foreach ($files as $filename) {
-            $file = $varDir.$filename;
+            $file = $varDir . $filename;
 
             if (filemtime($file) <= $daysAgoTimestamp) {
                 unlink($file);

@@ -1,13 +1,14 @@
 <?php
 
-use QUI\HtmlToPdf\Handler;
-
 /**
  * Test a binary used in quiqqer/htmltopdf
  *
  * @param string $type - "pdf" or "image"
  * @return string|false - Error message or false if everything is alright
  */
+
+use QUI\HtmlToPdf\Handler;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_htmltopdf_ajax_testBinary',
     function ($type) {

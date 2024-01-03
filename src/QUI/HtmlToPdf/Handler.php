@@ -72,7 +72,7 @@ class Handler
         }
 
         $binaryVersion = explode(' ', `$binaryPath -V`);
-        $versionParts  = explode('.', $binaryVersion[1]);
+        $versionParts = explode('.', $binaryVersion[1]);
 
         if (isset($versionParts[0]) && (int)$versionParts[0] > 0) {
             return;
@@ -92,9 +92,11 @@ class Handler
             return;
         }
 
-        if (!empty($binaryVersion[2]) && $binaryVersion[2] === '(with'
+        if (
+            !empty($binaryVersion[2]) && $binaryVersion[2] === '(with'
             && !empty($binaryVersion[3]) && $binaryVersion[2] === 'patched'
-            && !empty($binaryVersion[4]) && $binaryVersion[2] === 'qt)') {
+            && !empty($binaryVersion[4]) && $binaryVersion[2] === 'qt)'
+        ) {
             return;
         }
 
@@ -103,7 +105,7 @@ class Handler
             'exception.Handler.checkPDFGeneratorBinary.binary_wrong_version',
             [
                 'installedVersion' => $binaryVersion[1],
-                'requiredVersion'  => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
+                'requiredVersion' => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
             ]
         ]);
     }
@@ -116,7 +118,7 @@ class Handler
      */
     public static function sendBinaryWarningMail(string $error)
     {
-        $Mailer    = new QUI\Mail\Mailer();
+        $Mailer = new QUI\Mail\Mailer();
         $adminMail = QUI::conf('mail', 'admin_mail');
 
         if (empty($adminMail)) {
@@ -138,7 +140,7 @@ class Handler
                 'quiqqer/htmltopdf',
                 'mail.warning.binary_missing.body',
                 [
-                    'host'  => QUI::conf('globals', 'host'),
+                    'host' => QUI::conf('globals', 'host'),
                     'error' => $error
                 ]
             )
