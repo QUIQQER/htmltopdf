@@ -8,6 +8,17 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
+use function array_merge;
+use function array_unique;
+use function array_values;
+use function file_exists;
+use function mb_substr;
+use function pathinfo;
+use function preg_replace;
+use function system;
+use function trim;
+use function unlink;
+
 /**
  * Document that receives HTML and outputs PDF
  *
@@ -18,37 +29,37 @@ class Document extends QUI\QDOM
     /**
      * Path to wkhtmltopdf bin file
      *
-     * @var string
+     * @var ?string
      */
-    protected $converterBinary = null;
+    protected ?string $converterBinary = null;
 
     /**
      * Unique document id
      *
-     * @var string
+     * @var string|null
      */
-    protected $documentId = null;
+    protected ?string $documentId = null;
 
     /**
      * Flag if PDF has already been created
      *
      * @var bool
      */
-    protected $created = false;
+    protected bool $created = false;
 
     /**
      * Var directory of quiqqer/htmltopdf package
      *
-     * @var string
+     * @var string|null
      */
-    protected $varDir = null;
+    protected ?string $varDir = null;
 
     /**
      * Header data for PDF conversion
      *
      * @var array
      */
-    protected $header = [
+    protected array $header = [
         'css' => '',
         'cssFiles' => [],
         'content' => '',
@@ -60,7 +71,7 @@ class Document extends QUI\QDOM
      *
      * @var array
      */
-    protected $body = [
+    protected array $body = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
@@ -71,7 +82,7 @@ class Document extends QUI\QDOM
      *
      * @var array
      */
-    protected $footer = [
+    protected array $footer = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
@@ -82,7 +93,7 @@ class Document extends QUI\QDOM
      *
      * @param array $settings (optional)
      */
-    public function __construct($settings = [])
+    public function __construct(array $settings = [])
     {
         $this->setAttributes([
             'showPageNumbers' => true,
@@ -126,7 +137,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html - HTML code
      */
-    public function setHeaderHTML(string $html)
+    public function setHeaderHTML(string $html): void
     {
         $this->header['content'] = $html;
     }
@@ -138,7 +149,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setHeaderHTMLFile(string $file)
+    public function setHeaderHTMLFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -158,7 +169,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setHeaderCSS(string $css)
+    public function setHeaderCSS(string $css): void
     {
         $this->header['css'] = $css;
     }
@@ -170,7 +181,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addHeaderCSSFile(string $file)
+    public function addHeaderCSSFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -190,7 +201,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html - HTML code
      */
-    public function setContentHTML(string $html)
+    public function setContentHTML(string $html): void
     {
         $this->body['content'] = $html;
     }
@@ -202,7 +213,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setContentHTMLFile(string $file)
+    public function setContentHTMLFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -222,7 +233,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setContentCSS(string $css)
+    public function setContentCSS(string $css): void
     {
         $this->body['css'] = $css;
     }
@@ -234,7 +245,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addContentCSSFile(string $file)
+    public function addContentCSSFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -254,7 +265,7 @@ class Document extends QUI\QDOM
      *
      * @param string $html
      */
-    public function setFooterHTML(string $html)
+    public function setFooterHTML(string $html): void
     {
         $this->footer['content'] = $html;
     }
@@ -266,7 +277,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function setFooterHTMLFile(string $file)
+    public function setFooterHTMLFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -286,7 +297,7 @@ class Document extends QUI\QDOM
      *
      * @param string $css
      */
-    public function setFooterCSS(string $css)
+    public function setFooterCSS(string $css): void
     {
         $this->footer['css'] = $css;
     }
@@ -298,7 +309,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function addFooterCSSFile(string $file)
+    public function addFooterCSSFile(string $file): void
     {
         if (!file_exists($file)) {
             throw new QUI\Exception([
@@ -432,7 +443,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function createImage($deletePdfFile = true, $cliParams = [], $trim = true)
+    public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array|string
     {
         // TEST
 //        $html = $this->getHeaderHTML()
@@ -460,7 +471,7 @@ class Document extends QUI\QDOM
         Handler::checkConvertBinary();
 
         $pdfFile = $this->createPDF();
-        $imageFile = \mb_substr($pdfFile, 0, -4) . '.jpg';
+        $imageFile = mb_substr($pdfFile, 0, -4) . '.jpg';
 
         $pdfFileLine = '\'' . $pdfFile . '\'';
 
@@ -468,7 +479,7 @@ class Document extends QUI\QDOM
             $pdfFileLine = '-trim ' . $pdfFileLine;
         }
 
-        $cliParams = \array_merge(
+        $cliParams = array_merge(
             $cliParams,
             [
                 '-density 300',
@@ -479,11 +490,11 @@ class Document extends QUI\QDOM
             ]
         );
 
-        $cliParams = \array_values(\array_unique($cliParams));
+        $cliParams = array_values(array_unique($cliParams));
         $command = Handler::getConvertBinaryPath();
 
         foreach ($cliParams as $param) {
-            $param = \trim($param);
+            $param = trim($param);
 
             if (empty($param)) {
                 continue;
@@ -492,24 +503,24 @@ class Document extends QUI\QDOM
             $command .= ' ' . $param;
         }
 
-        \system($command);
+        system($command);
 
         // Delete source PDF
-        if ($deletePdfFile && \file_exists($pdfFile)) {
-            \unlink($pdfFile);
+        if ($deletePdfFile && file_exists($pdfFile)) {
+            unlink($pdfFile);
         }
 
-        if (!\file_exists($imageFile)) {
+        if (!file_exists($imageFile)) {
             /**
              * Check if the PDF was split into multiple images.
              * In this case the images need to be appended to one single image.
              */
-            $imageFileInfo = \pathinfo($imageFile);
+            $imageFileInfo = pathinfo($imageFile);
             $imageFileExt = $imageFileInfo['extension'];
             $imageFileDir = $imageFileInfo['dirname'] . '/';
             $imageFileNoExt = $imageFileDir . $imageFileInfo['filename'];
 
-            if (!\file_exists($imageFileNoExt . '-0.' . $imageFileExt)) {
+            if (!file_exists($imageFileNoExt . '-0.' . $imageFileExt)) {
                 throw new QUI\Exception(
                     'Could not create image from pdf. Command: "' . $command . '".'
                 );
@@ -521,7 +532,7 @@ class Document extends QUI\QDOM
             do {
                 $imageFileNumbered = $imageFileNoExt . '-' . $imageNo++ . '.' . $imageFileExt;
 
-                if (!\file_exists($imageFileNumbered)) {
+                if (!file_exists($imageFileNumbered)) {
                     break;
                 }
 
@@ -542,7 +553,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function download($deletePdfFile = true)
+    public function download(bool $deletePdfFile = true): void
     {
         if (!$this->created) {
             $file = $this->createPDF();
@@ -832,6 +843,6 @@ class Document extends QUI\QDOM
      */
     protected function parseRelativeLinks(string $str): string
     {
-        return \preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
+        return preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
     }
 }
