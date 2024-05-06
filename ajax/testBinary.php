@@ -18,7 +18,7 @@ QUI::$Ajax->registerFunction(
             case 'pdf':
                 try {
                     Handler::checkPDFGeneratorBinary();
-                } catch (\Exception $Exception) {
+                } catch (Exception $Exception) {
                     QUI\System\Log::writeDebugException($Exception);
                     $error = $Exception->getMessage();
                 }
@@ -27,7 +27,7 @@ QUI::$Ajax->registerFunction(
             case 'image':
                 try {
                     Handler::checkConvertBinary();
-                } catch (\Exception $Exception) {
+                } catch (Exception $Exception) {
                     QUI\System\Log::writeDebugException($Exception);
                     $error = $Exception->getMessage();
                 }

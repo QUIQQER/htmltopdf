@@ -1,30 +1,30 @@
 {
-    "name": "quiqqer\/htmltopdf",
+    "name": "quiqqer/htmltopdf",
     "type": "quiqqer-plugin",
     "description": "HTML to PDF converter based on wkhtmltopdf",
     "license": [
         "PCSG QL-1.0",
         "CC BY-NC-SA 4.0"
     ],
-    "homepage": "https:\/\/www.quiqqer.com",
+    "homepage": "https://www.quiqqer.com",
     "authors": [
         {
             "name": "Patrick M\u00fcller",
             "email": "p.mueller@pcsg.de",
-            "homepage": "http:\/\/www.pcsg.de",
+            "homepage": "https://www.pcsg.de",
             "role": "Developer"
         }
     ],
     "support": {
         "email": "support@pcsg.de",
-        "url": "http:\/\/www.pcsg.de"
+        "url": "https://www.pcsg.de"
     },
     "require": {
-        "quiqqer\/quiqqer": "*@dev"
+        "quiqqer/core": "^2"
     },
     "autoload": {
         "psr-4": {
-            "QUI\\HtmlToPdf\\": "src\/QUI\/HtmlToPdf"
+            "QUI\\HtmlToPdf\\": "src/QUI/HtmlToPdf"
         }
     }
 }

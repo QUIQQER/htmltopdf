@@ -8,6 +8,12 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
+use function exec;
+use function explode;
+use function file_exists;
+use function is_executable;
+use function str_replace;
+
 /**
  * Document that receives HTML and outputs PDF
  *
@@ -23,7 +29,7 @@ class Events
      *
      * @throws QUI\Exception
      */
-    public static function onPackageSetup(QUI\Package\Package $Package)
+    public static function onPackageSetup(QUI\Package\Package $Package): void
     {
         if ($Package->getName() !== 'quiqqer/htmltopdf') {
             return;
@@ -34,12 +40,12 @@ class Events
     }
 
     /**
-     * Setup the binary for "wkhtmltopdf"
+     * Set up the binary for "wkhtmltopdf"
      *
      * @return void
      * @throws QUI\Exception
      */
-    protected static function setupPdfGeneratorBinary()
+    protected static function setupPdfGeneratorBinary(): void
     {
         $binary = Handler::getPDFGeneratorBinaryPath();
 
@@ -55,15 +61,15 @@ class Events
         }
 
         // Try to locate "wkhtmltopdf"
-        \exec("whereis wkhtmltopdf", $output);
+        exec("whereis wkhtmltopdf", $output);
 
         if (!empty($output)) {
-            $output = \str_replace("wkhtmltopdf: ", "", $output[0]);
-            $binaries = \explode(' ', $output);
+            $output = str_replace("wkhtmltopdf: ", "", $output[0]);
+            $binaries = explode(' ', $output);
 
             // Try all binaries and set the one that works
             foreach ($binaries as $binary) {
-                if (\file_exists($binary) && \is_executable($binary)) {
+                if (file_exists($binary) && is_executable($binary)) {
                     $Conf->setValue('settings', 'binary', $binary);
                     $Conf->save();
                     return;
@@ -74,7 +80,7 @@ class Events
         // Try defaults
         $binary = "/usr/local/bin/wkhtmltopdf";
 
-        if (\file_exists($binary) && \is_executable($binary)) {
+        if (file_exists($binary) && is_executable($binary)) {
             $Conf->setValue('settings', 'binary', $binary);
             $Conf->save();
             return;
@@ -82,19 +88,19 @@ class Events
 
         $binary = "/usr/bin/wkhtmltopdf";
 
-        if (\file_exists($binary) && \is_executable($binary)) {
+        if (file_exists($binary) && is_executable($binary)) {
             $Conf->setValue('settings', 'binary', $binary);
             $Conf->save();
         }
     }
 
     /**
-     * Setup the binary for "convert" (ImageMagick)
+     * Set up the binary for "convert" (ImageMagick)
      *
      * @return void
      * @throws QUI\Exception
      */
-    protected static function setupConvertBinary()
+    protected static function setupConvertBinary(): void
     {
         $binary = Handler::getConvertBinaryPath();
 
@@ -110,15 +116,15 @@ class Events
         }
 
         // Try to locate "wkhtmltopdf"
-        \exec("whereis convert", $output);
+        exec("whereis convert", $output);
 
         if (!empty($output)) {
-            $output = \str_replace("convert: ", "", $output[0]);
-            $binaries = \explode(' ', $output);
+            $output = str_replace("convert: ", "", $output[0]);
+            $binaries = explode(' ', $output);
 
             // Try all binaries and set the one that works
             foreach ($binaries as $binary) {
-                if (\file_exists($binary) && \is_executable($binary)) {
+                if (file_exists($binary) && is_executable($binary)) {
                     $Conf->setValue('settings', 'binary_convert', $binary);
                     $Conf->save();
                     return;
@@ -129,7 +135,7 @@ class Events
         // Try defaults
         $binary = "/usr/local/bin/convert";
 
-        if (\file_exists($binary) && \is_executable($binary)) {
+        if (file_exists($binary) && is_executable($binary)) {
             $Conf->setValue('settings', 'binary_convert', $binary);
             $Conf->save();
             return;
@@ -137,7 +143,7 @@ class Events
 
         $binary = "/usr/bin/convert";
 
-        if (\file_exists($binary) && \is_executable($binary)) {
+        if (file_exists($binary) && is_executable($binary)) {
             $Conf->setValue('settings', 'binary_convert', $binary);
             $Conf->save();
         }

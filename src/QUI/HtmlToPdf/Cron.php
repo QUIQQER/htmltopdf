@@ -2,6 +2,8 @@
 
 namespace QUI\HtmlToPdf;
 
+use DateTime;
+use Exception;
 use QUI;
 use QUI\Utils\System\File;
 
@@ -13,8 +15,9 @@ class Cron
      * @param array $options - Cron options
      * @return void
      * @throws QUI\Exception
+     * @throws Exception
      */
-    public static function cleanFiles($options)
+    public static function cleanFiles(array $options): void
     {
         if (empty($options['days'])) {
             QUI\System\Log::addWarning(
@@ -27,7 +30,7 @@ class Cron
         $varDir = QUI::getPackage('quiqqer/htmltopdf')->getVarDir();
         $files = File::readDir($varDir, true);
         $days = (int)$options['days'];
-        $DaysAgo = new \DateTime('-' . $days . ' days');
+        $DaysAgo = new DateTime('-' . $days . ' days');
         $daysAgoTimestamp = $DaysAgo->getTimestamp();
 
         foreach ($files as $filename) {
