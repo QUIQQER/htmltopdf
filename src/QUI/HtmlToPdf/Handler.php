@@ -5,6 +5,8 @@ namespace QUI\HtmlToPdf;
 use QUI;
 use QUI\HtmlToPdf\Exception as HtmlToPdfException;
 
+use function is_executable;
+
 /**
  * Class Handler
  *
@@ -19,14 +21,14 @@ class Handler
      *
      * @var array
      */
-    public static $cliParams = [];
+    public static array $cliParams = [];
 
     /**
      * Get path to the PDF generator binary
      *
      * @return string
      */
-    public static function getPDFGeneratorBinaryPath()
+    public static function getPDFGeneratorBinaryPath(): bool|string
     {
         try {
             $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
@@ -45,9 +47,9 @@ class Handler
      * Checks if the binary for generating PDF files from HTML is installed
      * and executable in the current PHP environment.
      *
-     * @throws \QUI\HtmlToPdf\Exception
+     * @throws Exception
      */
-    public static function checkPDFGeneratorBinary()
+    public static function checkPDFGeneratorBinary(): void
     {
         $binaryPath = self::getPDFGeneratorBinaryPath();
 
@@ -61,7 +63,7 @@ class Handler
             ]);
         }
 
-        if (!\is_executable($binaryPath)) {
+        if (!is_executable($binaryPath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
                 'exception.Handler.checkPDFGeneratorBinary.binary_not_executable',
@@ -116,7 +118,7 @@ class Handler
      * @param string $error - Error text
      * @return void
      */
-    public static function sendBinaryWarningMail(string $error)
+    public static function sendBinaryWarningMail(string $error): void
     {
         $Mailer = new QUI\Mail\Mailer();
         $adminMail = QUI::conf('mail', 'admin_mail');
@@ -156,9 +158,9 @@ class Handler
     /**
      * Get path to the ImageMagick `convert` command
      *
-     * @return string
+     * @return bool|string
      */
-    public static function getConvertBinaryPath()
+    public static function getConvertBinaryPath(): bool|string
     {
         try {
             $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
@@ -177,9 +179,9 @@ class Handler
      * Checks if the binary for ImageMagick`convert` is installed
      * and executable in the current PHP environment.
      *
-     * @throws \QUI\HtmlToPdf\Exception
+     * @throws Exception
      */
-    public static function checkConvertBinary()
+    public static function checkConvertBinary(): void
     {
         $binaryPath = self::getConvertBinaryPath();
 
@@ -190,7 +192,7 @@ class Handler
             ]);
         }
 
-        if (!\is_executable($binaryPath)) {
+        if (!is_executable($binaryPath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
                 'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable'
