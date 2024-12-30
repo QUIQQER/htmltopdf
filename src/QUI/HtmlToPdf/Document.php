@@ -432,6 +432,8 @@ class Document extends QUI\QDOM
 
         $this->created = true;
 
+        QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$this, $pdfFile]);
+
         return $pdfFile;
     }
 
