@@ -25,8 +25,6 @@ class Handler
 
     /**
      * Get path to the PDF generator binary
-     *
-     * @return string
      */
     public static function getPDFGeneratorBinaryPath(): bool|string
     {
@@ -96,8 +94,8 @@ class Handler
 
         if (
             !empty($binaryVersion[2]) && $binaryVersion[2] === '(with'
-            && !empty($binaryVersion[3]) && $binaryVersion[2] === 'patched'
-            && !empty($binaryVersion[4]) && $binaryVersion[2] === 'qt)'
+            && !empty($binaryVersion[3]) && $binaryVersion[3] === 'patched'
+            && !empty($binaryVersion[4]) && $binaryVersion[4] === 'qt)'
         ) {
             return;
         }
