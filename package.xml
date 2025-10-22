@@ -23,5 +23,9 @@
             <license><![CDATA[PCSG QL-1.0]]></license>
             <license><![CDATA[CC BY-NC-SA 4.0]]></license>
         </copyright>
+
+        <provider>
+            <htmlToPdfCreator src="\QUI\HtmlToPdf\Provider\Mpdf\Provider"/>
+        </provider>
     </package>
 </quiqqer>

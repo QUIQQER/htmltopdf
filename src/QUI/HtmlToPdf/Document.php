@@ -36,9 +36,9 @@ class Document extends QUI\QDOM
     /**
      * Unique document id
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $documentId = null;
+    public readonly string $documentId;
 
     /**
      * Flag if PDF has already been created
@@ -114,12 +114,12 @@ class Document extends QUI\QDOM
 
         $this->setAttributes($settings);
 
-        try {
-            Handler::checkPDFGeneratorBinary();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            Handler::sendBinaryWarningMail($Exception->getMessage());
-        }
+//        try {
+//            Handler::checkPDFGeneratorBinary();
+//        } catch (\Exception $Exception) {
+//            QUI\System\Log::writeException($Exception);
+//            Handler::sendBinaryWarningMail($Exception->getMessage());
+//        }
 
         $this->documentId = uniqid();
         $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
@@ -325,14 +325,17 @@ class Document extends QUI\QDOM
     }
 
     /**
-     * Create PDF file based on settings
-     *
      * @return string - pdf file path
      *
      * @throws QUI\Exception
+     * @deprecated This direct call will be removed in the next major release.
+     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} and {@see PdfCreator::createPdf()}
      */
     public function createPDF(): string
     {
+        $handler = new Handler();
+        return $handler->getPdfCreator()->createPdf($this);
+
         $varDir = $this->varDir;
 
         // Determine library path
@@ -445,7 +448,7 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array|string
+    public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array | string
     {
         // TEST
 //        $html = $this->getHeaderHTML()
@@ -552,43 +555,15 @@ class Document extends QUI\QDOM
      *
      * @param bool $deletePdfFile (optional) - delete pdf file after download
      * @return void
+     * @deprecated This direct call will be removed in the next major release.
+     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} and {@see PdfCreator::createAndDownloadPdf()}
      *
      * @throws QUI\Exception
      */
     public function download(bool $deletePdfFile = true): void
     {
-        if (!$this->created) {
-            $file = $this->createPDF();
-        } else {
-            $file = $this->varDir . $this->documentId . '.pdf';
-
-            if (!file_exists($file)) {
-                $file = $this->createPDF();
-            }
-        }
-
-        $filename = $this->getAttribute('filename');
-
-        if (empty($filename)) {
-            $filename = $this->documentId . '_' . date("d_m_Y__H_m") . '.pdf';
-        }
-
-        try {
-            QUI\Utils\System\File::send($file, 0, $filename);
-        } catch (\Exception $Exception) {
-            QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF download failed:: ' . $Exception->getMessage()
-            );
-
-            throw new QUI\Exception([
-                'quiqqer/htmltopdf',
-                'exception.document.pdf.download.failed'
-            ]);
-        }
-
-        if ($deletePdfFile) {
-            unlink($file);
-        }
+        $handler = new Handler();
+        $handler->getPdfCreator()->createAndDownloadPdf($this, !$deletePdfFile);
     }
 
     /**
@@ -661,46 +636,46 @@ class Document extends QUI\QDOM
 
         $body = '<body>' . $hd['content'];
 
-        if ($this->getAttribute('foldingMarks')) {
-            $body .= '
-                <div class="folding-marks">
-                    <div class="folding-mark din-5008-f1"></div>
-                    <div class="folding-mark din-5008-f2"></div>
-                    <div class="folding-mark din-5008-hole"></div>
-                </div>
-                <style>
-                       .folding-marks {
-                            height: 100%;
-                            left: 0;
-                            position: fixed;
-                            top: 0;
-                            width: 100%;
-                       }
-                       
-                       .folding-mark {
-                            background: #000;
-                            height: 1px;
-                            left: 0;
-                            position: absolute;
-                            width: 40px;
-                       }
-                       
-                       .din-5008-f1 {
-                            background: #000;
-                            top: 105mm;
-                       }
-                       
-                       .din-5008-f2 {
-                            background: #000;
-                            top: 210mm;
-                       }
-                       
-                       .din-5008-hole {
-                            top: 148.5mm;
-                       }
-                </style>
-            ';
-        }
+//        if ($this->getAttribute('foldingMarks')) {
+//            $body .= '
+//                <div class="folding-marks">
+//                    <div class="folding-mark din-5008-f1"></div>
+//                    <div class="folding-mark din-5008-f2"></div>
+//                    <div class="folding-mark din-5008-hole"></div>
+//                </div>
+//                <style>
+//                       .folding-marks {
+//                            height: 100%;
+//                            left: 0;
+//                            position: fixed;
+//                            top: 0;
+//                            width: 100%;
+//                       }
+//
+//                       .folding-mark {
+//                            background: #000;
+//                            height: 1px;
+//                            left: 0;
+//                            position: absolute;
+//                            width: 40px;
+//                       }
+//
+//                       .din-5008-f1 {
+//                            background: #000;
+//                            top: 105mm;
+//                       }
+//
+//                       .din-5008-f2 {
+//                            background: #000;
+//                            top: 210mm;
+//                       }
+//
+//                       .din-5008-hole {
+//                            top: 148.5mm;
+//                       }
+//                </style>
+//            ';
+//        }
 
 
         $body .= '</body></html>';
@@ -757,7 +732,7 @@ class Document extends QUI\QDOM
         $css = $footer['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__) . '/default/footer.css');
         }
 
         if ($fullHtml) {
@@ -778,52 +753,44 @@ class Document extends QUI\QDOM
             $body = '<body>';
             $body .= $footer['content'];
         } else {
-            $body = '<div id="document-body">';
+            $body = '<div id="document-footer">';
             $body .= '<style>' . $css . '</style>';
-
-            // Special CSS for page counter
-            $body .= '<style>
-                    #pages_current:after {
-                        counter-increment: page;
-                        content: counter(page);
-                    }                
-                </style>';
 
             foreach ($footer['cssFiles'] as $file) {
                 $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
         }
 
-        if ($this->getAttribute('showPageNumbers')) {
-            $body .= '<div id="pages">
-                        <span id="pages_prefix">' . $this->getAttribute('pageNumbersPrefix') . '</span>
-                        <span id="pages_current"></span>
-                        <span id="pages_total"></span>
-                    </div>';
-
-            if ($fullHtml) {
-                $body .= '<script>
-                          var parts = document.location.href.split("&");
-                          var currentPage, totalPages;
-
-                          for (var i = 0, len = parts.length; i < len; i++) {
-                              var param = parts[i].split("=");
-
-                              switch (param[0]) {
-                                case "sitepage":
-                                    currentPage = decodeURIComponent(param[1]);
-                                    break;
-                                case "topage":
-                                    totalPages = decodeURIComponent(param[1]);
-                                    break;
-                              }
-                          }
-
-                          document.getElementById("pages_current").innerHTML = currentPage + " / ";
-                          document.getElementById("pages_total").innerHTML = totalPages;
-                      </script>';
-            }
-        }
+//        if ($this->getAttribute('showPageNumbers')) {
+//            $body .= '<div id="pages">
+//                        <span id="pages_prefix">' . $this->getAttribute('pageNumbersPrefix') . '</span>
+//                        <span id="pages_current"></span>
+//                        <span id="pages_total"></span>
+//                    </div>';
+//
+//            if ($fullHtml) {
+//                $body .= '<script>
+//                          var parts = document.location.href.split("&");
+//                          var currentPage, totalPages;
+//
+//                          for (var i = 0, len = parts.length; i < len; i++) {
+//                              var param = parts[i].split("=");
+//
+//                              switch (param[0]) {
+//                                case "sitepage":
+//                                    currentPage = decodeURIComponent(param[1]);
+//                                    break;
+//                                case "topage":
+//                                    totalPages = decodeURIComponent(param[1]);
+//                                    break;
+//                              }
+//                          }
+//
+//                          document.getElementById("pages_current").innerHTML = currentPage + " / ";
+//                          document.getElementById("pages_total").innerHTML = totalPages;
+//                      </script>';
+//            }
+//        }
 
         if ($fullHtml) {
             $body .= '</body></html>';

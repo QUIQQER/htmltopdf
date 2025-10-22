@@ -4,6 +4,8 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 use QUI\HtmlToPdf\Exception as HtmlToPdfException;
+use QUI\HtmlToPdf\Provider\ProviderRepository;
+use QUI\HtmlToPdf\Provider\ProviderRepositoryInterface;
 
 use function is_executable;
 
@@ -16,6 +18,8 @@ class Handler
 {
     const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.4 (with patched qt)';
 
+    private ?PdfCreator $pdfCreator = null;
+
     /**
      * Additional wkhtmltopdf CLI parameters based on version
      *
@@ -23,10 +27,31 @@ class Handler
      */
     public static array $cliParams = [];
 
+    public function __construct(
+        private ?ProviderRepositoryInterface $providerRepository = null
+    ) {
+        if (is_null($this->providerRepository)) {
+            $this->providerRepository = new ProviderRepository();
+        }
+    }
+
+    /**
+     * @throws QUI\Exception
+     */
+    public function getPdfCreator(): PdfCreator
+    {
+        if (!is_null($this->pdfCreator)) {
+            return $this->pdfCreator;
+        }
+
+        $this->pdfCreator = new PdfCreator($this->providerRepository->getCurrentProvider()->getHtmlToPdfCreator());
+        return $this->pdfCreator;
+    }
+
     /**
      * Get path to the PDF generator binary
      */
-    public static function getPDFGeneratorBinaryPath(): bool|string
+    public static function getPDFGeneratorBinaryPath(): bool | string
     {
         try {
             $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
@@ -158,7 +183,7 @@ class Handler
      *
      * @return bool|string
      */
-    public static function getConvertBinaryPath(): bool|string
+    public static function getConvertBinaryPath(): bool | string
     {
         try {
             $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();

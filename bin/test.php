@@ -6,6 +6,7 @@ define('QUIQQER_AJAX', true);
 require_once dirname(__FILE__, 4) . '/header.php';
 
 use QUI\HtmlToPdf\Document;
+use QUI\HtmlToPdf\Handler;
 
 $User = QUI::getUserBySession();
 
@@ -64,7 +65,8 @@ try {
         exit;
     }
 
-    $Document->download();
+    $handler = new Handler();
+    $handler->getPdfCreator()->createAndDownloadPdf($Document);
 } catch (\Exception $Exception) {
     QUI\System\Log::writeException($Exception);
 }

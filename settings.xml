@@ -14,6 +14,15 @@
                 <conf name="binary_convert">
                     <type><![CDATA[string]]></type>
                 </conf>
+                <conf name="html_to_pdf_creator_provider">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Mpdf\Provider]]></defaultvalue>
+                </conf>
+            </section>
+            <section name="chrome_headless">
+                <conf name="executable">
+                    <type><![CDATA[string]]></type>
+                </conf>
             </section>
 
         </config>
@@ -64,7 +73,8 @@
                             </description>
                         </input>
 
-                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration" label="false">
+                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration"
+                               label="false">
                             <text>
                                 <locale group="quiqqer/htmltopdf" var="settings.testDocument.title"/>
                             </text>
@@ -73,6 +83,33 @@
                             </description>
                         </input>
 
+                        <input conf="settings.html_to_pdf_creator_provider"
+                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.html_to_pdf_creator_provider.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.html_to_pdf_creator_provider.description"/>
+                            </description>
+                        </input>
+
+
+                    </settings>
+
+                    <settings title="chrome_headless" name="chrome_headless">
+                        <title>
+                            <locale group="quiqqer/htmltopdf" var="chrome_headless.title"/>
+                        </title>
+
+                        <input conf="chrome_headless.executable" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.description"/>
+                            </description>
+                        </input>
                     </settings>
                 </category>
 

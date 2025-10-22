@@ -126,6 +126,36 @@
             <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> binary. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Absolute filesystem path to the <b>convert</b> binary. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
         </locale>
+        <locale name="settings.html_to_pdf_creator_provider.title">
+            <de><![CDATA[Provider zur PDF-Erzeugung]]></de>
+            <en><![CDATA[PDF creation provider]]></en>
+        </locale>
+        <locale name="settings.html_to_pdf_creator_provider.description">
+            <de><![CDATA[Provider, welcher PDF-Dateien (aus HTML) erzeugt.]]></de>
+            <en><![CDATA[Provider that creates PDF files (from HTML).]]></en>
+        </locale>
+
+        <!-- Provider -->
+        <locale name="provider.Mpdf.title">
+            <de><![CDATA[mpdf]]></de>
+            <en><![CDATA[mpdf]]></en>
+        </locale>
+        <locale name="provider.ChromeHeadless.title">
+            <de><![CDATA[Chrome headless (setzt "Chrome executable" voraus)]]></de>
+            <en><![CDATA[Chrome headless (requires "Chrome executable")]]></en>
+        </locale>
+        <locale name="chrome_headless.title">
+            <de><![CDATA[Chrome headless]]></de>
+            <en><![CDATA[Chrome headless]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.executable.title">
+            <de><![CDATA[Chrome executable]]></de>
+            <en><![CDATA[Chrome executable]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.executable.description">
+            <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
+        </locale>
 
         <!-- Class: Handler -->
         <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_found">

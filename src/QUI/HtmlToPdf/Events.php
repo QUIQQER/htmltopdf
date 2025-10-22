@@ -35,8 +35,8 @@ class Events
             return;
         }
 
-        self::setupPdfGeneratorBinary();
-        self::setupConvertBinary();
+//        self::setupPdfGeneratorBinary();
+//        self::setupConvertBinary();
     }
 
     /**
