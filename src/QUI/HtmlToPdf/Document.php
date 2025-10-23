@@ -555,10 +555,10 @@ class Document extends QUI\QDOM
      *
      * @param bool $deletePdfFile (optional) - delete pdf file after download
      * @return void
+     * @throws QUI\Exception
      * @deprecated This direct call will be removed in the next major release.
      * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} and {@see PdfCreator::createAndDownloadPdf()}
      *
-     * @throws QUI\Exception
      */
     public function download(bool $deletePdfFile = true): void
     {
@@ -753,7 +753,7 @@ class Document extends QUI\QDOM
             $body = '<body>';
             $body .= $footer['content'];
         } else {
-            $body = '<div id="document-footer">';
+            $body = '<footer id="document-footer">';
             $body .= '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
@@ -796,7 +796,7 @@ class Document extends QUI\QDOM
             $body .= '</body></html>';
             $body = $header . $body;
         } else {
-            $body .= '</div>';
+            $body .= '</footer>';
         }
 
         return $this->parseRelativeLinks($body);
