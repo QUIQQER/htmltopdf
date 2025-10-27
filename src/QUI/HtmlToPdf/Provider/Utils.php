@@ -34,7 +34,7 @@ class Utils
      */
     public static function removeElementFromHtml(string $html, string $element): string
     {
-        return preg_replace('/<' . $element . '[^>]*>.*?<\/' . $element . '>/', '', $html);
+        return preg_replace('/<' . $element . '[^>]*>.*?<\/' . $element . '>/si', '', $html);
     }
 
     /**

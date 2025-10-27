@@ -144,27 +144,27 @@ class Creator implements HtmlToPdfCreatorInterface
 <!-- Workaround to achieve full a4 format as PDF file -->
 
 <div class="invoice-header invoice-header-top" style="border: 1px solid red;">
-    <table class="invoice-header-image">
-        <tbody>
-            <tr>
-            <td style="vertical-align: top;">
-            
-            <div style="vertical-align: top; border: 1px solid red; float: left; width: 150px; display: inline; bottom: initial; font-size: 12px; text-align: left; line-height: 16px;">
+    <div class="invoice-header-image">
+        <div style="float: left; width: 200px;">
+        <img src="https://erp-v2.peat.pcsg.eu/media/cache/erp/ChatGPT_Image_7_Juni_2025_14_50_48__1024x1024.png" style="max-height: 120px;"/>
+        </div>
+
+        <div class="invoice-header-image-qrcode"
+             style="border: 1px solid #e5e5e5; width: 250px; padding: 10px 4px 0 10px; text-align: left; float: right;">
+            <div style="border: 1px solid red; float: left; width: 150px; display: inline-block; bottom: initial; font-size: 12px; text-align: left; line-height: 16px;">
                 <b>Überweisen per Code</b>
-            Ganz bequem Code mit
-            der Banking-App scannen.
+                    Ganz bequem Code mit
+                    der Banking-App scannen.
             </div>
-            </td>
             
-            <td>
-            <img src="data:image/png;base64,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" style="height: 90px;  float: right; border: 1px solid green; top: 0; position: absolute;"/>
-            </td>
-            </tr> 
-        </tbody>
-            </table>
+            <div style="width: 90px; height: 90px;  float: right; border: 1px solid green;">
+            <img src="data:image/png;base64,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"/>
+            </div>
+        </div>
+    </div>
 
     <div class="invoice-body-header-text">
-        Party Peat - Ruhrstr. 13 - 42697 Solingen
+        Party Peat - Test. 13 - 123123 Testhausen
     </div>
 
     <div class="invoice-customer">
@@ -191,15 +191,15 @@ class Creator implements HtmlToPdfCreatorInterface
     <div class="invoice-data">
         <div class="invoice-data-highlight">
                         <h2>Rechnung</h2>
-                        <table>
+                        <table style="border-spacing: 2px;">
                 <tbody>
                 <tr>
                     <td>Beleg-Nr.</td>
-                    <td class="value-id"><span>INV-2025-261326</span></td>
+                    <td class="value-id value"><span class="span-test">INV-2025-1337</div></td>
                 </tr>
                 <tr>
                     <td>Datum</td>
-                    <td class="value-date"><span>05.03.25</span></td>
+                    <td class="value-date value"><span>05.03.25</span></td>
                 </tr>
                                 <tr>
                     <td>Kunden-Nr.</td>
@@ -208,13 +208,13 @@ class Creator implements HtmlToPdfCreatorInterface
                 
                                 <tr>
                     <td>Bestell-Nr.</td>
-                    <td class="value-orderNumber"><span>2025-52</span></td>
+                    <td class="value-orderNumber value"><span>2025-52</span></td>
                 </tr>
                 
                 
                                                 <tr>
                     <td>Vertrags-Nr.</td>
-                    <td class="value-contract-id">
+                    <td class="value-contract-id value">
                         
                         <span>CONTR-2148</span>
                     </td>
@@ -228,7 +228,7 @@ class Creator implements HtmlToPdfCreatorInterface
             </table>
         </div>
 
-            </div>
+    </div>
 
     <div class="invoice-header-line"></div>
 </div>

@@ -759,6 +759,8 @@ class Document extends QUI\QDOM
             foreach ($footer['cssFiles'] as $file) {
                 $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
+
+            $body .= $footer['content'];
         }
 
 //        if ($this->getAttribute('showPageNumbers')) {
