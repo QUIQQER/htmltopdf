@@ -27,7 +27,6 @@
         <provider>
             <htmlToPdfCreator src="\QUI\HtmlToPdf\Provider\Mpdf\Provider"/>
             <htmlToPdfCreator src="\QUI\HtmlToPdf\Provider\ChromeHeadless\Provider"/>
-            <htmlToPdfCreator src="\QUI\HtmlToPdf\Provider\DomPdf\Provider"/>
         </provider>
     </package>
 </quiqqer>
