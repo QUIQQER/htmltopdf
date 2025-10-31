@@ -11,10 +11,15 @@ use QUI;
 use function array_merge;
 use function array_unique;
 use function array_values;
+use function dirname;
 use function file_exists;
+use function file_get_contents;
+use function is_array;
 use function mb_substr;
 use function pathinfo;
 use function preg_replace;
+use function property_exists;
+use function str_replace;
 use function system;
 use function trim;
 use function unlink;
@@ -88,31 +93,48 @@ class Document extends QUI\QDOM
         'content' => ''
     ];
 
+    public readonly DocumentOptions $options;
+
     /**
      * Document constructor.
      *
-     * @param array $settings (optional)
+     * @param DocumentOptions|array|null $options - If array, keys will be mapped to {@see DocumentOptions} properties;
+     * If NULL a default options object is created.
      */
-    public function __construct(array $settings = [])
+    public function __construct(DocumentOptions | array | null $options = null)
     {
-        $this->setAttributes([
-            'showPageNumbers' => true,
-            'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
-            'filename' => '',
-            'dpi' => 300,
-            'marginTop' => 20,    // mm
-            'marginRight' => 5,     // mm
-            'marginBottom' => 20,    // mm
-            'marginLeft' => 5,     // mm
-            'headerSpacing' => 5,     // should be 5 at minimum
-            'footerSpacing' => 0,
-            'zoom' => 1,
-            'enableForms' => false,
-            'foldingMarks' => false,
-            'disableSmartShrinking' => false
-        ]);
+        if (is_null($options) || is_array($options)) {
+            $this->options = new DocumentOptions();
 
-        $this->setAttributes($settings);
+            if (is_array($options)) {
+                foreach ($options as $k => $v) {
+                    if (property_exists($this->options, $k)) {
+                        $this->options->$k = $v;
+                    }
+                }
+            }
+        } else {
+            $this->options = $options;
+        }
+
+//        $this->setAttributes([
+//            'showPageNumbers' => true,
+//            'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
+//            'filename' => '',
+//            'dpi' => 300,
+//            'marginTop' => 20,    // mm
+//            'marginRight' => 5,     // mm
+//            'marginBottom' => 20,    // mm
+//            'marginLeft' => 5,     // mm
+//            'headerSpacing' => 5,     // should be 5 at minimum
+//            'footerSpacing' => 0,
+//            'zoom' => 1,
+//            'enableForms' => false,
+//            'foldingMarks' => false,
+//            'disableSmartShrinking' => false
+//        ]);
+//
+//        $this->setAttributes($settings);
 
 //        try {
 //            Handler::checkPDFGeneratorBinary();
@@ -263,7 +285,8 @@ class Document extends QUI\QDOM
     /**
      * Set HTML content for PDF footer area
      *
-     * @param string $html
+     * @param string $html - HTML will be wrapped by <footer class="{$this->options->cssClassFooter}"></footer>;
+     *                       All <footer> tags contained in $html will be replaced by <div>!
      */
     public function setFooterHTML(string $html): void
     {
@@ -273,7 +296,9 @@ class Document extends QUI\QDOM
     /**
      * Set HTML file used for PDF footer area
      *
-     * @param string $file - path to html file
+     * @param string $file - path to html file;
+     *                       HTML will be wrapped by <footer class="{$this->options->cssClassFooter}"></footer>;
+     *                       All <footer> tags provided in $file will be replaced by <div>!
      *
      * @throws QUI\Exception
      */
@@ -608,79 +633,80 @@ class Document extends QUI\QDOM
     /**
      * Build header html from header settings
      *
+     * @param bool $fullHtml (optional) - Return the footer with complete HTML (including DOCTYPE and header);
+     * if this is set to false, return footer in a div only. [default: true]
+     *
      * @return string - complete HTML for PDF header
      */
-    public function getHeaderHTML(): string
+    public function getHeaderHTML(bool $fullHtml = true): string
     {
-        $hd = $this->header;
+        $header = $this->header;
 
-        $header = '<!DOCTYPE html>
+        $css = $header['css'];
+
+        if (empty($css)) {
+            $css = file_get_contents(dirname(__FILE__) . '/default/header.css');
+        }
+
+        $content = str_replace(['<header>', '</header>'], ['<div', '</div>'], $header['content']);
+        $content = '<header class="' . $this->options->cssClassHeader . '">' . $content . '</header>';
+
+        if ($fullHtml) {
+            $head = '<!DOCTYPE html>
                         <html>
                          <head>
                             <meta charset="UTF-8">';
 
-        // add css
-        $css = $hd['css'];
+            // add css
+            $head .= '<style>' . $css . '</style>';
 
-        if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            foreach ($header['cssFiles'] as $file) {
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            }
+
+            $head .= '</head>';
+            $body = $head . '<body>' . $content . '</body></html>';
+        } else {
+            $body = '<style>' . $css . '</style>';
+
+            foreach ($header['cssFiles'] as $file) {
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            }
+
+            $body .= $content;
         }
 
-        $header .= '<style>' . $css . '</style>';
-
-        foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
-        }
-
-        $header .= '</head>';
-
-        $body = '<body>' . $hd['content'];
-
-//        if ($this->getAttribute('foldingMarks')) {
-//            $body .= '
-//                <div class="folding-marks">
-//                    <div class="folding-mark din-5008-f1"></div>
-//                    <div class="folding-mark din-5008-f2"></div>
-//                    <div class="folding-mark din-5008-hole"></div>
-//                </div>
-//                <style>
-//                       .folding-marks {
-//                            height: 100%;
-//                            left: 0;
-//                            position: fixed;
-//                            top: 0;
-//                            width: 100%;
-//                       }
+        return $this->parseRelativeLinks($body);
 //
-//                       .folding-mark {
-//                            background: #000;
-//                            height: 1px;
-//                            left: 0;
-//                            position: absolute;
-//                            width: 40px;
-//                       }
 //
-//                       .din-5008-f1 {
-//                            background: #000;
-//                            top: 105mm;
-//                       }
 //
-//                       .din-5008-f2 {
-//                            background: #000;
-//                            top: 210mm;
-//                       }
 //
-//                       .din-5008-hole {
-//                            top: 148.5mm;
-//                       }
-//                </style>
-//            ';
+//        $header = '<!DOCTYPE html>
+//                        <html>
+//                         <head>
+//                            <meta charset="UTF-8">';
+//
+//        // add css
+//        $css = $hd['css'];
+//
+//        if (empty($css)) {
+//            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
 //        }
-
-
-        $body .= '</body></html>';
-
-        return $this->parseRelativeLinks($header . $body);
+//
+//        $header .= '<style>' . $css . '</style>';
+//
+//        foreach ($hd['cssFiles'] as $file) {
+//            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+//        }
+//
+//        $header .= '</head>';
+//
+//        $body = '<body>' . $hd['content'];
+//
+//
+//        $body .= '</body></html>';
+//
+//        return $this->parseRelativeLinks($header . $body);
     }
 
     /**
@@ -721,84 +747,51 @@ class Document extends QUI\QDOM
      * Build body html from body settings
      *
      * @param bool $fullHtml (optional) - Return the footer with complete HTML (including DOCTYPE and header);
-     * if this is set to false, return footer in a div only.
+     * if this is set to false, return footer in a div only. [default: true]
      *
      * @return string - complete HTML for PDF footer
      */
     public function getFooterHTML(bool $fullHtml = true): string
     {
         $footer = $this->footer;
-
         $css = $footer['css'];
 
         if (empty($css)) {
             $css = file_get_contents(dirname(__FILE__) . '/default/footer.css');
         }
 
+        $content = str_replace(['<footer', '</footer>'], ['<div', '</div>'], $footer['content']);
+        $content = '<footer class="' . $this->options->cssClassFooter . '">' . $content . '</footer>';
+
         if ($fullHtml) {
-            $header = '<!DOCTYPE html>
+            $head = '<!DOCTYPE html>
                         <html>
                          <head>
                             <meta charset="UTF-8">';
 
             // add css
-            $header .= '<style>' . $css . '</style>';
+            $head .= '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
 
-            $header .= '</head>';
+            $head .= '</head>';
 
             $body = '<body>';
-            $body .= $footer['content'];
         } else {
-            $body = '<footer id="document-footer">';
-            $body .= '<style>' . $css . '</style>';
+            $body = '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
                 $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
-
-            $body .= $footer['content'];
         }
 
-//        if ($this->getAttribute('showPageNumbers')) {
-//            $body .= '<div id="pages">
-//                        <span id="pages_prefix">' . $this->getAttribute('pageNumbersPrefix') . '</span>
-//                        <span id="pages_current"></span>
-//                        <span id="pages_total"></span>
-//                    </div>';
-//
-//            if ($fullHtml) {
-//                $body .= '<script>
-//                          var parts = document.location.href.split("&");
-//                          var currentPage, totalPages;
-//
-//                          for (var i = 0, len = parts.length; i < len; i++) {
-//                              var param = parts[i].split("=");
-//
-//                              switch (param[0]) {
-//                                case "sitepage":
-//                                    currentPage = decodeURIComponent(param[1]);
-//                                    break;
-//                                case "topage":
-//                                    totalPages = decodeURIComponent(param[1]);
-//                                    break;
-//                              }
-//                          }
-//
-//                          document.getElementById("pages_current").innerHTML = currentPage + " / ";
-//                          document.getElementById("pages_total").innerHTML = totalPages;
-//                      </script>';
-//            }
-//        }
+        $body .= $content;
 
         if ($fullHtml) {
             $body .= '</body></html>';
-            $body = $header . $body;
-        } else {
-            $body .= '</footer>';
+            $body = $head . $body;
         }
 
         return $this->parseRelativeLinks($body);

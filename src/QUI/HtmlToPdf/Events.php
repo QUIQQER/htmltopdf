@@ -8,6 +8,8 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
+use Smarty;
+
 use function exec;
 use function explode;
 use function file_exists;
@@ -147,5 +149,14 @@ class Events
             $Conf->setValue('settings', 'binary_convert', $binary);
             $Conf->save();
         }
+    }
+
+    public static function onSmartyInit(Smarty $smarty): void
+    {
+        $smarty->registerPlugin(
+            "function",
+            "imageBase64",
+            SmartyFunctions::imageBase64(...)
+        );
     }
 }

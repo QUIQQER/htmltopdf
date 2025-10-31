@@ -108,7 +108,7 @@ class Creator implements HtmlToPdfCreatorInterface
         $html .= $this->extractBodyContent($contentHtml);
         
         // Add folding marks if enabled
-        if ($document->getAttribute('foldingMarks')) {
+        if ($document->options->foldingMarks) {
             $html .= $this->getFoldingMarksHtml();
         }
         
@@ -139,6 +139,10 @@ class Creator implements HtmlToPdfCreatorInterface
             'headless' => true,
             'noSandbox' => true,
             'ignoreCertificateErrors' => true,
+
+            'headers' => [
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
+            ]
         ]);
         
         try {
@@ -164,20 +168,22 @@ class Creator implements HtmlToPdfCreatorInterface
 
             // Configure PDF options based on document attributes
             // IMPORTANT: Margins are in INCHES, not mm! (1 inch = 25.4mm)
+            // Chrome's footer templates are rendered WITHIN the page margins
             $pdfOptions = [
                 'landscape' => false,
                 'printBackground' => true,
-                'preferCSSPageSize' => true,  // Use CSS @page rules
+                'preferCSSPageSize' => true,  // Don't use CSS @page rules
                 'displayHeaderFooter' => true,  // Enable Chrome's header/footer
+
                 'headerTemplate' => $headerTemplate,
                 'footerTemplate' => $footerTemplate,
-                'scale' => (float)$document->getAttribute('zoom') ?: 1.0,
+//                'scale' => (float)$document->getAttribute('zoom') ?: 1.0,
                 
-                // Convert margins from mm to inches
-                'marginTop' => $this->mmToInches((float)$document->getAttribute('marginTop')),
-                'marginRight' => $this->mmToInches((float)$document->getAttribute('marginRight')),
-                'marginBottom' => $this->mmToInches((float)$document->getAttribute('marginBottom')),
-                'marginLeft' => $this->mmToInches((float)$document->getAttribute('marginLeft')),
+                // Set margins to 0 for full-width footer
+                'marginTop' => $this->mmToInches((float)$document->options->marginTop),
+                'marginRight' => $this->mmToInches((float)$document->options->marginRight),
+                'marginBottom' => $this->mmToInches((float)$document->options->marginBottom),
+                'marginLeft' => $this->mmToInches((float)$document->options->marginLeft),
                 
                 // A4 paper size in inches
                 'paperWidth' => 8.27,   // A4 width: 210mm = 8.27 inches
@@ -213,7 +219,7 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function buildHeaderTemplate(Document $document): string
     {
-        return $document->getHeaderHTML();
+//        return $document->getHeaderHTML();
         $headerHtml = $document->getHeaderHTML();
         
         if (empty($headerHtml)) {
@@ -223,19 +229,34 @@ class Creator implements HtmlToPdfCreatorInterface
 //        return $headerHtml;
         
         // Extract styles and body content
-        $styles = $this->extractStyles($headerHtml);
-        $content = $this->extractBodyContent($headerHtml);
+//        $styles = $this->extractStyles($headerHtml);
+//        $content = $this->extractBodyContent($headerHtml);
+//        $content = QUI\HtmlToPdf\Provider\Utils::removeElementFromHtml($content, 'style');
         
         // Add folding marks if enabled
         if ($document->getAttribute('foldingMarks')) {
-            $content .= $this->getFoldingMarksHtml();
+//            $content .= $this->getFoldingMarksHtml();
         }
-        
-        // Build complete header template
-        return '<div style="width: 100%; font-size: 10px; padding: 0; margin: 0;">
-            ' . $styles . '
-            ' . $content . '
-        </div>';
+
+        // Specific styling for footer wrapper
+        // TODO: remove border
+        $style = '<style>
+             * {
+                -webkit-print-color-adjust: exact;
+             }
+             
+            .' . $document->options->cssClassHeader . '{
+                position: absolute;
+                width: 210mm;
+                margin: 0;
+                padding: 0;
+                height: ' . $document->options->marginTop . 'mm;
+                top: 0;
+                left: 0;
+            }
+        </style>';
+
+        return str_replace('</header>', $style . '</header>', $headerHtml);
     }
     
     /**
@@ -247,36 +268,43 @@ class Creator implements HtmlToPdfCreatorInterface
     private function buildFooterTemplate(Document $document): string
     {
         $footerHtml = $document->getFooterHTML();
-        $showPageNumbers = $document->getAttribute('showPageNumbers');
+        $showPageNumbers = $document->options->showPageNumbers;
         
-        if (empty($footerHtml) && !$showPageNumbers) {
+        if (empty($footerHtml) && $showPageNumbers === false) {
             return '<div></div>';  // Empty template required by Chrome
         }
         
-        $content = '';
-//
-//        // Extract styles and body content from footer
-//        if (!empty($footerHtml)) {
-//            $styles = $this->extractStyles($footerHtml);
-//            $content .= $styles;
-//            $content .= $this->extractBodyContent($footerHtml);
-//        }
-        
         // Add page numbers if enabled
         if ($showPageNumbers) {
-            $prefix = $document->getAttribute('pageNumbersPrefix');
-            $pageNumbersHtml = '<div style="text-align: right; width: 100%;">
-                <span>' . htmlspecialchars($prefix) . '</span>
+            $pageNumbersHtml = '
+            <div class="'.$document->options->cssClassPageNumbersContainer.'" style="text-align: right; width: 100%;">
+                <span>' . htmlspecialchars($document->options->pageNumbersPrefix) . '</span>
                 <span class="pageNumber"></span>
                 <span> / </span>
                 <span class="totalPages"></span>
             </div>';
 
-            $footerHtml = str_replace('</body>', $pageNumbersHtml . '</body>', $footerHtml);
+            $footerHtml = str_replace('</footer>', $pageNumbersHtml . '</footer>', $footerHtml);
         }
 
-        // Build complete footer template
-        return $footerHtml;
+        // Specific styling for footer wrapper
+        $style = '<style>
+             * {
+                -webkit-print-color-adjust: exact;
+             }
+
+            .' . $document->options->cssClassFooter . '{
+                position: absolute;
+                width: 210mm;
+                margin: 0;
+                padding: 0;
+                height: ' . $document->options->marginBottom . 'mm;
+                bottom: 0;
+                left: 0;
+            }
+        </style>';
+
+        return str_replace('</head>', $style . '</head>', $footerHtml);
     }
     
     /**

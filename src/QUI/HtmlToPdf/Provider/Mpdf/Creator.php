@@ -15,6 +15,7 @@ use function mb_strlen;
 use function mb_strpos;
 use function preg_match_all;
 use function preg_replace_callback;
+use function str_replace;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
@@ -37,13 +38,18 @@ class Creator implements HtmlToPdfCreatorInterface
             // Create mpdf instance with document settings
             $mpdf = $this->createMpdfInstance($document);
 
+            // Set folding marks as watermark if enabled (appears on every page)
+            if ($document->options->foldingMarks) {
+                $this->setFoldingMarks($mpdf);
+            }
+
             // Set header if content exists (must be BEFORE content for mPDF)
             if (!empty($document->getHeaderHTML())) {
                 $this->setHeader($mpdf, $document);
             }
 
             // Set footer if content exists or page numbers are enabled
-            if (!empty($document->getFooterHTML()) || $document->getAttribute('showPageNumbers')) {
+            if (!empty($document->getFooterHTML()) || $document->options->showPageNumbers) {
                 $this->setFooter($mpdf, $document);
             }
 
@@ -83,33 +89,33 @@ class Creator implements HtmlToPdfCreatorInterface
         $config = [
             'mode' => 'utf-8',
             'format' => 'A4',
-            'margin_left' => (float)$document->getAttribute('marginLeft'),
-            'margin_right' => (float)$document->getAttribute('marginRight'),
-            'margin_top' => (float)$document->getAttribute('marginTop'),
-            'margin_bottom' => (float)$document->getAttribute('marginBottom'),
-//            'margin_footer' => (float)$document->getAttribute('marginBottom'),
-            'margin_header' => (float)$document->getAttribute('headerSpacing'),
-            'margin_footer' => (float)$document->getAttribute('footerSpacing'),
+            'margin_left' => (float)$document->options->marginLeft,
+            'margin_right' => (float)$document->options->marginRight,
+            'margin_top' => (float)$document->options->marginTop,
+            'margin_bottom' => (float)$document->options->marginBottom,
+//            'margin_footer' => (float)$document->options->marginBottom,
+            'margin_header' => (float)$document->options->headerSpacing,
+            'margin_footer' => (float)$document->options->footerSpacing,
             'orientation' => 'P',
             'tempDir' => sys_get_temp_dir()
         ];
 
         // Apply DPI setting
-        $dpi = (int)$document->getAttribute('dpi');
-        if ($dpi > 0) {
+//        $dpi = (int)$document->options->dpi;
+//        if ($dpi > 0) {
 //            $config['dpi'] = $dpi;
-        }
+//        }
 
         $mpdf = new Mpdf($config);
 
         // Apply zoom factor
-        $zoom = (float)$document->getAttribute('zoom');
-        if ($zoom != 1) {
-            $mpdf->SetDisplayMode('fullpage');
-        }
+//        $zoom = (float)$document->options->zoom;
+//        if ($zoom != 1) {
+//            $mpdf->SetDisplayMode('fullpage');
+//        }
 
         // Enable forms if requested
-        if ($document->getAttribute('enableForms') === true) {
+        if ($document->options->enableForms === true) {
             $mpdf->useActiveForms = true;
         }
 
@@ -133,6 +139,7 @@ class Creator implements HtmlToPdfCreatorInterface
 
         // Now extract body content (CSS is already processed)
         $headerHtml = $this->extractElementContent($fullHeaderHtml);
+        $headerHtml = '<div>' . $headerHtml . '</div>';
         $this->body .= $headerHtml;
 
         $mpdf->SetHTMLHeader($headerHtml);
@@ -157,122 +164,33 @@ class Creator implements HtmlToPdfCreatorInterface
         $footerHtml = $this->extractElementContent($fullFooterHtml);
 
         // Add page numbers if enabled
-        if ($document->getAttribute('showPageNumbers')) {
+        if ($document->options->showPageNumbers) {
             $pageNumbersHtml = $this->getPageNumbersHtml($document);
-            // Extract last HTML closing element name in $footerHtml
-            preg_match_all('/<\/(\w+)>$/m', $footerHtml, $matches);
-
-            if (!empty($matches)) {
-                $match = array_pop($matches);
-                $lastClosingElementName = array_pop($match);
-                $pos = mb_strpos(
-                    $footerHtml,
-                    "</$lastClosingElementName>",
-                    -(mb_strlen("</$lastClosingElementName>") + 2)
-                );
-                $footerHtml = mb_substr($footerHtml, 0, $pos) . $pageNumbersHtml . mb_substr($footerHtml, $pos);
-            }
+            $footerHtml = str_replace('</footer>', $pageNumbersHtml . '</footer>', $footerHtml);
         }
 
         // Remove position:fixed and position:absolute from footer (not supported in mPDF footers)
         $footerHtml = $this->extractAndRemoveStyleElementsAndAppendToMpdf($mpdf, $footerHtml);
         $this->body .= $footerHtml;
 
-//        $footerHtml = '
-//
-//<footer class="invoice-footer" style="border: 1px solid red;">
-//    <div class="invoice-footer-line"></div>
-//
-//    <div style="width: 100%;">
-//        &nbsp;
-//    </div>
-//
-//    <div class="invoice-footer-container invoice-footer-container__company">
-//        <ul>
-//                        <li>
-//                <header>
-//                Party Peat
-//                </header>
-//            </li>
-//                                    <li>
-//                Ruhrstr. 13
-//            </li>
-//
-//                        <li>
-//                                42697
-//
-//                                Solingen
-//                            </li>
-//                    </ul>
-//    </div>
-//
-//    <div class="invoice-footer-container">
-//        <header>
-//            Telefon | Mail | Web
-//        </header>
-//
-//
-//        <table>
-//            <tbody>
-//
-//
-//
-//                        <tr>
-//                <td class="table-label">E-Mail:
-//                </td>
-//                <td>peat+party@mailbox.org</td>
-//            </tr>
-//
-//                        </tbody>
-//        </table>
-//
-//    </div>
-//
-//    <div class="invoice-footer-container">
-//        <header>
-//            Steuerinformationen
-//        </header>
-//
-//        <ul>
-//                                            </ul>
-//
-//                <header class="invoice-footer-companyOwner">
-//            Geschäftsführer
-//        </header>
-//        <ul>
-//            <li>
-//                Patrick Müller
-//            </li>
-//        </ul>
-//            </div>
-//
-//        <div class="invoice-footer-container">
-//
-//        <header>
-//            Bankverbindung
-//        </header>
-//        <ul>
-//                        <li>
-//                Feier und Sauf Bank Solingen
-//            </li>
-//                                    <li>
-//                IBAN:
-//                DE11 1111 2222 3333 4444 55
-//            </li>
-//                                    <li>
-//                BIC:
-//                DEUTPARTY69
-//            </li>
-//                    </ul>
-//    </div>
-//    <div id="pages" style="text-align: right; width: 100%; border: 1px solid red;">
-//                    <span id="pages_prefix">Seite</span>
-//                    <span id="pages_current">{PAGENO}</span>
-//                    <span> / </span>
-//                    <span id="pages_total">{nbpg}</span>
-//                </div></footer>
-//
-//';
+        // Specific styling for footer wrapper
+        $mpdf->WriteHTML(' 
+             <style>
+                .' . $document->options->cssClassFooter . '{
+                    position: absolute;
+                    width: 210mm;
+                    margin: 0;
+                    padding: 0;
+                    height: ' . $document->options->marginBottom . 'mm;
+                    bottom: 0;
+                    left: 0;
+                }
+            </style>
+            ',
+            HTMLParserMode::HEADER_CSS,
+            $this->initWriteHtml,
+            false
+        );
 
         $mpdf->SetHTMLFooter($footerHtml);
     }
@@ -289,11 +207,6 @@ class Creator implements HtmlToPdfCreatorInterface
     {
         $contentHtml = $document->getContentHTML();
         $contentHtml = $this->extractElementContent($contentHtml);
-
-        // Add folding marks as watermark if enabled (position:fixed works in body, not in header)
-        if ($document->getAttribute('foldingMarks')) {
-            $contentHtml = $this->getFoldingMarksHtml() . $contentHtml;
-        }
 
         $contentHtml = $this->extractAndRemoveStyleElementsAndAppendToMpdf($mpdf, $contentHtml);
         $this->body .= $contentHtml;
@@ -326,9 +239,9 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function getPageNumbersHtml(Document $document): string
     {
-        $prefix = $document->getAttribute('pageNumbersPrefix');
+        $prefix = $document->options->pageNumbersPrefix;
 
-        return '<div id="pages" style="text-align: right; width: 100%; border: 1px solid red;">
+        return '<div class="'.$document->options->cssClassPageNumbersContainer.'">
                     <span id="pages_prefix">' . htmlspecialchars($prefix) . '</span>
                     <span id="pages_current">{PAGENO}</span>
                     <span> / </span>
@@ -337,50 +250,33 @@ class Creator implements HtmlToPdfCreatorInterface
     }
 
     /**
-     * Get HTML for folding marks (DIN-5008 standard)
+     * Set folding marks (DIN-5008 standard; Form type B) as watermark
+     * Watermarks automatically appear on every page
      *
-     * @return string
+     * @param Mpdf $mpdf
+     * @return void
+     * @throws QUI\Exception
      */
-    private function getFoldingMarksHtml(): string
+    private function setFoldingMarks(Mpdf $mpdf): void
     {
-        return '
-            <div class="folding-marks">
-                <div class="folding-mark din-5008-f1"></div>
-                <div class="folding-mark din-5008-f2"></div>
-                <div class="folding-mark din-5008-hole"></div>
-            </div>
-            <style>
-                .folding-marks {
-                    height: 100%;
-                    left: 0;
-                    position: fixed;
-                    top: 0;
-                    width: 100%;
-                }
-                
-                .folding-mark {
-                    background: #000;
-                    height: 1px;
-                    left: 0;
-                    position: absolute;
-                    width: 40px;
-                }
-                
-                .din-5008-f1 {
-                    background: #000;
-                    top: 105mm;
-                }
-                
-                .din-5008-f2 {
-                    background: #000;
-                    top: 210mm;
-                }
-                
-                .din-5008-hole {
-                    top: 148.5mm;
-                }
-            </style>
-        ';
+        $Package = QUI::getPackage('quiqqer/htmltopdf');
+        $foldingMarksPath = $Package->getDir() . 'src/QUI/HtmlToPdf/Provider/Mpdf/bin/folding-marks-din5008.svg';
+
+        if (!file_exists($foldingMarksPath)) {
+            QUI\System\Log::addWarning('Folding marks file not found: ' . $foldingMarksPath);
+            return;
+        }
+
+        // Set watermark image with full opacity (folding marks should be clearly visible)
+        // 'P' = Resize to full physical page size (not just print area), keeping aspect ratio
+        // [0, 0] = Position at top-left of physical page (x=0mm, y=0mm)
+        $mpdf->SetWatermarkImage(
+            $foldingMarksPath,
+            1.0,   // Full opacity (1.0 = completely opaque, 0 = transparent)
+            'P',   // 'P' = full Page size (physical page, not print area)
+            [0, 0] // Position: top-left corner of physical page
+        );
+        $mpdf->showWatermarkImage = true;
     }
 
     /**
