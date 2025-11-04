@@ -2,13 +2,11 @@
 
 namespace QUI\HtmlToPdf;
 
-use chillerlan\QRCode\QRCodeException;
 use QUI;
 use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
 use QUI\Utils\System\File;
 
 use function date;
-use function file_exists;
 use function unlink;
 
 class PdfCreator
@@ -20,7 +18,23 @@ class PdfCreator
 
     public function createPdf(Document $document): string
     {
-        return $this->creator->createPdf($document);
+        $pdfFilePath = $this->creator->createPdf($document);
+
+        try {
+            QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$document, $pdfFilePath]);
+        } catch (\Exception $exception) {
+            QUI\System\Log::writeException(
+                $exception,
+                QUI\System\Log::LEVEL_ERROR,
+                [
+                    'document' => $document,
+                    'pdfFilePath' => $pdfFilePath,
+                    'event' => 'quiqqerHtmlToPDFCreated'
+                ]
+            );
+        }
+
+        return $pdfFilePath;
     }
 
     public function createAndDownloadPdf(Document $document, bool $keepPdfFile = false): void
@@ -33,7 +47,6 @@ class PdfCreator
         }
         try {
             File::send($pdfFile, 0, $filename);
-
         } catch (\Throwable $exception) {
             QUI\System\Log::writeException($exception);
 

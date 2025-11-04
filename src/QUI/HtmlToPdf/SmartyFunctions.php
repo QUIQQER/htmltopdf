@@ -7,7 +7,8 @@ use Smarty_Internal_Template;
 
 class SmartyFunctions
 {
-    public static function imageBase64(array $params, Smarty_Internal_Template $smarty): string {
+    public static function imageBase64(array $params, Smarty_Internal_Template $smarty): string
+    {
         if (empty($params['image'])) {
             QUI\System\Log::addWarning(
                 "\$params does not container 'image'"

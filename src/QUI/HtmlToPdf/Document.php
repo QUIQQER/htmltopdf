@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file contains \QUI\HtmlToPdf\Document
- */
-
 namespace QUI\HtmlToPdf;
 
 use QUI;
@@ -32,13 +28,6 @@ use function unlink;
 class Document extends QUI\QDOM
 {
     /**
-     * Path to wkhtmltopdf bin file
-     *
-     * @var ?string
-     */
-    protected ?string $converterBinary = null;
-
-    /**
      * Unique document id
      *
      * @var string
@@ -46,25 +35,16 @@ class Document extends QUI\QDOM
     public readonly string $documentId;
 
     /**
-     * Flag if PDF has already been created
-     *
-     * @var bool
-     */
-    protected bool $created = false;
-
-    /**
      * Var directory of quiqqer/htmltopdf package
      *
      * @var string|null
      */
-    protected ?string $varDir = null;
+    private ?string $varDir = null;
 
     /**
      * Header data for PDF conversion
-     *
-     * @var array
      */
-    protected array $header = [
+    private array $header = [
         'css' => '',
         'cssFiles' => [],
         'content' => '',
@@ -73,10 +53,8 @@ class Document extends QUI\QDOM
 
     /**
      * Content (body) data for PDF conversion
-     *
-     * @var array
      */
-    protected array $body = [
+    private array $body = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
@@ -84,10 +62,8 @@ class Document extends QUI\QDOM
 
     /**
      * Footer data for PDF conversion
-     *
-     * @var array
      */
-    protected array $footer = [
+    private array $footer = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
@@ -96,8 +72,6 @@ class Document extends QUI\QDOM
     public readonly DocumentOptions $options;
 
     /**
-     * Document constructor.
-     *
      * @param DocumentOptions|array|null $options - If array, keys will be mapped to {@see DocumentOptions} properties;
      * If NULL a default options object is created.
      */
@@ -144,13 +118,26 @@ class Document extends QUI\QDOM
 //        }
 
         $this->documentId = uniqid();
-        $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
 
         try {
             $Package = QUI::getPackage('quiqqer/htmltopdf');
             $this->varDir = $Package->getVarDir();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * This also sets a corresponding {@see DocumentOptions} for this document if available.
+     */
+    public function setAttribute(string $name, mixed $value): void
+    {
+        parent::setAttribute($name, $value);
+
+        if (property_exists($this->options, $name) && gettype($value) === gettype($this->options->$name)) {
+            $this->options->$name = $value;
         }
     }
 
@@ -354,115 +341,12 @@ class Document extends QUI\QDOM
      *
      * @throws QUI\Exception
      * @deprecated This direct call will be removed in the next major release.
-     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} and {@see PdfCreator::createPdf()}
+     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} with {@see PdfCreator::createPdf()}
      */
     public function createPDF(): string
     {
         $handler = new Handler();
         return $handler->getPdfCreator()->createPdf($this);
-
-        $varDir = $this->varDir;
-
-        // Determine library path
-        $cmdPrefix = '';
-
-        try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-            $libPath = $Conf->get('settings', 'lib_path');
-
-            if (is_string($libPath)) {
-                $libPath = trim($libPath);
-            }
-
-            if (!empty($libPath)) {
-                $cmdPrefix = 'export LD_LIBRARY_PATH=' . $libPath . '; ';
-            }
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-        }
-
-        $cmd = $cmdPrefix . $this->converterBinary . ' ';
-
-        $cmd .= ' -T ' . $this->getAttribute('marginTop') . 'mm';
-        $cmd .= ' -R ' . $this->getAttribute('marginRight') . 'mm';
-        $cmd .= ' -B ' . $this->getAttribute('marginBottom') . 'mm';
-        $cmd .= ' -L ' . $this->getAttribute('marginLeft') . 'mm';
-
-        if ($this->getAttribute('disableSmartShrinking') === true) {
-            $cmd .= ' --disable-smart-shrinking';
-        }
-
-        if ($this->getAttribute('enableForms') === true) {
-            $cmd .= ' --enable-forms';
-        }
-
-        $headerHtmlFile = false;
-        $footerHtmlFile = false;
-
-        if (!empty($this->header['content'])) {
-            $cmd .= ' --header-spacing ' . $this->getAttribute('headerSpacing');
-
-            $headerHtmlFile = $this->getHeaderHTMLFile();
-
-            $cmd .= ' --header-html "' . $headerHtmlFile . '"';
-//            $cmd .= ' --header-line';
-        }
-
-        if (
-            !empty($this->footer['content'])
-            || $this->getAttribute('showPageNumbers')
-        ) {
-            $cmd .= ' --footer-spacing ' . $this->getAttribute('footerSpacing');
-
-            $footerHtmlFile = $this->getFooterHTMLFile();
-
-            $cmd .= ' --footer-html "' . $footerHtmlFile . '"';
-        }
-
-        $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
-        $cmd .= ' --zoom ' . (float)$this->getAttribute('zoom');
-
-        // Additional CLI params
-        foreach (Handler::$cliParams as $cliParam) {
-            $cmd .= ' ' . $cliParam;
-        }
-
-        $bodyHtmlFile = $this->getContentHTMLFile();
-
-        $pdfFile = $varDir . $this->documentId . '.pdf';
-
-        $cmd .= ' ' . $bodyHtmlFile . ' ' . $pdfFile;
-
-        exec($cmd . ' 2> /dev/null', $output, $exitStatus);
-
-        if ($exitStatus !== 0) {
-            QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF conversion failed:: ' . json_encode($output)
-                . ' -- PDF create cmd: > ' . $cmd . ' <'
-            );
-
-            throw new QUI\Exception([
-                'quiqqer/htmltopdf',
-                'exception.document.pdf.conversion.failed'
-            ]);
-        }
-
-        // delete html files
-        if ($headerHtmlFile) {
-            unlink($headerHtmlFile);
-        }
-
-        unlink($bodyHtmlFile);
-
-        if ($footerHtmlFile) {
-            unlink($footerHtmlFile);
-        }
-
-        $this->created = true;
-
-        QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$this, $pdfFile]);
-
-        return $pdfFile;
     }
 
     /**
@@ -805,7 +689,7 @@ class Document extends QUI\QDOM
      * @param string $str
      * @return string - Modified string
      */
-    protected function parseRelativeLinks(string $str): string
+    private function parseRelativeLinks(string $str): string
     {
         return preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
     }

@@ -12,7 +12,7 @@ class Cron
     /**
      * Clean old PDF and HTML files from var folder
      *
-     * @param array $options - Cron options
+     * @param array $options<string,mixed> - Cron options
      * @return void
      * @throws QUI\Exception
      * @throws Exception

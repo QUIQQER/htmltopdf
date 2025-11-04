@@ -174,7 +174,8 @@ class Creator implements HtmlToPdfCreatorInterface
         $this->body .= $footerHtml;
 
         // Specific styling for footer wrapper
-        $mpdf->WriteHTML(' 
+        $mpdf->WriteHTML(
+            ' 
              <style>
                 .' . $document->options->cssClassFooter . '{
                     position: absolute;
@@ -241,7 +242,7 @@ class Creator implements HtmlToPdfCreatorInterface
     {
         $prefix = $document->options->pageNumbersPrefix;
 
-        return '<div class="'.$document->options->cssClassPageNumbersContainer.'">
+        return '<div class="' . $document->options->cssClassPageNumbersContainer . '">
                     <span id="pages_prefix">' . htmlspecialchars($prefix) . '</span>
                     <span id="pages_current">{PAGENO}</span>
                     <span> / </span>

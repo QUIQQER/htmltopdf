@@ -2,9 +2,8 @@
 
 use QUI\HtmlToPdf\Provider\ProviderRepository;
 
-QUI::$Ajax->registerFunction(
+QUI::$Ajax?->registerFunction(
     'package_quiqqer_htmltopdf_ajax_backend_getProviderList',
-
     /**
      * Get list of all available HtmlToPdfCreatorProviders.
      * @return array<string,string>

@@ -26,7 +26,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         try {
             $config = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
             $chromePath = $config->get('chrome_headless', 'executable');
-            
+
             if (!empty($chromePath)) {
                 putenv("CHROME_PATH=" . $chromePath);
             } else {
@@ -38,7 +38,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
             // Fallback to default Chrome path
             putenv("CHROME_PATH=/usr/bin/google-chrome");
         }
-        
+
         return new Creator();
     }
 }

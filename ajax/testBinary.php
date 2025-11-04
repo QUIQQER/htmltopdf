@@ -9,7 +9,7 @@
 
 use QUI\HtmlToPdf\Handler;
 
-QUI::$Ajax->registerFunction(
+QUI::$Ajax?->registerFunction(
     'package_quiqqer_htmltopdf_ajax_testBinary',
     function ($type) {
         $error = false;

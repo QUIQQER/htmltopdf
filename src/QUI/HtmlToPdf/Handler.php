@@ -23,7 +23,7 @@ class Handler
     /**
      * Additional wkhtmltopdf CLI parameters based on version
      *
-     * @var array
+     * @var array<string,string>
      */
     public static array $cliParams = [];
 

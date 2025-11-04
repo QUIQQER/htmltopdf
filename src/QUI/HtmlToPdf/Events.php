@@ -7,7 +7,6 @@
 namespace QUI\HtmlToPdf;
 
 use QUI;
-
 use Smarty;
 
 use function exec;

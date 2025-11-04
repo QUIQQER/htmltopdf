@@ -5,6 +5,9 @@ namespace QUI\HtmlToPdf\Provider;
 use QUI;
 use Throwable;
 
+use function class_exists;
+use function is_a;
+
 class ProviderRepository implements ProviderRepositoryInterface
 {
     public function __construct(
