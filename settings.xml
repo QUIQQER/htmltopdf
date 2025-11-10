@@ -16,11 +16,20 @@
                 </conf>
                 <conf name="html_to_pdf_creator_provider">
                     <type><![CDATA[string]]></type>
-                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Mpdf\Provider]]></defaultvalue>
+                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider]]></defaultvalue>
+                </conf>
+                <conf name="pdf_to_image_converter_provider">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Image\ImageMagick\Provider]]></defaultvalue>
                 </conf>
             </section>
             <section name="chrome_headless">
                 <conf name="executable">
+                    <type><![CDATA[string]]></type>
+                </conf>
+            </section>
+            <section name="image_magick">
+                <conf name="convert_binary">
                     <type><![CDATA[string]]></type>
                 </conf>
             </section>
@@ -84,7 +93,7 @@
                         </input>
 
                         <input conf="settings.html_to_pdf_creator_provider"
-                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect">
+                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectPdf">
                             <text>
                                 <locale group="quiqqer/htmltopdf" var="settings.html_to_pdf_creator_provider.title"/>
                             </text>
@@ -94,7 +103,16 @@
                             </description>
                         </input>
 
-
+                        <input conf="settings.pdf_to_image_converter_provider"
+                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectImage">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.pdf_to_image_converter_provider.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.pdf_to_image_converter_provider.description"/>
+                            </description>
+                        </input>
                     </settings>
 
                     <settings title="chrome_headless" name="chrome_headless">
@@ -108,6 +126,21 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.description"/>
+                            </description>
+                        </input>
+                    </settings>
+
+                    <settings title="image_magick" name="image_magick">
+                        <title>
+                            <locale group="quiqqer/htmltopdf" var="image_magick.title"/>
+                        </title>
+
+                        <input conf="image_magick.convert_binary" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_binary.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_binary.description"/>
                             </description>
                         </input>
                     </settings>

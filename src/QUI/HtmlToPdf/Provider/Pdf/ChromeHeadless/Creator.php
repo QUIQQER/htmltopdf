@@ -1,23 +1,23 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider\ChromeHeadless;
+namespace QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless;
 
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Exception\CommunicationException;
 use HeadlessChromium\Exception\NoResponseAvailable;
 use QUI;
+use QUI\Exception;
 use QUI\HtmlToPdf\Document;
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 
 use function preg_match_all;
-use function preg_replace;
 use function str_replace;
-use function substr_replace;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function createPdf(Document $document): string
     {

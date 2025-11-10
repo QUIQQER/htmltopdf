@@ -1,11 +1,11 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider\Mpdf;
+namespace QUI\HtmlToPdf\Provider\Pdf\Mpdf;
 
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorProviderInterface;
-use QUI\Locale;
 use QUI;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorProviderInterface;
+use QUI\Locale;
 
 class Provider implements HtmlToPdfCreatorProviderInterface
 {

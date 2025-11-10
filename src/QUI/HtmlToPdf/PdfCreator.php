@@ -3,22 +3,31 @@
 namespace QUI\HtmlToPdf;
 
 use QUI;
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
+use QUI\Exception;
+use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterInterface;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\Utils\System\File;
+use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageConversionFailedException;
 
 use function date;
 use function unlink;
 
-class PdfCreator
+readonly class PdfCreator
 {
+    /**
+     * @param HtmlToPdfCreatorInterface $pdfCreator
+     * @param PdfToImageConverterInterface|null $pdfToImageConverter (optional) - Only required if PDF to image
+     * conversion shall be available.
+     */
     public function __construct(
-        private HtmlToPdfCreatorInterface $creator
+        private HtmlToPdfCreatorInterface $pdfCreator,
+        private ?PdfToImageConverterInterface $pdfToImageConverter = null
     ) {
     }
 
     public function createPdf(Document $document): string
     {
-        $pdfFilePath = $this->creator->createPdf($document);
+        $pdfFilePath = $this->pdfCreator->createPdf($document);
 
         try {
             QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$document, $pdfFilePath]);
@@ -37,10 +46,14 @@ class PdfCreator
         return $pdfFilePath;
     }
 
-    public function createAndDownloadPdf(Document $document, bool $keepPdfFile = false): void
+    /**
+     * @return string|null - Pdf file path if $keepPdfFile is true; null otherwise
+     * @throws Exception
+     */
+    public function createAndDownloadPdf(Document $document, bool $keepPdfFile = false): ?string
     {
         $pdfFile = $this->createPDF($document);
-        $filename = $document->getAttribute('filename');
+        $filename = $document->options->filename;
 
         if (empty($filename)) {
             $filename = $document->documentId . '_' . date("d_m_Y__H_m") . '.pdf';
@@ -58,6 +71,30 @@ class PdfCreator
 
         if ($keepPdfFile === false) {
             unlink($pdfFile);
+            return null;
         }
+
+        return $pdfFile;
+    }
+
+    /**
+     * @param Document $document
+     * @return array - Generated image files
+     * @throws PdfToImageConversionFailedException
+     */
+    public function createPdfAndConvertToImage(Document $document): array
+    {
+        if ($this->pdfToImageConverter === null) {
+            throw new PdfToImageConversionFailedException([
+                'quiqqer/htmltopdf',
+                'exception.PdfCreatore.createPdfAndConvertToImage'
+            ]);
+        }
+
+        $pdfFilePath = $this->createPdf($document);
+        $images = $this->pdfToImageConverter->convertPdfToImage($pdfFilePath);
+
+        unlink($pdfFilePath);
+        return $images;
     }
 }

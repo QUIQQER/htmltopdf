@@ -1,6 +1,6 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider\Mpdf;
+namespace QUI\HtmlToPdf\Provider\Pdf\Mpdf;
 
 use Mpdf\HTMLParserMode;
 use Mpdf\Mpdf;
@@ -8,12 +8,8 @@ use Mpdf\MpdfException;
 use Mpdf\Output\Destination;
 use QUI;
 use QUI\HtmlToPdf\Document;
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 
-use function array_pop;
-use function mb_strlen;
-use function mb_strpos;
-use function preg_match_all;
 use function preg_replace_callback;
 use function str_replace;
 
@@ -289,10 +285,14 @@ class Creator implements HtmlToPdfCreatorInterface
     private function extractAndRemoveStyleElementsAndAppendToMpdf(Mpdf $mpdf, string $html): string
     {
         $styles = '';
-        $html = preg_replace_callback('/<style[^>]*>(.*?)<\/style>/is', function ($matches) use (&$styles) {
+        $htmlReplaced = preg_replace_callback('/<style[^>]*>(.*?)<\/style>/is', function ($matches) use (&$styles) {
             $styles .= $matches[1];
             return '';
         }, $html);
+
+        if (!is_string($htmlReplaced)) {
+            return $html;
+        }
 
         if (!empty($styles)) {
             $mpdf->WriteHTML($styles, HTMLParserMode::HEADER_CSS, $this->initWriteHtml, false);
@@ -300,6 +300,6 @@ class Creator implements HtmlToPdfCreatorInterface
             $this->initWriteHtml = false;
         }
 
-        return $html;
+        return $htmlReplaced;
     }
 }

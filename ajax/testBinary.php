@@ -17,7 +17,7 @@ QUI::$Ajax?->registerFunction(
         switch ($type) {
             case 'pdf':
                 try {
-                    Handler::checkPDFGeneratorBinary();
+                    // TODO: ggf. über Provider einen test Methode
                 } catch (Exception $Exception) {
                     QUI\System\Log::writeDebugException($Exception);
                     $error = $Exception->getMessage();

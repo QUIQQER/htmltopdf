@@ -1,6 +1,6 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider;
+namespace QUI\HtmlToPdf\Provider\Image;
 
 use QUI;
 use Throwable;
@@ -10,36 +10,46 @@ use function is_a;
 
 class ProviderRepository implements ProviderRepositoryInterface
 {
+    private QUI\Package\Manager $quiPackageManager;
+
     public function __construct(
-        private ?QUI\Package\Manager $quiPackageManager = null
+        ?QUI\Package\Manager $quiPackageManager = null
     ) {
-        if (is_null($this->quiPackageManager)) {
-            $this->quiPackageManager = QUI::getPackageManager();
+        if (is_null($quiPackageManager)) {
+            $quiPackageManager = QUI::getPackageManager();
         }
+
+        $this->quiPackageManager = $quiPackageManager;
     }
 
     /**
-     * @return HtmlToPdfCreatorProviderInterface
+     * @inheritDoc
      * @throws QUI\Exception
      */
-    public function getCurrentProvider(): HtmlToPdfCreatorProviderInterface
+    public function getCurrentProvider(): PdfToImageConverterProviderInterface
     {
         $config = $this->quiPackageManager->getInstalledPackage('quiqqer/htmltopdf')->getConfig();
-        $providerClass = $config->get('settings', 'html_to_pdf_creator_provider');
+
+        if (is_null($config)) {
+            throw new QUI\Exception("Cannot read / build config for quiqqer/htmltopdf.");
+        }
+
+        $providerClass = $config->get('settings', 'pdf_to_image_converter_provider');
 
         if (empty($providerClass)) {
-            throw new QUI\Exception("No quiqqer/htmltopdf PDF Creator provider set in config.");
+            throw new QUI\Exception("No quiqqer/htmltopdf PDF image converter provider set in config.");
         }
 
         if (!class_exists($providerClass)) {
             throw new QUI\Exception(
-                "The quiqqer/htmltopdf PDF Creator provider class " . $providerClass . " does not exist."
+                "The quiqqer/htmltopdf PDF image converter provider class " . $providerClass . " does not exist."
             );
         }
 
-        if (!is_a($providerClass, HtmlToPdfCreatorProviderInterface::class, true)) {
+        if (!is_a($providerClass, PdfToImageConverterProviderInterface::class, true)) {
             throw new QUI\Exception(
-                "The quiqqer/htmltopdf PDF Creator provider class " . $providerClass . " does not implement the HtmlToPdfCreatorProviderInterface."
+                "The quiqqer/htmltopdf PDF image converter provider class " . $providerClass . " does not implement"
+                . " " . PdfToImageConverterProviderInterface::class
             );
         }
 
@@ -47,7 +57,7 @@ class ProviderRepository implements ProviderRepositoryInterface
     }
 
     /**
-     * @return HtmlToPdfCreatorProviderInterface[]
+     * @inheritDoc
      */
     public function getAllProviders(): array
     {
@@ -64,21 +74,22 @@ class ProviderRepository implements ProviderRepositoryInterface
 
                 $packageProvider = $Package->getProvider();
 
-                if (empty($packageProvider['htmlToPdfCreator'])) {
+                if (empty($packageProvider['pdfToImageConverter'])) {
                     continue;
                 }
 
-                foreach ($packageProvider['htmlToPdfCreator'] as $class) {
+                foreach ($packageProvider['pdfToImageConverter'] as $class) {
                     if (!\class_exists($class)) {
                         continue;
                     }
 
-                    if (!\is_a($class, HtmlToPdfCreatorProviderInterface::class, true)) {
+                    if (!\is_a($class, PdfToImageConverterProviderInterface::class, true)) {
                         continue;
                     }
 
                     try {
                         $providers[] = new $class();
+                        // @phpstan-ignore catch.neverThrown (wo don't know what the provider constructor does or throws)
                     } catch (Throwable $e) {
                         QUI\System\Log::writeException($e);
                     }

@@ -1,10 +1,10 @@
 /**
  * Select for installed CAPTCHA modules
  *
- * @module package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect
+ * @module package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectImage
  * @author www.pcsg.de (Patrick Müller)
  */
-define('package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect', [
+define('package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectImage', [
 
     'qui/controls/buttons/Select',
     'qui/controls/loader/Loader',
@@ -17,7 +17,7 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect', [
     return new Class({
 
         Extends: QUISelect,
-        Type   : 'package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect',
+        Type   : 'package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectImage',
 
         Binds: [
             '$onInject',
@@ -58,7 +58,7 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect', [
         },
 
         /**
-         * Load captcha list and add entries
+         * Load list and add entries
          */
         $load: async function () {
             this.Loader.show();
@@ -85,7 +85,7 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelect', [
         $getProviderList: async function() {
             return new Promise((resolve, reject) => {
                 QUIAjax.get(
-                    'package_quiqqer_htmltopdf_ajax_backend_getProviderList',
+                    'package_quiqqer_htmltopdf_ajax_backend_getProviderListImage',
                     resolve,
                     {
                         'package': 'quiqqer/htmltopdf',

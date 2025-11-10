@@ -10,6 +10,7 @@ use function array_values;
 use function dirname;
 use function file_exists;
 use function file_get_contents;
+use function gettype;
 use function is_array;
 use function mb_substr;
 use function pathinfo;
@@ -82,7 +83,10 @@ class Document extends QUI\QDOM
 
             if (is_array($options)) {
                 foreach ($options as $k => $v) {
-                    if (property_exists($this->options, $k)) {
+                    if (
+                        property_exists($this->options, $k) &&
+                        gettype($v) === gettype($this->options->$k)
+                    ) {
                         $this->options->$k = $v;
                     }
                 }
@@ -90,6 +94,8 @@ class Document extends QUI\QDOM
         } else {
             $this->options = $options;
         }
+
+        // TODO: auskommentierten Bereich löschen, aber vorher gucken, was davon noch benötigt wird
 
 //        $this->setAttributes([
 //            'showPageNumbers' => true,
@@ -107,15 +113,6 @@ class Document extends QUI\QDOM
 //            'foldingMarks' => false,
 //            'disableSmartShrinking' => false
 //        ]);
-//
-//        $this->setAttributes($settings);
-
-//        try {
-//            Handler::checkPDFGeneratorBinary();
-//        } catch (\Exception $Exception) {
-//            QUI\System\Log::writeException($Exception);
-//            Handler::sendBinaryWarningMail($Exception->getMessage());
-//        }
 
         $this->documentId = uniqid();
 
@@ -130,7 +127,7 @@ class Document extends QUI\QDOM
     /**
      * @inheritDoc
      *
-     * This also sets a corresponding {@see DocumentOptions} for this document if available.
+     * This also sets corresponding {@see DocumentOptions} properties for this document if available.
      */
     public function setAttribute(string $name, mixed $value): void
     {

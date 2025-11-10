@@ -5,8 +5,8 @@ namespace QUITests\HtmlToPdf;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QUI\HtmlToPdf\Document;
-use QUI\HtmlToPdf\Provider\Mpdf\Provider as ProviderMpdf;
-use QUI\HtmlToPdf\Provider\ChromeHeadless\Provider as ProviderChromeHeadless;
+use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Provider as ProviderChromeHeadless;
+use QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider as ProviderMpdf;
 
 use function dirname;
 use function file_exists;

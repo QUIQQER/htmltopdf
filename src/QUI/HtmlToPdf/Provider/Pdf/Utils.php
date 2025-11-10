@@ -1,7 +1,8 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider;
+namespace QUI\HtmlToPdf\Provider\Pdf;
 
+use function is_string;
 use function preg_match;
 use function preg_replace;
 
@@ -16,9 +17,9 @@ class Utils
      */
     public static function extractContentFromHtmlElement(string $html, string $element = 'body'): string
     {
-        // Extract content between <body> tags if present
+        // Extract content between <$element> tags if present
         if (preg_match('/<' . $element . '[^>]*>(.*?)<\/' . $element . '>/is', $html, $matches)) {
-            return $matches[1];
+            return !empty($matches[1]) ? $matches[1] : $html;
         }
 
         return $html;
@@ -34,7 +35,13 @@ class Utils
      */
     public static function removeElementFromHtml(string $html, string $element): string
     {
-        return preg_replace('/<' . $element . '[^>]*>.*?<\/' . $element . '>/si', '', $html);
+        $replaced = preg_replace('/<' . $element . '[^>]*>.*?<\/' . $element . '>/si', '', $html);
+
+        if (is_string($replaced)) {
+            return $replaced;
+        }
+
+        return $html;
     }
 
     /**
@@ -50,11 +57,17 @@ class Utils
         $matches = [];
         preg_match('/<(' . $element . '[^>]*)>(.*?)<\/' . $element . '>/', $html, $matches);
         if (count($matches) > 0) {
-            return str_replace(
+            $replaced = str_replace(
                 $matches[0],
                 '<' . $element . ' ' . $matches[1] . '>' . $string . '</' . $element . '>',
                 $html
             );
+
+            if (!is_string($replaced)) {
+                return $html;
+            }
+
+            return $replaced;
         } else {
             return $html;
         }
@@ -70,10 +83,16 @@ class Utils
      */
     public static function prependStringInHtmlElement(string $html, string $element, string $string): string
     {
-        return preg_replace(
+        $replaced = preg_replace(
             '/<(' . $element . '[^>]*)>(.*?)<\/' . $element . '>/',
             '<${1}>${2}' . $string . '</' . $element . '>',
             $html
         );
+
+        if (!is_string($replaced)) {
+            return $html;
+        }
+
+        return $replaced;
     }
 }

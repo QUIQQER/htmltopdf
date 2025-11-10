@@ -1,11 +1,12 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider\ChromeHeadless;
+namespace QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless;
 
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorInterface;
-use QUI\HtmlToPdf\Provider\HtmlToPdfCreatorProviderInterface;
-use QUI\Locale;
 use QUI;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
+use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorProviderInterface;
+use QUI\Locale;
+use Throwable;
 
 use function putenv;
 
@@ -25,7 +26,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         // Read Chrome binary path from settings
         try {
             $config = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-            $chromePath = $config->get('chrome_headless', 'executable');
+            $chromePath = $config?->get('chrome_headless', 'executable');
 
             if (!empty($chromePath)) {
                 putenv("CHROME_PATH=" . $chromePath);
@@ -33,7 +34,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
                 // Fallback to default Chrome path
                 putenv("CHROME_PATH=/usr/bin/google-chrome");
             }
-        } catch (\Exception $Exception) {
+        } catch (Throwable $Exception) {
             QUI\System\Log::writeException($Exception);
             // Fallback to default Chrome path
             putenv("CHROME_PATH=/usr/bin/google-chrome");

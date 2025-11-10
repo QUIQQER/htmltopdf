@@ -1,6 +1,6 @@
 <?php
 
-namespace QUI\HtmlToPdf\Provider;
+namespace QUI\HtmlToPdf\Provider\Pdf;
 
 use QUI\Locale;
 

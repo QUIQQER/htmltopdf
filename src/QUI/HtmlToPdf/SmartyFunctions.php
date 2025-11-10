@@ -7,6 +7,11 @@ use Smarty_Internal_Template;
 
 class SmartyFunctions
 {
+    /**
+     * @param array<string,mixed> $params
+     * @param Smarty_Internal_Template $smarty
+     * @return string
+     */
     public static function imageBase64(array $params, Smarty_Internal_Template $smarty): string
     {
         if (empty($params['image'])) {
@@ -48,13 +53,25 @@ class SmartyFunctions
                 $height = $params['height'];
             }
 
-            $fullImgPath = $image->createResizeCache($width, $height);
-//            $resizeData = $image->getResizeSize($width, $height);
+            $fullImgPathResized = $image->createResizeCache($width, $height);
+
+            if (!is_string($fullImgPathResized)) {
+                QUI\System\Log::addWarning(
+                    "Image resize failed",
+                    [
+                        'image' => $image,
+                        'width' => $width,
+                        'height' => $height,
+                        'fullImgPath' => $fullImgPath
+                    ]
+                );
+            } else {
+                $fullImgPath = $fullImgPathResized;
+            }
         } catch (\Exception $exception) {
             QUI\System\Log::writeException($exception);
             return '';
         }
-
 
         // Convert SVG to PNG
         if (!empty($params['svgtopng']) && str_contains($fullImgPath, '.svg')) {
@@ -66,10 +83,23 @@ class SmartyFunctions
             } elseif (class_exists('\Imagick')) {
                 $svg = file_get_contents($fullImgPath);
 
+                if ($svg === false) {
+                    QUI\System\Log::addWarning(
+                        "Image resize failed. SVG file not found / readable.",
+                        [
+                            'image' => $image,
+                            'width' => $width,
+                            'height' => $height,
+                            'fullImgPath' => $fullImgPath
+                        ]
+                    );
+                    return '';
+                }
+
                 try {
-                    $im = new Imagick();
+                    $im = new \Imagick();
                     $im->readImageBlob($svg);
-                    $im->setImageBackgroundColor(new ImagickPixel('transparent'));
+                    $im->setImageBackgroundColor(new \ImagickPixel('transparent'));
                     $im->setImageFormat("png24");
                     $im->writeImage($pngImage);
                     $im->clear();
@@ -86,6 +116,19 @@ class SmartyFunctions
             $src = str_replace(CMS_DIR, URL_DIR, $src);
         } else {
             $src = file_get_contents($fullImgPath);
+
+            if ($src === false) {
+                QUI\System\Log::addWarning(
+                    "Cannot render image. Image file not found / readable.",
+                    [
+                        'image' => $image,
+                        'width' => $width,
+                        'height' => $height,
+                        'fullImgPath' => $fullImgPath
+                    ]
+                );
+                return '';
+            }
         }
 
         return "data:" . $mimeType . ";base64," . base64_encode($src);

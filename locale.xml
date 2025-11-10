@@ -134,6 +134,18 @@
             <de><![CDATA[Provider, welcher PDF-Dateien (aus HTML) erzeugt.]]></de>
             <en><![CDATA[Provider that creates PDF files (from HTML).]]></en>
         </locale>
+        <locale name="image_magick.title">
+            <de><![CDATA[ImageMagick]]></de>
+            <en><![CDATA[ImageMagick]]></en>
+        </locale>
+        <locale name="settings.pdf_to_image_converter_provider.description">
+            <de><![CDATA[Provider, welcher Bilder aus PDF-Dateien erzeugt.]]></de>
+            <en><![CDATA[Provider that creates images from PDF files.]]></en>
+        </locale>
+        <locale name="settings.pdf_to_image_converter_provider.title">
+            <de><![CDATA[PDF-zu-Bild Provider]]></de>
+            <en><![CDATA[PDF-to-image provider]]></en>
+        </locale>
 
         <!-- Provider -->
         <locale name="provider.Mpdf.title">
@@ -156,25 +168,26 @@
             <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
         </locale>
+        <locale name="settings.image_magick.convert_binary.title">
+            <de><![CDATA[convert binary]]></de>
+            <en><![CDATA[convert binary]]></en>
+        </locale>
+        <locale name="settings.image_magick.convert_binary.description">
+            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> binary. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> binary. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
+        </locale>
+
+        <locale name="provider.ImageMagick.title">
+            <de><![CDATA[ImageMagick (convert)]]></de>
+            <en><![CDATA[ImageMagick (convert)]]></en>
+        </locale>
 
         <!-- Class: Handler -->
-        <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_found">
-            <de><![CDATA[Das Programm "wkhtmltopdf" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
-            <en><![CDATA[The executable "wkhtmltopdf" could not be found on the system. Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
-        </locale>
-        <locale name="exception.Handler.checkPDFGeneratorBinary.binary_not_executable">
-            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "wkhtmltopdf" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
-            <en><![CDATA[The PHP process has no access to the executable "wkhtmltopdf" ([path]). Please configure your system so that PHP can execute it.]]></en>
-        </locale>
-        <locale name="exception.Handler.checkPDFGeneratorBinary.binary_wrong_version">
-            <de><![CDATA[Das Programm "wkhtmltopdf" ist in einer nicht-kompatiblen Version installiert ([installedVersion]). Bitte installieren Sie "wkhtmltopdf" in Version [requiredVersion] oder höher.]]></de>
-            <en><![CDATA[The executable "wkhtmltopdf" is installed in a non-compatible version ([installedVersion]). Please install "wkhtmltopdf" in version [requiredVersion] or higher.]]></en>
-        </locale>
-        <locale name="exception.Handler.checkPDFGeneratorBinary.convert.binary_not_found">
+        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_binary_not_found">
             <de><![CDATA[Das Programm "convert" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "convert" (Teil von ImageMagick).]]></de>
             <en><![CDATA[The executable "convert" could not be found on the system. Please install "convert" (part of ImageMagick).]]></en>
         </locale>
-        <locale name="exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable">
+        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_binary_not_executable">
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "convert" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
