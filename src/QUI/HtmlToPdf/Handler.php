@@ -5,8 +5,10 @@ namespace QUI\HtmlToPdf;
 use QUI;
 use QUI\Exception;
 use QUI\HtmlToPdf\Exception as HtmlToPdfException;
-use QUI\HtmlToPdf\Provider\Pdf\ProviderRepository;
-use QUI\HtmlToPdf\Provider\Pdf\ProviderRepositoryInterface;
+use QUI\HtmlToPdf\Provider\Pdf\ProviderRepository as HtmlToPdfCreatorProviderRepository;
+use QUI\HtmlToPdf\Provider\Pdf\ProviderRepositoryInterface as HtmlToPdfCreatorProviderRepositoryInterface;
+use QUI\HtmlToPdf\Provider\Image\ProviderRepository as PdfToImageConverterProviderRepository;
+use QUI\HtmlToPdf\Provider\Image\ProviderRepositoryInterface as PdfToImageConverterProviderRepositoryInterface;
 
 use function is_executable;
 
@@ -18,16 +20,23 @@ use function is_executable;
 class Handler
 {
     private ?PdfCreator $pdfCreator = null;
-    private ProviderRepositoryInterface $providerRepository;
+    private HtmlToPdfCreatorProviderRepositoryInterface $htmlToPdfCreatorProviderRepository;
+    private PdfToImageConverterProviderRepositoryInterface $pdfToImageConverterProviderRepository;
 
     public function __construct(
-        ?ProviderRepositoryInterface $providerRepository = null
+        ?HtmlToPdfCreatorProviderRepositoryInterface $htmlToPdfCreatorProviderRepository = null,
+        ?PdfToImageConverterProviderRepositoryInterface $pdfToImageConverterRepository = null
     ) {
-        if (is_null($providerRepository)) {
-            $providerRepository = new ProviderRepository();
+        if (is_null($htmlToPdfCreatorProviderRepository)) {
+            $htmlToPdfCreatorProviderRepository = new HtmlToPdfCreatorProviderRepository();
         }
 
-        $this->providerRepository = $providerRepository;
+        if (is_null($pdfToImageConverterRepository)) {
+            $pdfToImageConverterRepository = new PdfToImageConverterProviderRepository();
+        }
+
+        $this->htmlToPdfCreatorProviderRepository = $htmlToPdfCreatorProviderRepository;
+        $this->pdfToImageConverterProviderRepository = $pdfToImageConverterRepository;
     }
 
     /**
@@ -39,7 +48,10 @@ class Handler
             return $this->pdfCreator;
         }
 
-        $this->pdfCreator = new PdfCreator($this->providerRepository->getCurrentProvider()->getHtmlToPdfCreator());
+        $this->pdfCreator = new PdfCreator(
+            $this->htmlToPdfCreatorProviderRepository->getCurrentProvider()->getHtmlToPdfCreator(),
+            $this->pdfToImageConverterProviderRepository->getCurrentProvider()->getPdfToImageConverter()
+        );
         return $this->pdfCreator;
     }
 

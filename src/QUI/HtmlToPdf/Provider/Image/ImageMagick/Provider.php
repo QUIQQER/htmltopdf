@@ -61,22 +61,35 @@ class Provider implements PdfToImageConverterProviderInterface
      */
     private function getConvertBinaryPath(): ?string
     {
+        $binaryPath = null;
+
         try {
             $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
 
-            if (is_null($conf)) {
+            if (!is_null($conf)) {
+                $binaryPath = $conf->get('image_magick', 'convert_binary');
+            } else {
                 QUI\System\Log::addError("Cannot read / build config for quiqqer/htmltopdf.");
-                return null;
             }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return null;
         }
 
-        $binaryPath = $conf->get('image_magick', 'convert_binary');
-
         if (empty($binaryPath)) {
-            return null;
+            $binaryPath = `which convert`;
+
+            if (empty($binaryPath)) {
+                QUI\System\Log::addWarning(
+                    "ImageMagick convert binary path not set in config. `which convert` produced empty result."
+                    ." ImageMagick / convert seems to be not installed."
+                );
+                return null;
+            }
+
+            QUI\System\Log::addWarning(
+                "ImageMagick convert binary path not set in config. Using `which convert` (= $binaryPath) instead."
+            );
         }
 
         $binaryPath = trim($binaryPath);

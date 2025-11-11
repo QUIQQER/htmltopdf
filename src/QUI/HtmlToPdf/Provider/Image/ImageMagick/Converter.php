@@ -29,6 +29,8 @@ readonly class Converter implements PdfToImageConverterInterface
             $this->converterBinary,
 
             '-transparent-color',
+            'white',
+
             '-background',
             'white',
 

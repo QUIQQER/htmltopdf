@@ -191,7 +191,14 @@
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "convert" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
-
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.executable_not_found">
+            <de><![CDATA[Das Programm "google-chrome" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "google-chrome" (Google Chrome Web-Browser).]]></de>
+            <en><![CDATA[The executable "google-chrome" could not be found on the system. Please install "google-chrome" (Google Chrome web browser).]]></en>
+        </locale>
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.not_executable">
+            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "google-chrome" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
+            <en><![CDATA[The PHP process has no access to the executable "google-chrome" ([path]). Please configure your system so that PHP can execute it.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/htmltopdf" datatype="js">
@@ -205,8 +212,14 @@
             <en><![CDATA[Create test image from PDF document]]></en>
         </locale>
         <locale name="controls.TestGeneration.error.information" html="true">
-            <de><![CDATA[<b>Fehler</b>:<br/><br/>[error]<br/><br/>Sollte der Fehler weiterhin bestehen, kontaktieren Sie bitte einen Administrator!]]></de>
-            <en><![CDATA[<b>Error</b>:<br/><br/>[error]<br/><br/>Should the error persist, please contact an administrator!]]></en>
+            <de><![CDATA[
+            <b>Fehler</b>:<br/><br/>[error]<br/><br/><p>Sollte der Fehler weiterhin bestehen, kontaktieren Sie bitte einen Administrator!</p><br/>
+            <p><b>Hint:</b> Bitte schauen Sie auch auf der <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">"Common problems" Wiki-Seite</a> für weitere Informationen.</p>
+]]></de>
+            <en><![CDATA[
+            <b>Error</b>:<br/><br/>[error]<br/><br/><p>Should the error persist, please contact an administrator!</p><br/>
+            <p><b>Hint:</b> Please also consult the <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">"Common problems" wiki page</a> for more information.</p>
+]]></en>
         </locale>
         <locale name="controls.TestGeneration.error.title">
             <de><![CDATA[Fehler bei Test-Dokument]]></de>

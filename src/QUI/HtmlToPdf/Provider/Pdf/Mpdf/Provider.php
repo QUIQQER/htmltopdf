@@ -3,6 +3,7 @@
 namespace QUI\HtmlToPdf\Provider\Pdf\Mpdf;
 
 use QUI;
+use QUI\HtmlToPdf\Provider\Pdf\Exception\HtmlToPdfRequirementsNotMetException;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorProviderInterface;
 use QUI\Locale;
@@ -21,5 +22,13 @@ class Provider implements HtmlToPdfCreatorProviderInterface
     public function getHtmlToPdfCreator(): HtmlToPdfCreatorInterface
     {
         return new Creator();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkRequirements(): void
+    {
+        // nothing to check
     }
 }

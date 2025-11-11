@@ -2,6 +2,8 @@
 
 namespace QUI\HtmlToPdf\Provider\Pdf;
 
+use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterProviderInterface;
+
 interface ProviderRepositoryInterface
 {
     /**
