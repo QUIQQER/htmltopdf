@@ -24,9 +24,21 @@ class Provider implements PdfToImageConverterProviderInterface
         return $locale->get('quiqqer/htmltopdf', 'provider.ImageMagick.title');
     }
 
+    /**
+     * @throws PdfToImageRequirementsNotMetException
+     */
     public function getPdfToImageConverter(): PdfToImageConverterInterface
     {
-        return new Converter($this->getConvertBinaryPath());
+        $executablePath = $this->getConvertExecutablePath();
+
+        if (empty($executablePath)) {
+            throw new PdfToImageRequirementsNotMetException([
+                'quiqqer/htmltopdf',
+                'exception.Provider.ImageMagick.checkRequirements.convert_executable_not_found'
+            ]);
+        }
+
+        return new Converter($executablePath);
     }
 
     /**
@@ -34,21 +46,21 @@ class Provider implements PdfToImageConverterProviderInterface
      */
     public function checkRequirements(): void
     {
-        $binaryPath = $this->getConvertBinaryPath();
+        $executablePath = $this->getConvertExecutablePath();
 
-        if (is_null($binaryPath) || !file_exists($binaryPath)) {
+        if (is_null($executablePath) || !file_exists($executablePath)) {
             throw new PdfToImageRequirementsNotMetException([
                 'quiqqer/htmltopdf',
-                'exception.Provider.ImageMagick.checkRequirements.convert_binary_not_found'
+                'exception.Provider.ImageMagick.checkRequirements.convert_executable_not_found'
             ]);
         }
 
-        if (!is_executable($binaryPath)) {
+        if (!is_executable($executablePath)) {
             throw new PdfToImageRequirementsNotMetException([
                 'quiqqer/htmltopdf',
-                'exception.Provider.ImageMagick.checkRequirements.convert_binary_not_executable',
+                'exception.Provider.ImageMagick.checkRequirements.convert_executable_not_executable',
                 [
-                    'path' => $binaryPath
+                    'path' => $executablePath
                 ]
             ]);
         }
@@ -59,15 +71,15 @@ class Provider implements PdfToImageConverterProviderInterface
      *
      * @return string|null
      */
-    private function getConvertBinaryPath(): ?string
+    private function getConvertExecutablePath(): ?string
     {
-        $binaryPath = null;
+        $executablePath = null;
 
         try {
             $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
 
             if (!is_null($conf)) {
-                $binaryPath = $conf->get('image_magick', 'convert_binary');
+                $executablePath = $conf->get('image_magick', 'convert_executable');
             } else {
                 QUI\System\Log::addError("Cannot read / build config for quiqqer/htmltopdf.");
             }
@@ -76,24 +88,24 @@ class Provider implements PdfToImageConverterProviderInterface
             return null;
         }
 
-        if (empty($binaryPath)) {
-            $binaryPath = `which convert`;
+        if (empty($executablePath)) {
+            $executablePath = `which convert`;
 
-            if (empty($binaryPath)) {
+            if (empty($executablePath)) {
                 QUI\System\Log::addWarning(
-                    "ImageMagick convert binary path not set in config. `which convert` produced empty result."
-                    ." ImageMagick / convert seems to be not installed."
+                    "ImageMagick convert executable path not set in config. `which convert` produced empty result."
+                    . " ImageMagick / convert seems to be not installed."
                 );
                 return null;
             }
 
             QUI\System\Log::addWarning(
-                "ImageMagick convert binary path not set in config. Using `which convert` (= $binaryPath) instead."
+                "ImageMagick convert executable path not set in config. Using `which convert` (= $executablePath) instead."
             );
         }
 
-        $binaryPath = trim($binaryPath);
+        $executablePath = trim($executablePath);
 
-        return empty($binaryPath) ? null : $binaryPath;
+        return empty($executablePath) ? null : $executablePath;
     }
 }

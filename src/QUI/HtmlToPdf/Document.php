@@ -4,22 +4,14 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
-use function array_merge;
-use function array_unique;
-use function array_values;
-use function dirname;
 use function file_exists;
 use function file_get_contents;
 use function gettype;
 use function is_array;
-use function mb_substr;
-use function pathinfo;
-use function preg_replace;
 use function property_exists;
-use function str_replace;
-use function system;
-use function trim;
-use function unlink;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Document that receives HTML and outputs PDF
@@ -44,6 +36,7 @@ class Document extends QUI\QDOM
 
     /**
      * Header data for PDF conversion
+     * @var array<string,mixed>
      */
     private array $header = [
         'css' => '',
@@ -54,6 +47,7 @@ class Document extends QUI\QDOM
 
     /**
      * Content (body) data for PDF conversion
+     * @var array<string,mixed>
      */
     private array $body = [
         'css' => '',
@@ -63,6 +57,7 @@ class Document extends QUI\QDOM
 
     /**
      * Footer data for PDF conversion
+     * @var array<string,mixed>
      */
     private array $footer = [
         'css' => '',
@@ -73,7 +68,7 @@ class Document extends QUI\QDOM
     public readonly DocumentOptions $options;
 
     /**
-     * @param DocumentOptions|array|null $options - If array, keys will be mapped to {@see DocumentOptions} properties;
+     * @param DocumentOptions|array<string,string|bool|numeric>|null $options - If array, keys will be mapped to {@see DocumentOptions} properties;
      * If NULL a default options object is created.
      */
     public function __construct(DocumentOptions | array | null $options = null)
@@ -342,118 +337,36 @@ class Document extends QUI\QDOM
      */
     public function createPDF(): string
     {
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createPdf() instead of"
+            . " QUI\HtmlToPdf\Document::createPDF()",
+            E_USER_DEPRECATED
+        );
+
         $handler = new Handler();
         return $handler->getPdfCreator()->createPdf($this);
     }
 
     /**
      * @param bool $deletePdfFile
-     * @param array $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
+     * @param array<string> $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
      * @param bool $trim (optional) - Trim margin of PDF file before generating image [default: true]
-     * @return string|array - File to generated image or array with image files if multiple images are generated
+     * @return string|array<string> - File to generated image or array with image files if multiple images are generated
      *
      * @throws QUI\Exception
+     * @deprecated This direct call will be removed in the next major release.
+     *  Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} with {@see PdfCreator::createPdfAndConvertToImage()}
      */
     public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array | string
     {
-        // TEST
-//        $html = $this->getHeaderHTML()
-//                .$this->getContentHTML()
-//                .$this->getFooterHTML(false);
-//
-//        $htmlFile  = $this->varDir.'test.html';
-//        $imageFile = $this->varDir.'text.jpg';
-//
-//        \file_put_contents($htmlFile, $html);
-//
-//        $cmd = 'wkhtmltoimage';
-//
-//        $cmd .= ' --disable-smart-width';
-//
-//        $cmd .= ' '.$htmlFile.' '.$imageFile;
-//
-//        exec($cmd.' 2> /dev/null', $output, $exitStatus);
-//
-//        \QUI\System\Log::writeRecursive($imageFile);
-//
-//        return $imageFile;
-        // /TEST
-
-        Handler::checkConvertBinary();
-
-        $pdfFile = $this->createPDF();
-        $imageFile = mb_substr($pdfFile, 0, -4) . '.jpg';
-
-        $pdfFileLine = '\'' . $pdfFile . '\'';
-
-        if ($trim) {
-            $pdfFileLine = '-trim ' . $pdfFileLine;
-        }
-
-        $cliParams = array_merge(
-            $cliParams,
-            [
-                '-density 300',
-                $pdfFileLine,
-                '-quality 100',
-                '-resize 2480x3508', // DIN A4
-                '\'' . $imageFile . '\'',
-            ]
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createPdfAndConvertToImage() instead of"
+            . " QUI\HtmlToPdf\Document::createImage()",
+            E_USER_DEPRECATED
         );
 
-        $cliParams = array_values(array_unique($cliParams));
-        $command = Handler::getConvertBinaryPath();
-
-        foreach ($cliParams as $param) {
-            $param = trim($param);
-
-            if (empty($param)) {
-                continue;
-            }
-
-            $command .= ' ' . $param;
-        }
-
-        system($command);
-
-        // Delete source PDF
-        if ($deletePdfFile && file_exists($pdfFile)) {
-            unlink($pdfFile);
-        }
-
-        if (!file_exists($imageFile)) {
-            /**
-             * Check if the PDF was split into multiple images.
-             * In this case the images need to be appended to one single image.
-             */
-            $imageFileInfo = pathinfo($imageFile);
-            $imageFileExt = $imageFileInfo['extension'];
-            $imageFileDir = $imageFileInfo['dirname'] . '/';
-            $imageFileNoExt = $imageFileDir . $imageFileInfo['filename'];
-
-            if (!file_exists($imageFileNoExt . '-0.' . $imageFileExt)) {
-                throw new QUI\Exception(
-                    'Could not create image from pdf. Command: "' . $command . '".'
-                );
-            }
-
-            $imageFiles = [];
-            $imageNo = 0;
-
-            do {
-                $imageFileNumbered = $imageFileNoExt . '-' . $imageNo++ . '.' . $imageFileExt;
-
-                if (!file_exists($imageFileNumbered)) {
-                    break;
-                }
-
-                $imageFiles[] = $imageFileNumbered;
-            } while (true);
-
-            return $imageFiles;
-        }
-
-        return $imageFile;
+        $handler = new Handler();
+        return $handler->getPdfCreator()->createPdfAndConvertToImage($this);
     }
 
     /**
@@ -468,6 +381,12 @@ class Document extends QUI\QDOM
      */
     public function download(bool $deletePdfFile = true): void
     {
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createAndDownloadPdf() instead of"
+            . " QUI\HtmlToPdf\Document::download()",
+            E_USER_DEPRECATED
+        );
+
         $handler = new Handler();
         $handler->getPdfCreator()->createAndDownloadPdf($this, !$deletePdfFile);
     }
@@ -530,19 +449,19 @@ class Document extends QUI\QDOM
         }
 
         $content = str_replace(['<header>', '</header>'], ['<div', '</div>'], $header['content']);
-        $content = '<header class="' . $this->options->cssClassHeader . '">' . $content . '</header>';
+        $content = '<header class="' . $this->options->cssClassHeaderContainer . '">' . $content . '</header>';
 
         if ($fullHtml) {
             $head = '<!DOCTYPE html>
                         <html>
                          <head>
-                            <meta charset="UTF-8">';
+                            <meta charset="UTF - 8">';
 
             // add css
             $head .= '<style>' . $css . '</style>';
 
             foreach ($header['cssFiles'] as $file) {
-                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
 
             $head .= '</head>';
@@ -551,7 +470,7 @@ class Document extends QUI\QDOM
             $body = '<style>' . $css . '</style>';
 
             foreach ($header['cssFiles'] as $file) {
-                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
 
             $body .= $content;
@@ -565,7 +484,7 @@ class Document extends QUI\QDOM
 //        $header = '<!DOCTYPE html>
 //                        <html>
 //                         <head>
-//                            <meta charset="UTF-8">';
+//                            <meta charset="UTF - 8">';
 //
 //        // add css
 //        $css = $hd['css'];
@@ -577,7 +496,7 @@ class Document extends QUI\QDOM
 //        $header .= '<style>' . $css . '</style>';
 //
 //        foreach ($hd['cssFiles'] as $file) {
-//            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+//            $header .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
 //        }
 //
 //        $header .= '</head>';
@@ -602,7 +521,7 @@ class Document extends QUI\QDOM
         $header = '<!DOCTYPE html>
                         <html>
                          <head>
-                            <meta charset="UTF-8">';
+                            <meta charset="UTF - 8">';
 
         // add css
         $css = $hd['css'];
@@ -614,12 +533,12 @@ class Document extends QUI\QDOM
         $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            $header .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
         }
 
         $header .= '</head>';
 
-        $body = '<body>' . $hd['content'] . '</body></html>';
+        $body = '<body class="' . $this->options->cssClassBodyContainer . '">' . $hd['content'] . '</body></html>';
 
         return $this->parseRelativeLinks($header . $body);
     }
@@ -642,29 +561,28 @@ class Document extends QUI\QDOM
         }
 
         $content = str_replace(['<footer', '</footer>'], ['<div', '</div>'], $footer['content']);
-        $content = '<footer class="' . $this->options->cssClassFooter . '">' . $content . '</footer>';
+        $content = '<footer class="' . $this->options->cssClassFooterContainer . '">' . $content . '</footer>';
 
         if ($fullHtml) {
             $head = '<!DOCTYPE html>
                         <html>
                          <head>
-                            <meta charset="UTF-8">';
+                            <meta charset="UTF - 8">';
 
             // add css
             $head .= '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
 
             $head .= '</head>';
-
             $body = '<body>';
         } else {
             $body = '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
         }
 
@@ -688,6 +606,7 @@ class Document extends QUI\QDOM
      */
     private function parseRelativeLinks(string $str): string
     {
-        return preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
+        $replaced = preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
+        return $replaced ?: $str;
     }
 }

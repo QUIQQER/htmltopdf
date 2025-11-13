@@ -12,9 +12,6 @@ use function dirname;
 use function file_exists;
 use function unlink;
 
-/**
- * Class FieldsTest
- */
 class CreatePdfTest extends TestCase
 {
     #[Test]
@@ -32,17 +29,17 @@ class CreatePdfTest extends TestCase
             $document->addContentCSSFile(dirname(__FILE__) . '/files/body.css');
             $document->addContentCSSFile(dirname(__FILE__) . '/files/body2.css');
         } catch (\Exception $Exception) {
-            $this->fail('PDF-Dokument konnte CSS-Datei nicht hinzugefügt werden :: ' . $Exception->getMessage());
+            $this->fail('CSS files could not be added to PDF document :: ' . $Exception->getMessage());
         }
 
         try {
             $provider = new ProviderMpdf();
             $pdfFile = $provider->getHtmlToPdfCreator()->createPdf($document);
         } catch (\Exception $Exception) {
-            $this->fail('PDF-Dokument konnte nicht erstellt werden :: ' . $Exception->getMessage());
+            $this->fail('PDF file could not be created :: ' . $Exception->getMessage());
         }
 
-        $this->assertFileExists($pdfFile, 'PDF-Datei nicht gefunden');
+        $this->assertFileExists($pdfFile, 'PDF file not found.');
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
@@ -64,17 +61,17 @@ class CreatePdfTest extends TestCase
             $document->addContentCSSFile(dirname(__FILE__) . '/files/body.css');
             $document->addContentCSSFile(dirname(__FILE__) . '/files/body2.css');
         } catch (\Exception $Exception) {
-            $this->fail('PDF-Dokument konnte CSS-Datei nicht hinzugefügt werden :: ' . $Exception->getMessage());
+            $this->fail('CSS files could not be added to PDF document :: ' . $Exception->getMessage());
         }
 
         try {
             $provider = new ProviderChromeHeadless();
             $pdfFile = $provider->getHtmlToPdfCreator()->createPdf($document);
         } catch (\Exception $Exception) {
-            $this->fail('PDF-Dokument konnte nicht erstellt werden :: ' . $Exception->getMessage());
+            $this->fail('PDF file could not be created :: ' . $Exception->getMessage());
         }
 
-        $this->assertFileExists($pdfFile, 'PDF-Datei nicht gefunden');
+        $this->assertFileExists($pdfFile, 'PDF file not found.');
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);

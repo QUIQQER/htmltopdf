@@ -79,7 +79,7 @@ readonly class PdfCreator
 
     /**
      * @param Document $document
-     * @return array - Generated image files
+     * @return array<string> - Generated image files (file paths)
      * @throws PdfToImageConversionFailedException
      */
     public function createPdfAndConvertToImage(Document $document): array
@@ -87,7 +87,7 @@ readonly class PdfCreator
         if ($this->pdfToImageConverter === null) {
             throw new PdfToImageConversionFailedException([
                 'quiqqer/htmltopdf',
-                'exception.PdfCreatore.createPdfAndConvertToImage'
+                'exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up'
             ]);
         }
 

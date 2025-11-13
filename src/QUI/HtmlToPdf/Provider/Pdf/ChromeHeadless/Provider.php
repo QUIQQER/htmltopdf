@@ -30,7 +30,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
      */
     public function getHtmlToPdfCreator(): HtmlToPdfCreatorInterface
     {
-        // Read Chrome binary path from settings
+        // Read Chrome executable path from settings
         $chromePath = $this->getGoogleChromeExecutablePath();
 
         if (empty($chromePath)) {

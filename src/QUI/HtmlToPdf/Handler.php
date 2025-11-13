@@ -61,7 +61,7 @@ class Handler
      * @return string
      * @throws Exception
      */
-    public static function getConvertBinaryPath(): string
+    public static function getConvertExecutablePath(): string
     {
         try {
             $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
@@ -69,43 +69,41 @@ class Handler
             if (is_null($conf)) {
                 throw new QUI\Exception("Cannot read / build config for quiqqer/htmltopdf.");
             }
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            return false;
+        } catch (\Exception $exception) {
+            QUI\System\Log::writeException($exception);
+            throw $exception;
         }
 
-        $binaryPath = $conf->get('settings', 'binary_convert');
+        $executablePath = $conf->get('settings', 'executable_convert');
 
-        if (empty($binaryPath)) {
-            throw new QUI\Exception("No convert binary path set for quiqqer/htmltopdf.");
+        if (empty($executablePath)) {
+            throw new QUI\Exception("No convert executable path set for quiqqer/htmltopdf.");
         }
 
-        $binaryPath = trim($binaryPath);
-
-        return empty($binaryPath) ? false : $binaryPath;
+        return trim($executablePath);
     }
 
     /**
-     * Checks if the binary for ImageMagick`convert` is installed
+     * Checks if the executable for ImageMagick`convert` is installed
      * and executable in the current PHP environment.
      *
      * @throws Exception
      */
-    public static function checkConvertBinary(): void
+    public static function checkConvertExecutable(): void
     {
-        $binaryPath = self::getConvertBinaryPath();
+        $executablePath = self::getConvertExecutablePath();
 
-        if (empty($binaryPath)) {
+        if (empty($executablePath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_found'
+                'exception.Handler.checkPDFGeneratorExecutable.convert.executable_not_found'
             ]);
         }
 
-        if (!is_executable($binaryPath)) {
+        if (!is_executable($executablePath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable'
+                'exception.Handler.checkPDFGeneratorExecutable.convert.executable_not_executable'
             ]);
         }
     }

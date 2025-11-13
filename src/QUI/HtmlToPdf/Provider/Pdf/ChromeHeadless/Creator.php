@@ -3,12 +3,11 @@
 namespace QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless;
 
 use HeadlessChromium\BrowserFactory;
-use HeadlessChromium\Exception\CommunicationException;
-use HeadlessChromium\Exception\NoResponseAvailable;
 use QUI;
 use QUI\Exception;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
+use Throwable;
 
 use function preg_match_all;
 use function str_replace;
@@ -43,9 +42,6 @@ class Creator implements HtmlToPdfCreatorInterface
             if (file_exists($htmlFile)) {
                 unlink($htmlFile);
             }
-
-            // Fire event
-            QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$document, $pdfFile]);
 
             return $pdfFile;
         } catch (\Exception $Exception) {
@@ -106,16 +102,9 @@ class Creator implements HtmlToPdfCreatorInterface
         // Add content section only (no header/footer - they're in PDF options)
         $html .= '<div class="pdf-content">';
         $html .= $this->extractBodyContent($contentHtml);
-
-        // Add folding marks if enabled
-        if ($document->options->foldingMarks) {
-            $html .= $this->getFoldingMarksHtml();
-        }
-
         $html .= '</div>';
-
-        $html .= '</body>
-</html>';
+        $html .= '</body>';
+        $html .= '</html>';
 
         return $html;
     }
@@ -127,8 +116,8 @@ class Creator implements HtmlToPdfCreatorInterface
      * @param string $pdfFile
      * @param Document $document
      * @return void
-     * @throws CommunicationException
-     * @throws NoResponseAvailable
+     *
+     * @throws \Exception
      */
     private function generatePdfWithChrome(string $htmlFile, string $pdfFile, Document $document): void
     {
@@ -195,6 +184,8 @@ class Creator implements HtmlToPdfCreatorInterface
 
             // Save to file
             $pdf->saveToFile($pdfFile);
+        } catch (Throwable $exception) {
+            QUI\System\Log::writeException($exception);
         } finally {
             $browser->close();
         }
@@ -226,26 +217,18 @@ class Creator implements HtmlToPdfCreatorInterface
             return '<div></div>';  // Empty template required by Chrome
         }
 
-//        return $headerHtml;
-
-        // Extract styles and body content
-//        $styles = $this->extractStyles($headerHtml);
-//        $content = $this->extractBodyContent($headerHtml);
-//        $content = QUI\HtmlToPdf\Provider\Utils::removeElementFromHtml($content, 'style');
-
         // Add folding marks if enabled
-        if ($document->getAttribute('foldingMarks')) {
-//            $content .= $this->getFoldingMarksHtml();
+        if ($document->options->foldingMarks) {
+            $headerHtml = str_replace('</header>', $this->getFoldingMarksHtml() . '</header>', $headerHtml);
         }
 
         // Specific styling for footer wrapper
-        // TODO: remove border
         $style = '<style>
              * {
                 -webkit-print-color-adjust: exact;
              }
              
-            .' . $document->options->cssClassHeader . '{
+            .' . $document->options->cssClassHeaderContainer . '{
                 position: absolute;
                 width: 210mm;
                 margin: 0;
@@ -293,7 +276,7 @@ class Creator implements HtmlToPdfCreatorInterface
                 -webkit-print-color-adjust: exact;
              }
 
-            .' . $document->options->cssClassFooter . '{
+            .' . $document->options->cssClassFooterContainer . '{
                 position: absolute;
                 width: 210mm;
                 margin: 0;
@@ -377,7 +360,7 @@ class Creator implements HtmlToPdfCreatorInterface
                     height: 1px;
                     left: 0;
                     position: absolute;
-                    width: 40px;
+                    width: ' . $this->mmToInches(4) . 'in
                 }
                 
                 .din-5008-f1 {

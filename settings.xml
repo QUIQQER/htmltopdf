@@ -20,7 +20,7 @@
                 </conf>
             </section>
             <section name="image_magick">
-                <conf name="convert_binary">
+                <conf name="convert_executable">
                     <type><![CDATA[string]]></type>
                 </conf>
             </section>
@@ -99,12 +99,12 @@
                             <locale group="quiqqer/htmltopdf" var="image_magick.title"/>
                         </title>
 
-                        <input conf="image_magick.convert_binary" type="text">
+                        <input conf="image_magick.convert_executable" type="text">
                             <text>
-                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_binary.title"/>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_executable.title"/>
                             </text>
                             <description>
-                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_binary.description"/>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_executable.description"/>
                             </description>
                         </input>
                     </settings>

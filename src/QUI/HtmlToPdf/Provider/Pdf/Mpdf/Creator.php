@@ -9,6 +9,7 @@ use Mpdf\Output\Destination;
 use QUI;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
+use QUI\HtmlToPdf\Provider\Pdf\Exception\HtmlToPdfCreationFailedException;
 
 use function preg_replace_callback;
 use function str_replace;
@@ -21,6 +22,7 @@ class Creator implements HtmlToPdfCreatorInterface
 
     /**
      * @inheritDoc
+     * @throws HtmlToPdfCreationFailedException
      */
     public function createPdf(Document $document): string
     {
@@ -33,6 +35,8 @@ class Creator implements HtmlToPdfCreatorInterface
 
             // Create mpdf instance with document settings
             $mpdf = $this->createMpdfInstance($document);
+            $mpdf->shrink_tables_to_fit = '1'; // see https://mpdf.github.io/troubleshooting/resizing.html [13.11.2025]
+            $mpdf->shrink_this_table_to_fit = false;
 
             // Set folding marks as watermark if enabled (appears on every page)
             if ($document->options->foldingMarks) {
@@ -59,14 +63,11 @@ class Creator implements HtmlToPdfCreatorInterface
             // Save PDF to file
             $mpdf->Output($pdfFile, Destination::FILE);
 
-            // Fire event
-            QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$document, $pdfFile]);
-
             return $pdfFile;
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
-            throw new QUI\Exception([
+            throw new HtmlToPdfCreationFailedException([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.conversion.failed'
             ]);
@@ -90,8 +91,8 @@ class Creator implements HtmlToPdfCreatorInterface
             'margin_top' => (float)$document->options->marginTop,
             'margin_bottom' => (float)$document->options->marginBottom,
 //            'margin_footer' => (float)$document->options->marginBottom,
-            'margin_header' => (float)$document->options->headerSpacing,
-            'margin_footer' => (float)$document->options->footerSpacing,
+            'margin_header' => 0, //(float)$document->options->headerSpacing,
+            'margin_footer' => 0, //(float)$document->options->footerSpacing,
             'orientation' => 'P',
             'tempDir' => sys_get_temp_dir()
         ];
@@ -173,7 +174,7 @@ class Creator implements HtmlToPdfCreatorInterface
         $mpdf->WriteHTML(
             ' 
              <style>
-                .' . $document->options->cssClassFooter . '{
+                .' . $document->options->cssClassFooterContainer . '{
                     position: absolute;
                     width: 210mm;
                     margin: 0;
@@ -257,7 +258,7 @@ class Creator implements HtmlToPdfCreatorInterface
     private function setFoldingMarks(Mpdf $mpdf): void
     {
         $Package = QUI::getPackage('quiqqer/htmltopdf');
-        $foldingMarksPath = $Package->getDir() . 'src/QUI/HtmlToPdf/Provider/Mpdf/bin/folding-marks-din5008.svg';
+        $foldingMarksPath = $Package->getDir() . 'src/QUI/HtmlToPdf/Provider/Pdf/Mpdf/bin/folding-marks-din5008.svg';
 
         if (!file_exists($foldingMarksPath)) {
             QUI\System\Log::addWarning('Folding marks file not found: ' . $foldingMarksPath);

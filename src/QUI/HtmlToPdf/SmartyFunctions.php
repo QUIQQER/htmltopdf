@@ -4,6 +4,9 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 use Smarty_Internal_Template;
+use Throwable;
+
+use function file_get_contents;
 
 class SmartyFunctions
 {
@@ -45,11 +48,23 @@ class SmartyFunctions
             $width = $image->getWidth();
             $height = $image->getHeight();
 
-            if (!empty($params['width']) && $params['width'] < $width) {
+            if (
+                !empty($params['width']) &&
+                (
+                    $params['width'] < $width ||
+                    empty($width)
+                )
+            ) {
                 $width = $params['width'];
             }
 
-            if (!empty($params['height']) && $params['height'] < $height) {
+            if (
+                !empty($params['height']) &&
+                (
+                    $params['height'] < $height ||
+                    empty($height)
+                )
+            ) {
                 $height = $params['height'];
             }
 
@@ -76,7 +91,6 @@ class SmartyFunctions
         // Convert SVG to PNG
         if (!empty($params['svgtopng']) && str_contains($fullImgPath, '.svg')) {
             $pngImage = $fullImgPath . '.png';
-            $src = '';
 
             if (file_exists($pngImage)) {
                 $src = $pngImage;
@@ -107,30 +121,32 @@ class SmartyFunctions
 
                     $src = $pngImage;
                     $mimeType = 'image/png';
-                } catch (Exception $exception) {
+                } catch (Throwable $exception) {
                     QUI\System\Log::writeException($exception);
                     return '';
                 }
+            } else {
+                $src = $fullImgPath;
             }
 
-            $src = str_replace(CMS_DIR, URL_DIR, $src);
+            $imageFileContent = file_get_contents($src);
         } else {
-            $src = file_get_contents($fullImgPath);
-
-            if ($src === false) {
-                QUI\System\Log::addWarning(
-                    "Cannot render image. Image file not found / readable.",
-                    [
-                        'image' => $image,
-                        'width' => $width,
-                        'height' => $height,
-                        'fullImgPath' => $fullImgPath
-                    ]
-                );
-                return '';
-            }
+            $imageFileContent = file_get_contents($fullImgPath);
         }
 
-        return "data:" . $mimeType . ";base64," . base64_encode($src);
+        if ($imageFileContent === false) {
+            QUI\System\Log::addWarning(
+                "Cannot render image. Image file not found / readable.",
+                [
+                    'image' => $image,
+                    'width' => $width,
+                    'height' => $height,
+                    'fullImgPath' => $fullImgPath
+                ]
+            );
+            return '';
+        }
+
+        return "data:" . $mimeType . ";base64," . base64_encode($imageFileContent);
     }
 }

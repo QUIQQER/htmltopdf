@@ -29,16 +29,16 @@
     <groups name="quiqqer/htmltopdf" datatype="php">
 
         <!-- Mails -->
-        <locale name="mail.warning.binary_missing.subject">
+        <locale name="mail.warning.executable_missing.subject">
             <de><![CDATA[[host] - PDF-Dokumente können nicht erstellt werden]]></de>
             <en><![CDATA[[host] - PDF documents cannot be created]]></en>
         </locale>
-        <locale name="mail.warning.binary_missing.body" html="true">
+        <locale name="mail.warning.executable_missing.body" html="true">
             <de><![CDATA[
 <p>PDF-Dokumente auf Ihrem QUIQQER-System [host] können nicht oder u.U. nicht vollständig korrekt generiert werden. Folgender Fehler tritt auf:</p>
 <p><b>[error]</b></p>
 <p>Bitte prüfen Sie, ob das Programm <b>wkhtmltopdf</b> auf Ihrem System installiert und von PHP ausführbar ist.</p>
-<p>Sollte das Programm bereits installiert sein, prüfen Sie, ob der korrekte Pfad unter <b>Einstellungen -> HTML zu PDF Konvertierung -> wkhtmltopdf binary</b> eingetragen ist.</p>
+<p>Sollte das Programm bereits installiert sein, prüfen Sie, ob der korrekte Pfad unter <b>Einstellungen -> HTML zu PDF Konvertierung -> wkhtmltopdf executable</b> eingetragen ist.</p>
 <p>wkhtmltopdf wird mindestens in Version <b>0.12.5 (with patched qt)</b> benötigt.</p>
 <p>Weitere Informationen finden Sie unter <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
 ]]></de>
@@ -46,7 +46,7 @@
 <p>PDF documents on your QUIQQER system [host] may not be generated correctly or at all. The following error occurs:</p>
 <p><b>[error]</b></p>
 <p>Please check if the program <b>wkhtmltopdf</b> is installed on your system and executable by PHP. The following error occurs:</p>
-<p>If the program should already be installed, check that the correct path is entered under <b>Settings -> HTML to PDF conversion -> wkhtmltopdf binary</b>.</p>
+<p>If the program should already be installed, check that the correct path is entered under <b>Settings -> HTML to PDF conversion -> wkhtmltopdf executable</b>.</p>
 <p>wkhtmltopdf is required in least version <b>0.12.5 (with patched qt)</b>.</p>
 <p>For further information, see <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
 ]]></en>
@@ -102,13 +102,13 @@
             <de><![CDATA[Ordner im Dateisystem (absoluter Pfad), in dem sich die Bibliotheks-Dateien befinden, die bei der Generierung von PDF-Dokumenten verwendet werden sollen. Leerlassen für die Verwendung der Standard-Betriebssystem-Einstellung.]]></de>
             <en><![CDATA[Folder in the file system (absolute path) containing the library files to be used when generating PDF documents. Leave empty to use the default operating system setting.]]></en>
         </locale>
-        <locale name="settings.binary.title">
-            <de><![CDATA[wkhtmltopdf binary]]></de>
-            <en><![CDATA[wkhtmltopdf binary]]></en>
+        <locale name="settings.executable.title">
+            <de><![CDATA[wkhtmltopdf executable]]></de>
+            <en><![CDATA[wkhtmltopdf executable]]></en>
         </locale>
-        <locale name="settings.binary.description" html="true">
-            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>wkhtmltopdf</b> binary. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>wkhtmltopdf</b> binary. Has to executable by the executing PHP process.]]></en>
+        <locale name="settings.executable.description" html="true">
+            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>wkhtmltopdf</b> executable. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Absolute filesystem path to the <b>wkhtmltopdf</b> executable. Has to executable by the executing PHP process.]]></en>
         </locale>
         <locale name="settings.testDocument.title">
             <de><![CDATA[Einstellungen testen]]></de>
@@ -118,13 +118,13 @@
             <de><![CDATA[Generiert ein Test-Dokument basierend auf den aktuellen Einstellungen (<b>Einstellungen sollten vorher gespeichert werden!</b>).]]></de>
             <en><![CDATA[Generates a test document based on the current settings (<b>settings should be saved beforehand!</b>).]]></en>
         </locale>
-        <locale name="settings.binary_convert.title">
-            <de><![CDATA[convert binary (ImageMagick)]]></de>
-            <en><![CDATA[convert binary (ImageMagick)]]></en>
+        <locale name="settings.executable_convert.title">
+            <de><![CDATA[convert executable (ImageMagick)]]></de>
+            <en><![CDATA[convert executable (ImageMagick)]]></en>
         </locale>
-        <locale name="settings.binary_convert.description">
-            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> binary. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>convert</b> binary. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
+        <locale name="settings.executable_convert.description">
+            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> executable. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
         </locale>
         <locale name="settings.html_to_pdf_creator_provider.title">
             <de><![CDATA[Provider zur PDF-Erzeugung]]></de>
@@ -168,26 +168,26 @@
             <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
         </locale>
-        <locale name="settings.image_magick.convert_binary.title">
-            <de><![CDATA[convert binary]]></de>
-            <en><![CDATA[convert binary]]></en>
+        <locale name="settings.image_magick.convert_executable.title">
+            <de><![CDATA[convert executable]]></de>
+            <en><![CDATA[convert executable]]></en>
         </locale>
-        <locale name="settings.image_magick.convert_binary.description">
-            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> binary. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>convert</b> binary. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
+        <locale name="settings.image_magick.convert_executable.description">
+            <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> executable. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
         </locale>
 
         <locale name="provider.ImageMagick.title">
-            <de><![CDATA[ImageMagick (convert)]]></de>
-            <en><![CDATA[ImageMagick (convert)]]></en>
+            <de><![CDATA[ImageMagick (convert; setzt "convert executable" voraus)]]></de>
+            <en><![CDATA[ImageMagick (convert; requires "convert executable")]]></en>
         </locale>
 
         <!-- Class: Handler -->
-        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_binary_not_found">
+        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_executable_not_found">
             <de><![CDATA[Das Programm "convert" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "convert" (Teil von ImageMagick).]]></de>
             <en><![CDATA[The executable "convert" could not be found on the system. Please install "convert" (part of ImageMagick).]]></en>
         </locale>
-        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_binary_not_executable">
+        <locale name="exception.Provider.ImageMagick.checkRequirements.convert_executable_not_executable">
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "convert" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
@@ -198,6 +198,10 @@
         <locale name="exception.Provider.GoogleChrome.checkRequirements.not_executable">
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "google-chrome" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "google-chrome" ([path]). Please configure your system so that PHP can execute it.]]></en>
+        </locale>
+        <locale name="exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up">
+            <de><![CDATA[Aus PDF-Dateien können aktuell keine Bilder generiert werden, da kein PDF-zu-Bild Provider konfiguriert ist.]]></de>
+            <en><![CDATA[Currently, images cannot be created from PDF files, since no PDF-to-image provider is configured.]]></en>
         </locale>
     </groups>
 

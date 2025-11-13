@@ -14,7 +14,7 @@ use function pathinfo;
 readonly class Converter implements PdfToImageConverterInterface
 {
     public function __construct(
-        private string $converterBinary
+        private string $convertExecutable
     ) {
     }
 
@@ -26,7 +26,7 @@ readonly class Converter implements PdfToImageConverterInterface
         $imageFile = basename($pdfFile, '.pdf') . '.jpg';
 
         $command = [
-            $this->converterBinary,
+            $this->convertExecutable,
 
             '-transparent-color',
             'white',
@@ -84,9 +84,9 @@ readonly class Converter implements PdfToImageConverterInterface
 
         /**
          * Check if the PDF was split into multiple images.
-         * In this case the images need to be appended to one single image.
          */
         $imageFileInfo = pathinfo($imageFile);
+        // @phpstan-ignore offsetAccess.notFound ('extension' property always exists)
         $imageFileExt = $imageFileInfo['extension'];
         $imageFileDir = $imageFileInfo['dirname'] . '/';
         $imageFileNoExt = $imageFileDir . $imageFileInfo['filename'];
