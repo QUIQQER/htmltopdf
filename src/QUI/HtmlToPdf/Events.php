@@ -3,20 +3,21 @@
 namespace QUI\HtmlToPdf;
 
 use QUI;
+use QUI\Package\Package;
 use Smarty;
 use SmartyException;
-use QUI\Package\Package;
 
 /**
- * Document that receives HTML and outputs PDF
- *
- * @author www.pcsg.de (Patrick Müller)
+ * Main event handlers for quiqqer/htmltopdf
  */
 class Events
 {
+    /**
+     * quiqqer/core: onPackageSetup
+     */
     public static function onPackageSetup(Package $package): void
     {
-
+        self::migrateConfigFromV3($package);
     }
 
     private static function migrateConfigFromV3(Package $package): void
@@ -28,7 +29,15 @@ class Events
                 throw new QUI\Exception("Could not load config from {$package->getName()}.");
             }
 
-            $convertExecutable = $config->get('')
+            $convertExecutableOld = $config->get('settings', 'binary_convert');
+            $convertExecutableNew = $config->get('image_magick', 'convert_executable');
+
+            if (empty($convertExecutableOld) || !empty($convertExecutableNew)) {
+                return;
+            }
+
+            $config->set('image_magick', 'convert_executable', $convertExecutableOld);
+            $config->save();
         } catch (\Exception $exception) {
             QUI\System\Log::writeException($exception);
         }

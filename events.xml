@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <events>
     <event on="onSmartyInit" fire="\QUI\HtmlToPdf\Events::onSmartyInit" />
+    <event on="onPackageSetup" fire="\QUI\HtmlToPdf\Events::onPackageSetup" />
 </events>
