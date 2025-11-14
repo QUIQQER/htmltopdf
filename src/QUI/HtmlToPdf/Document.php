@@ -73,9 +73,7 @@ class Document extends QUI\QDOM
      */
     public function __construct(DocumentOptions | array | null $options = null)
     {
-        if (is_null($options)) {
-            $this->options = new DocumentOptions();
-        } elseif (is_array($options)) {
+        if (is_null($options) || is_array($options)) {
             $this->options = new DocumentOptions($options);
         } else {
             $this->options = $options;
