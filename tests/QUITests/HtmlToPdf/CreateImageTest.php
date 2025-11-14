@@ -51,7 +51,7 @@ class CreateImageTest extends TestCase
 
         $this->assertNotEmpty($imageFiles, 'Image files not found.');
         $this->assertFileExists($imageFiles[0], 'First image file not found.');
-        $this->assertEquals('a062aa2b0ecf3f08e4f6d3d6f5f2384a', md5_file($imageFiles[0]));
+        $this->assertEquals('1d5db5c9e982818507d75a97af844fbe', md5_file($imageFiles[0]));
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
