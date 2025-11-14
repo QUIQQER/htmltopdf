@@ -4,6 +4,9 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
+use function gettype;
+use function property_exists;
+
 /**
  * Configuration object for PDF document generation
  */
@@ -77,11 +80,6 @@ class DocumentOptions
     public bool $foldingMarks = false;
 
     /**
-     * Disable smart shrinking
-     */
-    public bool $disableSmartShrinking = false;
-
-    /**
      * CSS class for the header container.
      */
     public string $cssClassHeaderContainer = 'document-header';
@@ -103,14 +101,26 @@ class DocumentOptions
     public string $cssClassPageNumbersContainer = 'document-footer-pageNumbers';
 
     /**
+     * @param array<string,string|bool|numeric>|null $options - Properties of this class provided in array form
      * @param QUI\Locale|null $locale [default: {@see QUI::getLocale()}]
      */
-    public function __construct(private ?QUI\Locale $locale = null)
+    public function __construct(?array $options = null, private ?QUI\Locale $locale = null)
     {
         if (is_null($this->locale)) {
             $this->locale = QUI::getLocale();
         }
 
         $this->pageNumbersPrefix = $this->locale->get('quiqqer/htmltopdf', 'footer.page.prefix');
+
+        if (!is_null($options)) {
+            foreach ($options as $k => $v) {
+                if (
+                    property_exists($this, $k) &&
+                    gettype($v) === gettype($this->$k)
+                ) {
+                    $this->$k = $v;
+                }
+            }
+        }
     }
 }

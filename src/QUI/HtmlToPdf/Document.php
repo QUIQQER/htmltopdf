@@ -73,41 +73,13 @@ class Document extends QUI\QDOM
      */
     public function __construct(DocumentOptions | array | null $options = null)
     {
-        if (is_null($options) || is_array($options)) {
+        if (is_null($options)) {
             $this->options = new DocumentOptions();
-
-            if (is_array($options)) {
-                foreach ($options as $k => $v) {
-                    if (
-                        property_exists($this->options, $k) &&
-                        gettype($v) === gettype($this->options->$k)
-                    ) {
-                        $this->options->$k = $v;
-                    }
-                }
-            }
+        } elseif (is_array($options)) {
+            $this->options = new DocumentOptions($options);
         } else {
             $this->options = $options;
         }
-
-        // TODO: auskommentierten Bereich löschen, aber vorher gucken, was davon noch benötigt wird
-
-//        $this->setAttributes([
-//            'showPageNumbers' => true,
-//            'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
-//            'filename' => '',
-//            'dpi' => 300,
-//            'marginTop' => 20,    // mm
-//            'marginRight' => 5,     // mm
-//            'marginBottom' => 20,    // mm
-//            'marginLeft' => 5,     // mm
-//            'headerSpacing' => 5,     // should be 5 at minimum
-//            'footerSpacing' => 0,
-//            'zoom' => 1,
-//            'enableForms' => false,
-//            'foldingMarks' => false,
-//            'disableSmartShrinking' => false
-//        ]);
 
         $this->documentId = uniqid();
 
