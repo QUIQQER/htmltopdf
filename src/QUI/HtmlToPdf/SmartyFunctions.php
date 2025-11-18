@@ -38,7 +38,16 @@ class SmartyFunctions
             }
 
             $mimeType = mime_content_type($image);
-            return "data:" . $mimeType . ";base64," . base64_encode(file_get_contents($image));
+            $imagerFileContent = file_get_contents($image);
+
+            if ($imagerFileContent === false) {
+                QUI\System\Log::addWarning(
+                    "{$params['image']} file content could not be read."
+                );
+                return '';
+            }
+
+            return "data:" . $mimeType . ";base64," . base64_encode($imagerFileContent);
         } elseif (!($image instanceof QUI\Projects\Media\Image)) {
             QUI\System\Log::addWarning(
                 "\$params['image'] is not a " . QUI\Projects\Media\Image::class . "."
