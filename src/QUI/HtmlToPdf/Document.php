@@ -98,7 +98,7 @@ class Document extends QUI\QDOM
     {
         parent::setAttribute($name, $value);
 
-        if (property_exists($this->options, $name) && gettype($value) === gettype($this->options->$name)) {
+        if (property_exists($this->options, $name)) {
             $this->options->$name = $value;
         }
     }
@@ -447,36 +447,6 @@ class Document extends QUI\QDOM
         }
 
         return $this->parseRelativeLinks($body);
-//
-//
-//
-//
-//        $header = '<!DOCTYPE html>
-//                        <html>
-//                         <head>
-//                            <meta charset="UTF - 8">';
-//
-//        // add css
-//        $css = $hd['css'];
-//
-//        if (empty($css)) {
-//            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
-//        }
-//
-//        $header .= '<style>' . $css . '</style>';
-//
-//        foreach ($hd['cssFiles'] as $file) {
-//            $header .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
-//        }
-//
-//        $header .= '</head>';
-//
-//        $body = '<body>' . $hd['content'];
-//
-//
-//        $body .= '</body></html>';
-//
-//        return $this->parseRelativeLinks($header . $body);
     }
 
     /**

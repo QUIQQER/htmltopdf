@@ -18,7 +18,7 @@ $type = $_GET['type'];
 
 try {
     $document = new Document([
-        'marginTop' => 50, // dies ist variabel durch quiqqerInvoicePdfCreate
+        'marginTop' => 40, // dies ist variabel durch quiqqerInvoicePdfCreate
 //        'marginBottom'  => 10, // dies ist variabel durch quiqqerInvoicePdfCreate
         'filename' => 'test.pdf',
     ]);

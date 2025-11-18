@@ -4,7 +4,6 @@ namespace QUI\HtmlToPdf;
 
 use QUI;
 
-use function gettype;
 use function property_exists;
 
 /**
@@ -114,10 +113,7 @@ class DocumentOptions
 
         if (!is_null($options)) {
             foreach ($options as $k => $v) {
-                if (
-                    property_exists($this, $k) &&
-                    gettype($v) === gettype($this->$k)
-                ) {
+                if (property_exists($this, $k)) {
                     $this->$k = $v;
                 }
             }

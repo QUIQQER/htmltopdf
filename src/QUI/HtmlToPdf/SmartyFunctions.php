@@ -6,7 +6,10 @@ use QUI;
 use Smarty_Internal_Template;
 use Throwable;
 
+use function base64_encode;
+use function file_exists;
 use function file_get_contents;
+use function is_readable;
 
 class SmartyFunctions
 {
@@ -26,9 +29,19 @@ class SmartyFunctions
 
         $image = $params['image'];
 
-        if (!($image instanceof QUI\Projects\Media\Image)) {
+        if (is_string($image)) {
+            if (!file_exists($image) || !is_readable($image)) {
+                QUI\System\Log::addWarning(
+                    "\$params['image'] does not exist or is not readable."
+                );
+                return '';
+            }
+
+            $mimeType = mime_content_type($image);
+            return "data:" . $mimeType . ";base64," . base64_encode(file_get_contents($image));
+        } elseif (!($image instanceof QUI\Projects\Media\Image)) {
             QUI\System\Log::addWarning(
-                "\$params does not contain an instance of QUI\Projects\Media\Image"
+                "\$params['image'] is not a " . QUI\Projects\Media\Image::class . "."
             );
             return '';
         }

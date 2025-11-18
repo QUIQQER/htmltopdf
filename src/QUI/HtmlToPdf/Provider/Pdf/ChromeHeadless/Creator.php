@@ -145,8 +145,8 @@ class Creator implements HtmlToPdfCreatorInterface
             $headerTemplate = $this->buildHeaderTemplate($document);
             $footerTemplate = $this->buildFooterTemplate($document);
 
-            preg_match_all('#\d*mm#i', $footerTemplate, $matches);
-
+//            preg_match_all('#\d*mm#i', $footerTemplate, $matches);
+//
 //            if (!empty($matches[0])) {
 //                foreach ($matches[0] as $mmCssRuleValue) {
 //                    $numericValueInMm = preg_replace('#[^\d]#i', '', $mmCssRuleValue);
@@ -168,15 +168,14 @@ class Creator implements HtmlToPdfCreatorInterface
                 'footerTemplate' => $footerTemplate,
 //                'scale' => (float)$document->getAttribute('zoom') ?: 1.0,
 
-                // Set margins to 0 for full-width footer
                 'marginTop' => $this->mmToInches((float)$document->options->marginTop),
                 'marginRight' => $this->mmToInches((float)$document->options->marginRight),
                 'marginBottom' => $this->mmToInches((float)$document->options->marginBottom),
                 'marginLeft' => $this->mmToInches((float)$document->options->marginLeft),
 
                 // A4 paper size in inches
-                'paperWidth' => 8.27,   // A4 width: 210mm = 8.27 inches
-                'paperHeight' => 11.69, // A4 height: 297mm = 11.69 inches
+                'paperWidth' => 8.26772,   // A4 width: 210mm = 8.27 inches
+                'paperHeight' => 11.6929, // A4 height: 297mm = 11.69 inches
             ];
 
             // Generate PDF
@@ -225,17 +224,16 @@ class Creator implements HtmlToPdfCreatorInterface
         // Specific styling for footer wrapper
         $style = '<style>
              * {
+                box-sizing: border-box;
                 -webkit-print-color-adjust: exact;
              }
              
             .' . $document->options->cssClassHeaderContainer . '{
                 position: absolute;
-                width: 210mm;
-                margin: 0;
-                padding: 0;
+                width: calc(100% - ' . $document->options->marginLeft . 'mm - ' . $document->options->marginRight . 'mm);
                 height: ' . $document->options->marginTop . 'mm;
                 top: 0;
-                left: 0;
+                left: ' . $document->options->marginLeft . 'mm;
             }
         </style>';
 
@@ -273,17 +271,16 @@ class Creator implements HtmlToPdfCreatorInterface
         // Specific styling for footer wrapper
         $style = '<style>
              * {
+                box-sizing: border-box;
                 -webkit-print-color-adjust: exact;
              }
 
             .' . $document->options->cssClassFooterContainer . '{
                 position: absolute;
-                width: 210mm;
-                margin: 0;
-                padding: 0;
+                width: calc(100% - ' . $document->options->marginLeft . 'mm - ' . $document->options->marginRight . 'mm);
                 height: ' . $document->options->marginBottom . 'mm;
                 bottom: 0;
-                left: 0;
+                left: ' . $document->options->marginLeft . 'mm;
             }
         </style>';
 
