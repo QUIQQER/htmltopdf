@@ -3,54 +3,62 @@
 QUIQQER HTML to PDF
 ========
 
-This plugin allows the conversion from HTML to PDF. Set separate HTML files for the PDF header, body and footer. Works with `wkhtmltopdf`.
+This plugin allows the conversion from HTML to PDF. Set separate HTML files for the PDF header, body and footer.
+Additionally, PDF files can be directly converted to images.
 
 Package Name:
 
     quiqqer/htmltopdf
 
-
 Features
 --------
 * Convert HTML to PDF files
+* Convert PDF files to image(s)
 * Use simple HTML and CSS to style your PDFs
 * Separate HTML files and CSS files for PDF header, body and footer (optional)
 * Show page numbers in your PDF footer
+* Comes with two providers:
+  * mpdf (https://mpdf.github.io/) - runs natively in PHP and does not require external dependencies
+  * chrome-headless (https://github.com/chrome-php/chrome) - runs in a headless Chrome browser (requires Chrome 65+ to be installed)
 
 Installation
 ------------
 The Package Name is: quiqqer/htmltopdf
 
-### Dependencies
-
-**wkhtmltopdf** ist required in version **0.12.5 (with patched qt)** or higher.
-
-Download: http://wkhtmltopdf.org/downloads.html
-
-**Hint**: The required version may not be available via your OS sources list.
-
 Usage
 ----------
+
 ```php
-$Document = new \QUI\HtmlToPdf\Document();
+$document = new \QUI\HtmlToPdf\Document();
 
-$Document->setHeaderHTML('<div class="header-test"><p>I am a header</p></div>');
+$document->setHeaderHTML('<div class="header-test"><p>I am a header</p></div>');
 
-$Document->setContentHTML('<div class="body-test">I am THE body</div>');
-$Document->setContentCSS('.body-test { color: #ABC123; }');
-$Document->addContentCSSFile('/tmp/test.css');
+$document->setContentHTML('<div class="body-test">I am THE body</div>');
+$document->setContentCSS('.body-test { color: #ABC123; }');
+$document->addContentCSSFile('/tmp/test.css');
 
-$Document->setFooterHTML('<div class="footer-test">I am a footer</div>');
-$Document->setFooterCSS('.footer-test { color: #CFE123; }');
+$document->setFooterHTML('<div class="footer-test">I am a footer</div>');
+$document->setFooterCSS('.footer-test { color: #CFE123; }');
+
+$handler = new \QUI\HtmlToPdf\Handler();
+$pdfCreator = $handler->getPdfCreator();
 
 // create PDF file
-$pdfFile = $Document->createPDF();
+$pdfFile = $pdfCreator->createPdf($document);
 
-// Download PDF file
-$Document->download();
+// Download (and save) PDF file
+$pdfFile = $pdfCreator->createAndDownloadPdf($document, true);
+
+// Convert PDF to imgage(s)
+$pdfAsImages = $pdfCreator->createPdfAndConvertToImage($document);
 ```
 
-For the settings for the `\QUI\HtmlToPdf\Document` class see the [Wiki](https://dev.quiqqer.com/quiqqer/htmltopdf/wikis/settings)
+## Version 4
+
+Version 4 constitutes a major overhaul and cleanup of the plugin code base.
+
+Read everything important in the wiki:  
+https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/version-4
 
 Contribute
 ----------

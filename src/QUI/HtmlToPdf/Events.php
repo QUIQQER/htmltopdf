@@ -1,151 +1,61 @@
 <?php
 
-/**
- * This file contains \QUI\HtmlToPdf\Events
- */
-
 namespace QUI\HtmlToPdf;
 
 use QUI;
-
-use function exec;
-use function explode;
-use function file_exists;
-use function is_executable;
-use function str_replace;
+use QUI\Package\Package;
+use Smarty;
+use SmartyException;
 
 /**
- * Document that receives HTML and outputs PDF
- *
- * @author www.pcsg.de (Patrick Müller)
+ * Main event handlers for quiqqer/htmltopdf
  */
 class Events
 {
     /**
-     * Event: onPackageSetup
-     *
-     * @param QUI\Package\Package $Package
-     * @return void
-     *
-     * @throws QUI\Exception
+     * quiqqer/core: onPackageSetup
      */
-    public static function onPackageSetup(QUI\Package\Package $Package): void
+    public static function onPackageSetup(Package $package): void
     {
-        if ($Package->getName() !== 'quiqqer/htmltopdf') {
-            return;
-        }
-
-        self::setupPdfGeneratorBinary();
-        self::setupConvertBinary();
+        self::migrateConfigFromV3($package);
     }
 
-    /**
-     * Set up the binary for "wkhtmltopdf"
-     *
-     * @return void
-     * @throws QUI\Exception
-     */
-    protected static function setupPdfGeneratorBinary(): void
+    private static function migrateConfigFromV3(Package $package): void
     {
-        $binary = Handler::getPDFGeneratorBinaryPath();
-
-        if (!empty($binary)) {
-            return;
-        }
-
         try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            return;
-        }
+            $config = $package->getConfig();
 
-        // Try to locate "wkhtmltopdf"
-        exec("whereis wkhtmltopdf", $output);
-
-        if (!empty($output)) {
-            $output = str_replace("wkhtmltopdf: ", "", $output[0]);
-            $binaries = explode(' ', $output);
-
-            // Try all binaries and set the one that works
-            foreach ($binaries as $binary) {
-                if (file_exists($binary) && is_executable($binary)) {
-                    $Conf->setValue('settings', 'binary', $binary);
-                    $Conf->save();
-                    return;
-                }
+            if (is_null($config)) {
+                throw new QUI\Exception("Could not load config from {$package->getName()}.");
             }
-        }
 
-        // Try defaults
-        $binary = "/usr/local/bin/wkhtmltopdf";
+            $convertExecutableOld = $config->get('settings', 'binary_convert');
+            $convertExecutableNew = $config->get('image_magick', 'convert_executable');
 
-        if (file_exists($binary) && is_executable($binary)) {
-            $Conf->setValue('settings', 'binary', $binary);
-            $Conf->save();
-            return;
-        }
+            if (empty($convertExecutableOld) || !empty($convertExecutableNew)) {
+                return;
+            }
 
-        $binary = "/usr/bin/wkhtmltopdf";
-
-        if (file_exists($binary) && is_executable($binary)) {
-            $Conf->setValue('settings', 'binary', $binary);
-            $Conf->save();
+            $config->set('image_magick', 'convert_executable', $convertExecutableOld);
+            $config->save();
+        } catch (\Exception $exception) {
+            QUI\System\Log::writeException($exception);
         }
     }
 
     /**
-     * Set up the binary for "convert" (ImageMagick)
+     * Register Smarty functions that are useful for HTML to PDF generation.
      *
+     * @param Smarty $smarty
      * @return void
-     * @throws QUI\Exception
+     * @throws SmartyException
      */
-    protected static function setupConvertBinary(): void
+    public static function onSmartyInit(Smarty $smarty): void
     {
-        $binary = Handler::getConvertBinaryPath();
-
-        if (!empty($binary)) {
-            return;
-        }
-
-        try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            return;
-        }
-
-        // Try to locate "wkhtmltopdf"
-        exec("whereis convert", $output);
-
-        if (!empty($output)) {
-            $output = str_replace("convert: ", "", $output[0]);
-            $binaries = explode(' ', $output);
-
-            // Try all binaries and set the one that works
-            foreach ($binaries as $binary) {
-                if (file_exists($binary) && is_executable($binary)) {
-                    $Conf->setValue('settings', 'binary_convert', $binary);
-                    $Conf->save();
-                    return;
-                }
-            }
-        }
-
-        // Try defaults
-        $binary = "/usr/local/bin/convert";
-
-        if (file_exists($binary) && is_executable($binary)) {
-            $Conf->setValue('settings', 'binary_convert', $binary);
-            $Conf->save();
-            return;
-        }
-
-        $binary = "/usr/bin/convert";
-
-        if (file_exists($binary) && is_executable($binary)) {
-            $Conf->setValue('settings', 'binary_convert', $binary);
-            $Conf->save();
-        }
+        $smarty->registerPlugin(
+            "function",
+            "imageBase64",
+            SmartyFunctions::imageBase64(...)
+        );
     }
 }
