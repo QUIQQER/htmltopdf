@@ -3,7 +3,12 @@
 namespace QUI\HtmlToPdf;
 
 use QUI;
+use QUI\Exception;
 use QUI\HtmlToPdf\Exception as HtmlToPdfException;
+use QUI\HtmlToPdf\Provider\Pdf\ProviderRepository as HtmlToPdfCreatorProviderRepository;
+use QUI\HtmlToPdf\Provider\Pdf\ProviderRepositoryInterface as HtmlToPdfCreatorProviderRepositoryInterface;
+use QUI\HtmlToPdf\Provider\Image\ProviderRepository as PdfToImageConverterProviderRepository;
+use QUI\HtmlToPdf\Provider\Image\ProviderRepositoryInterface as PdfToImageConverterProviderRepositoryInterface;
 
 use function is_executable;
 
@@ -14,186 +19,91 @@ use function is_executable;
  */
 class Handler
 {
-    const PDF_GENERATOR_BINARY_REQUIRED_VERSION = '0.12.4 (with patched qt)';
+    private ?PdfCreator $pdfCreator = null;
+    private HtmlToPdfCreatorProviderRepositoryInterface $htmlToPdfCreatorProviderRepository;
+    private PdfToImageConverterProviderRepositoryInterface $pdfToImageConverterProviderRepository;
 
-    /**
-     * Additional wkhtmltopdf CLI parameters based on version
-     *
-     * @var array
-     */
-    public static array $cliParams = [];
-
-    /**
-     * Get path to the PDF generator binary
-     */
-    public static function getPDFGeneratorBinaryPath(): bool|string
-    {
-        try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            return false;
+    public function __construct(
+        ?HtmlToPdfCreatorProviderRepositoryInterface $htmlToPdfCreatorProviderRepository = null,
+        ?PdfToImageConverterProviderRepositoryInterface $pdfToImageConverterRepository = null
+    ) {
+        if (is_null($htmlToPdfCreatorProviderRepository)) {
+            $htmlToPdfCreatorProviderRepository = new HtmlToPdfCreatorProviderRepository();
         }
 
-        $binaryPath = $Conf->get('settings', 'binary');
-        $binaryPath = trim($binaryPath);
+        if (is_null($pdfToImageConverterRepository)) {
+            $pdfToImageConverterRepository = new PdfToImageConverterProviderRepository();
+        }
 
-        return empty($binaryPath) ? false : $binaryPath;
+        $this->htmlToPdfCreatorProviderRepository = $htmlToPdfCreatorProviderRepository;
+        $this->pdfToImageConverterProviderRepository = $pdfToImageConverterRepository;
     }
 
     /**
-     * Checks if the binary for generating PDF files from HTML is installed
-     * and executable in the current PHP environment.
-     *
-     * @throws Exception
+     * @throws QUI\Exception
      */
-    public static function checkPDFGeneratorBinary(): void
+    public function getPdfCreator(): PdfCreator
     {
-        $binaryPath = self::getPDFGeneratorBinaryPath();
-
-        if (empty($binaryPath)) {
-            throw new HtmlToPdfException([
-                'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.binary_not_found',
-                [
-                    'requiredVersion' => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
-                ]
-            ]);
+        if (!is_null($this->pdfCreator)) {
+            return $this->pdfCreator;
         }
 
-        if (!is_executable($binaryPath)) {
-            throw new HtmlToPdfException([
-                'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.binary_not_executable',
-                [
-                    'path' => $binaryPath
-                ]
-            ]);
-        }
-
-        $binaryVersion = explode(' ', `$binaryPath -V`);
-        $versionParts = explode('.', $binaryVersion[1]);
-
-        if (isset($versionParts[0]) && (int)$versionParts[0] > 0) {
-            return;
-        }
-
-        if (isset($versionParts[1]) && (int)$versionParts[1] > 12) {
-            return;
-        }
-
-        if (isset($versionParts[2]) && (int)$versionParts[2] >= 4) {
-            // --enable-local-file-access is required since version 0.12.6
-            // see also: https://stackoverflow.com/q/62315246
-            if ((int)$versionParts[2] >= 6) {
-                self::$cliParams[] = '--enable-local-file-access';
-            }
-
-            return;
-        }
-
-        if (
-            !empty($binaryVersion[2]) && $binaryVersion[2] === '(with'
-            && !empty($binaryVersion[3]) && $binaryVersion[3] === 'patched'
-            && !empty($binaryVersion[4]) && $binaryVersion[4] === 'qt)'
-        ) {
-            return;
-        }
-
-        throw new HtmlToPdfException([
-            'quiqqer/htmltopdf',
-            'exception.Handler.checkPDFGeneratorBinary.binary_wrong_version',
-            [
-                'installedVersion' => $binaryVersion[1],
-                'requiredVersion' => self::PDF_GENERATOR_BINARY_REQUIRED_VERSION
-            ]
-        ]);
-    }
-
-    /**
-     * Send e-mail about wrong/missing wkhtmltopdf binary to admin
-     *
-     * @param string $error - Error text
-     * @return void
-     */
-    public static function sendBinaryWarningMail(string $error): void
-    {
-        $Mailer = new QUI\Mail\Mailer();
-        $adminMail = QUI::conf('mail', 'admin_mail');
-
-        if (empty($adminMail)) {
-            return;
-        }
-
-        $Mailer->addRecipient($adminMail);
-        $Mailer->setSubject(
-            QUI::getLocale()->get(
-                'quiqqer/htmltopdf',
-                'mail.warning.binary_missing.subject',
-                [
-                    'host' => QUI::conf('globals', 'host')
-                ]
-            )
+        $this->pdfCreator = new PdfCreator(
+            $this->htmlToPdfCreatorProviderRepository->getCurrentProvider()->getHtmlToPdfCreator(),
+            $this->pdfToImageConverterProviderRepository->getCurrentProvider()->getPdfToImageConverter()
         );
-        $Mailer->setBody(
-            QUI::getLocale()->get(
-                'quiqqer/htmltopdf',
-                'mail.warning.binary_missing.body',
-                [
-                    'host' => QUI::conf('globals', 'host'),
-                    'error' => $error
-                ]
-            )
-        );
-
-        try {
-            $Mailer->send();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-        }
+        return $this->pdfCreator;
     }
 
     /**
      * Get path to the ImageMagick `convert` command
      *
-     * @return bool|string
+     * @return string
+     * @throws Exception
      */
-    public static function getConvertBinaryPath(): bool|string
+    public static function getConvertExecutablePath(): string
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            return false;
+            $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+
+            if (is_null($conf)) {
+                throw new QUI\Exception("Cannot read / build config for quiqqer/htmltopdf.");
+            }
+        } catch (\Exception $exception) {
+            QUI\System\Log::writeException($exception);
+            throw $exception;
         }
 
-        $binaryPath = $Conf->get('settings', 'binary_convert');
-        $binaryPath = trim($binaryPath);
+        $executablePath = $conf->get('settings', 'executable_convert');
 
-        return empty($binaryPath) ? false : $binaryPath;
+        if (empty($executablePath)) {
+            throw new QUI\Exception("No convert executable path set for quiqqer/htmltopdf.");
+        }
+
+        return trim($executablePath);
     }
 
     /**
-     * Checks if the binary for ImageMagick`convert` is installed
+     * Checks if the executable for ImageMagick`convert` is installed
      * and executable in the current PHP environment.
      *
      * @throws Exception
      */
-    public static function checkConvertBinary(): void
+    public static function checkConvertExecutable(): void
     {
-        $binaryPath = self::getConvertBinaryPath();
+        $executablePath = self::getConvertExecutablePath();
 
-        if (empty($binaryPath)) {
+        if (empty($executablePath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_found'
+                'exception.Handler.checkPDFGeneratorExecutable.convert.executable_not_found'
             ]);
         }
 
-        if (!is_executable($binaryPath)) {
+        if (!is_executable($executablePath)) {
             throw new HtmlToPdfException([
                 'quiqqer/htmltopdf',
-                'exception.Handler.checkPDFGeneratorBinary.convert.binary_not_executable'
+                'exception.Handler.checkPDFGeneratorExecutable.convert.executable_not_executable'
             ]);
         }
     }
