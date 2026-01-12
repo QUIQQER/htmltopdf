@@ -11,7 +11,10 @@ phpunit-php8.2:
   rules:
     - when: never
 
-# Remove the entire phpunit-php8.3 block, to allow PHPUnit to run on PHP 8.3 in your pipeline
+# Install convert (imagemagick) and chrome (for chrome-headless)
 phpunit-php8.3:
-  rules:
-    - when: never
+  before_script:
+    - sudo apt-get update
+    - cd /tmp && sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
+    - sudo apt-get install -yq imagemagick
