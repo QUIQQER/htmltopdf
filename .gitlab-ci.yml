@@ -15,3 +15,8 @@ phpunit-php8.1:
 phpunit-php8.2:
   rules:
     - when: never
+
+# Unit tests are disabled for the pipeline because it requires chrome / convert to be installed
+phpunit-php8.3:
+  rules:
+    - when: never
