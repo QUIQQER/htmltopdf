@@ -1,5 +1,5 @@
 /**
- * Test PDF generation
+ * Test PDF / image generation
  *
  * @module package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration
  * @author www.pcsg.de (Patrick Müller)
@@ -82,15 +82,15 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration', [
          * Generate a test PDF
          *
          * @param {*} Btn - QUIButton control
+         * @return Promise<void>
          */
-        $generateTestDocument: function (Btn) {
-            var self = this;
-            var id   = 'download-document-test';
-            var type = Btn.getAttribute('documentType');
+        $generateTestDocument: async function (Btn) {
+            const id   = 'download-document-test';
+            const type = Btn.getAttribute('documentType');
 
-            var startDownload = function () {
+            const startDownload = () => {
                 new Element('iframe', {
-                    src   : URL_OPT_DIR + 'quiqqer/htmltopdf/bin/test.php?type=' + type,
+                    src   : URL_OPT_DIR + 'quiqqer/htmltopdf/bin/backend/test.php?type=' + type,
                     id    : id,
                     styles: {
                         position: 'absolute',
@@ -101,21 +101,33 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration', [
                     }
                 }).inject(document.body);
 
-                (function () {
+                (() => {
                     document.getElements('#' + id).destroy();
 
-                    self.$BtnPdf.enable();
-                    self.$BtnImage.enable();
-                }).delay(10000, self);
+                    this.$BtnPdf.enable();
+                    this.$BtnImage.enable();
+                }).delay(10000);
             };
 
             this.$BtnPdf.disable();
             this.$BtnImage.disable();
 
-            QUIAjax.get('package_quiqqer_htmltopdf_ajax_testBinary', function (error) {
-                if (!error) {
-                    startDownload();
-                    return;
+            try {
+                switch (type) {
+                    case 'image':
+                        await this.$testProviderImage();
+                        break;
+
+                    default:
+                        await this.$testProviderPdf();
+                }
+
+                startDownload();
+            } catch (e) {
+                let error = e;
+
+                if (typeof e === 'object' && 'getMessage' in e) {
+                    error = e.getMessage();
                 }
 
                 new QUIConfirm({
@@ -139,15 +151,43 @@ define('package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration', [
                         textimage: 'icon-ok fa fa-check'
                     },
                     events       : {
-                        onOpen: function (Win) {
-                            self.$BtnPdf.enable();
-                            self.$BtnImage.enable();
+                        onOpen: () => {
+                            this.$BtnPdf.enable();
+                            this.$BtnImage.enable();
                         }
                     }
                 }).open();
-            }, {
-                'package': 'quiqqer/htmltopdf',
-                type     : type
+            }
+        },
+
+        $testProviderImage: async function () {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_htmltopdf_ajax_backend_testProviderImage', function (error) {
+                    if (error) {
+                        reject(error);
+                    }
+
+                    resolve();
+                }, {
+                    'package': 'quiqqer/htmltopdf',
+                    onError  : reject
+                });
+            });
+        },
+
+        $testProviderPdf: async function () {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_htmltopdf_ajax_backend_testProviderPdf', function (error) {
+                    if (error !== null) {
+                        reject(error);
+                        return;
+                    }
+
+                    resolve();
+                }, {
+                    'package': 'quiqqer/htmltopdf',
+                    onError  : reject
+                });
             });
         }
     });

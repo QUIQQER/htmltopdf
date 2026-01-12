@@ -1,6 +1,7 @@
-body {
+#document-footer {
     font-family: Verdana, sans-serif;
     line-height: 1.2em;
+    /*font-weight: 900;*/
 }
 
 #pages {

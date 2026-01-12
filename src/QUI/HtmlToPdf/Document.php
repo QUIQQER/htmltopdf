@@ -1,23 +1,17 @@
 <?php
 
-/**
- * This file contains \QUI\HtmlToPdf\Document
- */
-
 namespace QUI\HtmlToPdf;
 
 use QUI;
 
-use function array_merge;
-use function array_unique;
-use function array_values;
 use function file_exists;
-use function mb_substr;
-use function pathinfo;
-use function preg_replace;
-use function system;
-use function trim;
-use function unlink;
+use function file_get_contents;
+use function gettype;
+use function is_array;
+use function property_exists;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Document that receives HTML and outputs PDF
@@ -27,39 +21,24 @@ use function unlink;
 class Document extends QUI\QDOM
 {
     /**
-     * Path to wkhtmltopdf bin file
-     *
-     * @var ?string
-     */
-    protected ?string $converterBinary = null;
-
-    /**
      * Unique document id
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $documentId = null;
-
-    /**
-     * Flag if PDF has already been created
-     *
-     * @var bool
-     */
-    protected bool $created = false;
+    public readonly string $documentId;
 
     /**
      * Var directory of quiqqer/htmltopdf package
      *
      * @var string|null
      */
-    protected ?string $varDir = null;
+    private ?string $varDir = null;
 
     /**
      * Header data for PDF conversion
-     *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected array $header = [
+    private array $header = [
         'css' => '',
         'cssFiles' => [],
         'content' => '',
@@ -68,10 +47,9 @@ class Document extends QUI\QDOM
 
     /**
      * Content (body) data for PDF conversion
-     *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected array $body = [
+    private array $body = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
@@ -79,56 +57,49 @@ class Document extends QUI\QDOM
 
     /**
      * Footer data for PDF conversion
-     *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected array $footer = [
+    private array $footer = [
         'css' => '',
         'cssFiles' => [],
         'content' => ''
     ];
 
+    public readonly DocumentOptions $options;
+
     /**
-     * Document constructor.
-     *
-     * @param array $settings (optional)
+     * @param DocumentOptions|array<string,string|bool|numeric>|null $options - If array, keys will be mapped to {@see DocumentOptions} properties;
+     * If NULL a default options object is created.
      */
-    public function __construct(array $settings = [])
+    public function __construct(DocumentOptions | array | null $options = null)
     {
-        $this->setAttributes([
-            'showPageNumbers' => true,
-            'pageNumbersPrefix' => QUI::getLocale()->get('quiqqer/htmltopdf', 'footer.page.prefix'),
-            'filename' => '',
-            'dpi' => 300,
-            'marginTop' => 20,    // mm
-            'marginRight' => 5,     // mm
-            'marginBottom' => 20,    // mm
-            'marginLeft' => 5,     // mm
-            'headerSpacing' => 5,     // should be 5 at minimum
-            'footerSpacing' => 0,
-            'zoom' => 1,
-            'enableForms' => false,
-            'foldingMarks' => false,
-            'disableSmartShrinking' => false
-        ]);
-
-        $this->setAttributes($settings);
-
-        try {
-            Handler::checkPDFGeneratorBinary();
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-            Handler::sendBinaryWarningMail($Exception->getMessage());
+        if (is_null($options) || is_array($options)) {
+            $this->options = new DocumentOptions($options);
+        } else {
+            $this->options = $options;
         }
 
         $this->documentId = uniqid();
-        $this->converterBinary = Handler::getPDFGeneratorBinaryPath();
 
         try {
             $Package = QUI::getPackage('quiqqer/htmltopdf');
             $this->varDir = $Package->getVarDir();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * This also sets corresponding {@see DocumentOptions} properties for this document if available.
+     */
+    public function setAttribute(string $name, mixed $value): void
+    {
+        parent::setAttribute($name, $value);
+
+        if (property_exists($this->options, $name)) {
+            $this->options->$name = $value;
         }
     }
 
@@ -263,7 +234,8 @@ class Document extends QUI\QDOM
     /**
      * Set HTML content for PDF footer area
      *
-     * @param string $html
+     * @param string $html - HTML will be wrapped by <footer class="{$this->options->cssClassFooter}"></footer>;
+     *                       All <footer> tags contained in $html will be replaced by <div>!
      */
     public function setFooterHTML(string $html): void
     {
@@ -273,7 +245,9 @@ class Document extends QUI\QDOM
     /**
      * Set HTML file used for PDF footer area
      *
-     * @param string $file - path to html file
+     * @param string $file - path to html file;
+     *                       HTML will be wrapped by <footer class="{$this->options->cssClassFooter}"></footer>;
+     *                       All <footer> tags provided in $file will be replaced by <div>!
      *
      * @throws QUI\Exception
      */
@@ -325,226 +299,44 @@ class Document extends QUI\QDOM
     }
 
     /**
-     * Create PDF file based on settings
-     *
      * @return string - pdf file path
      *
      * @throws QUI\Exception
+     * @deprecated This direct call will be removed in the next major release.
+     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} with {@see PdfCreator::createPdf()}
      */
     public function createPDF(): string
     {
-        $varDir = $this->varDir;
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createPdf() instead of"
+            . " QUI\HtmlToPdf\Document::createPDF()",
+            E_USER_DEPRECATED
+        );
 
-        // Determine library path
-        $cmdPrefix = '';
-
-        try {
-            $Conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
-            $libPath = $Conf->get('settings', 'lib_path');
-
-            if (is_string($libPath)) {
-                $libPath = trim($libPath);
-            }
-
-            if (!empty($libPath)) {
-                $cmdPrefix = 'export LD_LIBRARY_PATH=' . $libPath . '; ';
-            }
-        } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-        }
-
-        $cmd = $cmdPrefix . $this->converterBinary . ' ';
-
-        $cmd .= ' -T ' . $this->getAttribute('marginTop') . 'mm';
-        $cmd .= ' -R ' . $this->getAttribute('marginRight') . 'mm';
-        $cmd .= ' -B ' . $this->getAttribute('marginBottom') . 'mm';
-        $cmd .= ' -L ' . $this->getAttribute('marginLeft') . 'mm';
-
-        if ($this->getAttribute('disableSmartShrinking') === true) {
-            $cmd .= ' --disable-smart-shrinking';
-        }
-
-        if ($this->getAttribute('enableForms') === true) {
-            $cmd .= ' --enable-forms';
-        }
-
-        $headerHtmlFile = false;
-        $footerHtmlFile = false;
-
-        if (!empty($this->header['content'])) {
-            $cmd .= ' --header-spacing ' . $this->getAttribute('headerSpacing');
-
-            $headerHtmlFile = $this->getHeaderHTMLFile();
-
-            $cmd .= ' --header-html "' . $headerHtmlFile . '"';
-//            $cmd .= ' --header-line';
-        }
-
-        if (
-            !empty($this->footer['content'])
-            || $this->getAttribute('showPageNumbers')
-        ) {
-            $cmd .= ' --footer-spacing ' . $this->getAttribute('footerSpacing');
-
-            $footerHtmlFile = $this->getFooterHTMLFile();
-
-            $cmd .= ' --footer-html "' . $footerHtmlFile . '"';
-        }
-
-        $cmd .= ' --dpi ' . (int)$this->getAttribute('dpi');
-        $cmd .= ' --zoom ' . (float)$this->getAttribute('zoom');
-
-        // Additional CLI params
-        foreach (Handler::$cliParams as $cliParam) {
-            $cmd .= ' ' . $cliParam;
-        }
-
-        $bodyHtmlFile = $this->getContentHTMLFile();
-
-        $pdfFile = $varDir . $this->documentId . '.pdf';
-
-        $cmd .= ' ' . $bodyHtmlFile . ' ' . $pdfFile;
-
-        exec($cmd . ' 2> /dev/null', $output, $exitStatus);
-
-        if ($exitStatus !== 0) {
-            QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF conversion failed:: ' . json_encode($output)
-                . ' -- PDF create cmd: > ' . $cmd . ' <'
-            );
-
-            throw new QUI\Exception([
-                'quiqqer/htmltopdf',
-                'exception.document.pdf.conversion.failed'
-            ]);
-        }
-
-        // delete html files
-        if ($headerHtmlFile) {
-            unlink($headerHtmlFile);
-        }
-
-        unlink($bodyHtmlFile);
-
-        if ($footerHtmlFile) {
-            unlink($footerHtmlFile);
-        }
-
-        $this->created = true;
-
-        QUI::getEvents()->fireEvent('quiqqerHtmlToPDFCreated', [$this, $pdfFile]);
-
-        return $pdfFile;
+        $handler = new Handler();
+        return $handler->getPdfCreator()->createPdf($this);
     }
 
     /**
      * @param bool $deletePdfFile
-     * @param array $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
+     * @param array<string> $cliParams (optional) - Additional CLI params for the "convert" command [default: no additional params]
      * @param bool $trim (optional) - Trim margin of PDF file before generating image [default: true]
-     * @return string|array - File to generated image or array with image files if multiple images are generated
+     * @return string|array<string> - File to generated image or array with image files if multiple images are generated
      *
      * @throws QUI\Exception
+     * @deprecated This direct call will be removed in the next major release.
+     *  Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} with {@see PdfCreator::createPdfAndConvertToImage()}
      */
-    public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array|string
+    public function createImage(bool $deletePdfFile = true, array $cliParams = [], bool $trim = true): array | string
     {
-        // TEST
-//        $html = $this->getHeaderHTML()
-//                .$this->getContentHTML()
-//                .$this->getFooterHTML(false);
-//
-//        $htmlFile  = $this->varDir.'test.html';
-//        $imageFile = $this->varDir.'text.jpg';
-//
-//        \file_put_contents($htmlFile, $html);
-//
-//        $cmd = 'wkhtmltoimage';
-//
-//        $cmd .= ' --disable-smart-width';
-//
-//        $cmd .= ' '.$htmlFile.' '.$imageFile;
-//
-//        exec($cmd.' 2> /dev/null', $output, $exitStatus);
-//
-//        \QUI\System\Log::writeRecursive($imageFile);
-//
-//        return $imageFile;
-        // /TEST
-
-        Handler::checkConvertBinary();
-
-        $pdfFile = $this->createPDF();
-        $imageFile = mb_substr($pdfFile, 0, -4) . '.jpg';
-
-        $pdfFileLine = '\'' . $pdfFile . '\'';
-
-        if ($trim) {
-            $pdfFileLine = '-trim ' . $pdfFileLine;
-        }
-
-        $cliParams = array_merge(
-            $cliParams,
-            [
-                '-density 300',
-                $pdfFileLine,
-                '-quality 100',
-                '-resize 2480x3508', // DIN A4
-                '\'' . $imageFile . '\'',
-            ]
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createPdfAndConvertToImage() instead of"
+            . " QUI\HtmlToPdf\Document::createImage()",
+            E_USER_DEPRECATED
         );
 
-        $cliParams = array_values(array_unique($cliParams));
-        $command = Handler::getConvertBinaryPath();
-
-        foreach ($cliParams as $param) {
-            $param = trim($param);
-
-            if (empty($param)) {
-                continue;
-            }
-
-            $command .= ' ' . $param;
-        }
-
-        system($command);
-
-        // Delete source PDF
-        if ($deletePdfFile && file_exists($pdfFile)) {
-            unlink($pdfFile);
-        }
-
-        if (!file_exists($imageFile)) {
-            /**
-             * Check if the PDF was split into multiple images.
-             * In this case the images need to be appended to one single image.
-             */
-            $imageFileInfo = pathinfo($imageFile);
-            $imageFileExt = $imageFileInfo['extension'];
-            $imageFileDir = $imageFileInfo['dirname'] . '/';
-            $imageFileNoExt = $imageFileDir . $imageFileInfo['filename'];
-
-            if (!file_exists($imageFileNoExt . '-0.' . $imageFileExt)) {
-                throw new QUI\Exception(
-                    'Could not create image from pdf. Command: "' . $command . '".'
-                );
-            }
-
-            $imageFiles = [];
-            $imageNo = 0;
-
-            do {
-                $imageFileNumbered = $imageFileNoExt . '-' . $imageNo++ . '.' . $imageFileExt;
-
-                if (!file_exists($imageFileNumbered)) {
-                    break;
-                }
-
-                $imageFiles[] = $imageFileNumbered;
-            } while (true);
-
-            return $imageFiles;
-        }
-
-        return $imageFile;
+        $handler = new Handler();
+        return $handler->getPdfCreator()->createPdfAndConvertToImage($this);
     }
 
     /**
@@ -552,43 +344,21 @@ class Document extends QUI\QDOM
      *
      * @param bool $deletePdfFile (optional) - delete pdf file after download
      * @return void
-     *
      * @throws QUI\Exception
+     * @deprecated This direct call will be removed in the next major release.
+     * Please use {@see QUI\HtmlToPdf\Handler::getPdfCreator()} and {@see PdfCreator::createAndDownloadPdf()}
+     *
      */
     public function download(bool $deletePdfFile = true): void
     {
-        if (!$this->created) {
-            $file = $this->createPDF();
-        } else {
-            $file = $this->varDir . $this->documentId . '.pdf';
+        trigger_error(
+            "Please use QUI\HtmlToPdf\Handler::getPdfCreator()->createAndDownloadPdf() instead of"
+            . " QUI\HtmlToPdf\Document::download()",
+            E_USER_DEPRECATED
+        );
 
-            if (!file_exists($file)) {
-                $file = $this->createPDF();
-            }
-        }
-
-        $filename = $this->getAttribute('filename');
-
-        if (empty($filename)) {
-            $filename = $this->documentId . '_' . date("d_m_Y__H_m") . '.pdf';
-        }
-
-        try {
-            QUI\Utils\System\File::send($file, 0, $filename);
-        } catch (\Exception $Exception) {
-            QUI\System\Log::addError(
-                'quiqqer/htmltopdf PDF download failed:: ' . $Exception->getMessage()
-            );
-
-            throw new QUI\Exception([
-                'quiqqer/htmltopdf',
-                'exception.document.pdf.download.failed'
-            ]);
-        }
-
-        if ($deletePdfFile) {
-            unlink($file);
-        }
+        $handler = new Handler();
+        $handler->getPdfCreator()->createAndDownloadPdf($this, !$deletePdfFile);
     }
 
     /**
@@ -633,79 +403,50 @@ class Document extends QUI\QDOM
     /**
      * Build header html from header settings
      *
+     * @param bool $fullHtml (optional) - Return the footer with complete HTML (including DOCTYPE and header);
+     * if this is set to false, return footer in a div only. [default: true]
+     *
      * @return string - complete HTML for PDF header
      */
-    public function getHeaderHTML(): string
+    public function getHeaderHTML(bool $fullHtml = true): string
     {
-        $hd = $this->header;
+        $header = $this->header;
 
-        $header = '<!DOCTYPE html>
-                        <html>
-                         <head>
-                            <meta charset="UTF-8">';
-
-        // add css
-        $css = $hd['css'];
+        $css = $header['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__) . '/default/header.css');
         }
 
-        $header .= '<style>' . $css . '</style>';
+        $content = str_replace(['<header>', '</header>'], ['<div', '</div>'], $header['content']);
+        $content = '<header class="' . $this->options->cssClassHeaderContainer . '">' . $content . '</header>';
 
-        foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+        if ($fullHtml) {
+            $head = '<!DOCTYPE html>
+                        <html>
+                         <head>
+                            <meta charset="UTF - 8">';
+
+            // add css
+            $head .= '<style>' . $css . '</style>';
+
+            foreach ($header['cssFiles'] as $file) {
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+            }
+
+            $head .= '</head>';
+            $body = $head . '<body>' . $content . '</body></html>';
+        } else {
+            $body = '<style>' . $css . '</style>';
+
+            foreach ($header['cssFiles'] as $file) {
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+            }
+
+            $body .= $content;
         }
 
-        $header .= '</head>';
-
-        $body = '<body>' . $hd['content'];
-
-        if ($this->getAttribute('foldingMarks')) {
-            $body .= '
-                <div class="folding-marks">
-                    <div class="folding-mark din-5008-f1"></div>
-                    <div class="folding-mark din-5008-f2"></div>
-                    <div class="folding-mark din-5008-hole"></div>
-                </div>
-                <style>
-                       .folding-marks {
-                            height: 100%;
-                            left: 0;
-                            position: fixed;
-                            top: 0;
-                            width: 100%;
-                       }
-                       
-                       .folding-mark {
-                            background: #000;
-                            height: 1px;
-                            left: 0;
-                            position: absolute;
-                            width: 40px;
-                       }
-                       
-                       .din-5008-f1 {
-                            background: #000;
-                            top: 105mm;
-                       }
-                       
-                       .din-5008-f2 {
-                            background: #000;
-                            top: 210mm;
-                       }
-                       
-                       .din-5008-hole {
-                            top: 148.5mm;
-                       }
-                </style>
-            ';
-        }
-
-
-        $body .= '</body></html>';
-
-        return $this->parseRelativeLinks($header . $body);
+        return $this->parseRelativeLinks($body);
     }
 
     /**
@@ -720,7 +461,7 @@ class Document extends QUI\QDOM
         $header = '<!DOCTYPE html>
                         <html>
                          <head>
-                            <meta charset="UTF-8">';
+                            <meta charset="UTF - 8">';
 
         // add css
         $css = $hd['css'];
@@ -732,12 +473,12 @@ class Document extends QUI\QDOM
         $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+            $header .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
         }
 
         $header .= '</head>';
 
-        $body = '<body>' . $hd['content'] . '</body></html>';
+        $body = '<body class="' . $this->options->cssClassBodyContainer . '">' . $hd['content'] . '</body></html>';
 
         return $this->parseRelativeLinks($header . $body);
     }
@@ -746,90 +487,50 @@ class Document extends QUI\QDOM
      * Build body html from body settings
      *
      * @param bool $fullHtml (optional) - Return the footer with complete HTML (including DOCTYPE and header);
-     * if this is set to false, return footer in a div only.
+     * if this is set to false, return footer in a div only. [default: true]
      *
      * @return string - complete HTML for PDF footer
      */
     public function getFooterHTML(bool $fullHtml = true): string
     {
         $footer = $this->footer;
-
         $css = $footer['css'];
 
         if (empty($css)) {
-            $css = file_get_contents(dirname(__FILE__) . '/default/body.css');
+            $css = file_get_contents(dirname(__FILE__) . '/default/footer.css');
         }
+
+        $content = str_replace(['<footer', '</footer>'], ['<div', '</div>'], $footer['content']);
+        $content = '<footer class="' . $this->options->cssClassFooterContainer . '">' . $content . '</footer>';
 
         if ($fullHtml) {
-            $header = '<!DOCTYPE html>
+            $head = '<!DOCTYPE html>
                         <html>
                          <head>
-                            <meta charset="UTF-8">';
+                            <meta charset="UTF - 8">';
 
             // add css
-            $header .= '<style>' . $css . '</style>';
+            $head .= '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
 
-            $header .= '</head>';
-
+            $head .= '</head>';
             $body = '<body>';
-            $body .= $footer['content'];
         } else {
-            $body = '<div id="document-body">';
-            $body .= '<style>' . $css . '</style>';
-
-            // Special CSS for page counter
-            $body .= '<style>
-                    #pages_current:after {
-                        counter-increment: page;
-                        content: counter(page);
-                    }                
-                </style>';
+            $body = '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
             }
         }
 
-        if ($this->getAttribute('showPageNumbers')) {
-            $body .= '<div id="pages">
-                        <span id="pages_prefix">' . $this->getAttribute('pageNumbersPrefix') . '</span>
-                        <span id="pages_current"></span>
-                        <span id="pages_total"></span>
-                    </div>';
-
-            if ($fullHtml) {
-                $body .= '<script>
-                          var parts = document.location.href.split("&");
-                          var currentPage, totalPages;
-
-                          for (var i = 0, len = parts.length; i < len; i++) {
-                              var param = parts[i].split("=");
-
-                              switch (param[0]) {
-                                case "sitepage":
-                                    currentPage = decodeURIComponent(param[1]);
-                                    break;
-                                case "topage":
-                                    totalPages = decodeURIComponent(param[1]);
-                                    break;
-                              }
-                          }
-
-                          document.getElementById("pages_current").innerHTML = currentPage + " / ";
-                          document.getElementById("pages_total").innerHTML = totalPages;
-                      </script>';
-            }
-        }
+        $body .= $content;
 
         if ($fullHtml) {
             $body .= '</body></html>';
-            $body = $header . $body;
-        } else {
-            $body .= '</div>';
+            $body = $head . $body;
         }
 
         return $this->parseRelativeLinks($body);
@@ -843,8 +544,9 @@ class Document extends QUI\QDOM
      * @param string $str
      * @return string - Modified string
      */
-    protected function parseRelativeLinks(string $str): string
+    private function parseRelativeLinks(string $str): string
     {
-        return preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
+        $replaced = preg_replace('#=[\'"]\/media\/cache\/#i', '="' . CMS_DIR . 'media/cache/', $str);
+        return $replaced ?: $str;
     }
 }
