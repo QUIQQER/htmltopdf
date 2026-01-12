@@ -15,6 +15,6 @@ phpunit-php8.2:
 phpunit-php8.3:
   before_script:
     - sudo apt-get update
-    - cd /tmp && sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -qO /tmp/google-chrome-stable_current_amd64.deb
     - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
     - sudo apt-get install -yq imagemagick
