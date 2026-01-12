@@ -5,13 +5,22 @@
         <config>
 
             <section name="settings">
-                <conf name="binary">
+                <conf name="html_to_pdf_creator_provider">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider]]></defaultvalue>
+                </conf>
+                <conf name="pdf_to_image_converter_provider">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue><![CDATA[QUI\HtmlToPdf\Provider\Image\ImageMagick\Provider]]></defaultvalue>
+                </conf>
+            </section>
+            <section name="chrome_headless">
+                <conf name="executable">
                     <type><![CDATA[string]]></type>
                 </conf>
-                <conf name="lib_path">
-                    <type><![CDATA[string]]></type>
-                </conf>
-                <conf name="binary_convert">
+            </section>
+            <section name="image_magick">
+                <conf name="convert_executable">
                     <type><![CDATA[string]]></type>
                 </conf>
             </section>
@@ -37,34 +46,30 @@
                             <locale group="quiqqer/htmltopdf" var="settings.title"/>
                         </title>
 
-                        <input conf="settings.binary" type="text">
+                        <input conf="settings.html_to_pdf_creator_provider"
+                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectPdf">
                             <text>
-                                <locale group="quiqqer/htmltopdf" var="settings.binary.title"/>
+                                <locale group="quiqqer/htmltopdf" var="settings.html_to_pdf_creator_provider.title"/>
                             </text>
                             <description>
-                                <locale group="quiqqer/htmltopdf" var="settings.binary.description"/>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.html_to_pdf_creator_provider.description"/>
                             </description>
                         </input>
 
-                        <input conf="settings.lib_path" type="text">
+                        <input conf="settings.pdf_to_image_converter_provider"
+                               data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/ProviderSelectImage">
                             <text>
-                                <locale group="quiqqer/htmltopdf" var="settings.lib_path.title"/>
+                                <locale group="quiqqer/htmltopdf" var="settings.pdf_to_image_converter_provider.title"/>
                             </text>
                             <description>
-                                <locale group="quiqqer/htmltopdf" var="settings.lib_path.description"/>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.pdf_to_image_converter_provider.description"/>
                             </description>
                         </input>
 
-                        <input conf="settings.binary_convert" type="text">
-                            <text>
-                                <locale group="quiqqer/htmltopdf" var="settings.binary_convert.title"/>
-                            </text>
-                            <description>
-                                <locale group="quiqqer/htmltopdf" var="settings.binary_convert.description"/>
-                            </description>
-                        </input>
-
-                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration" label="false">
+                        <input type="hidden" data-qui="package/quiqqer/htmltopdf/bin/js/backend/controls/TestGeneration"
+                               label="false">
                             <text>
                                 <locale group="quiqqer/htmltopdf" var="settings.testDocument.title"/>
                             </text>
@@ -72,7 +77,36 @@
                                 <locale group="quiqqer/htmltopdf" var="settings.testDocument.description"/>
                             </description>
                         </input>
+                    </settings>
 
+                    <settings title="chrome_headless" name="chrome_headless">
+                        <title>
+                            <locale group="quiqqer/htmltopdf" var="chrome_headless.title"/>
+                        </title>
+
+                        <input conf="chrome_headless.executable" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.description"/>
+                            </description>
+                        </input>
+                    </settings>
+
+                    <settings title="image_magick" name="image_magick">
+                        <title>
+                            <locale group="quiqqer/htmltopdf" var="image_magick.title"/>
+                        </title>
+
+                        <input conf="image_magick.convert_executable" type="text">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_executable.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf" var="settings.image_magick.convert_executable.description"/>
+                            </description>
+                        </input>
                     </settings>
                 </category>
 

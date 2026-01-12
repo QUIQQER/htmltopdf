@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="210mm" height="297mm" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">
+    <!-- DIN 5008 Form B Falzmarken für A4 Hochformat -->
+    
+    <!-- Falzmarke 1: 105mm von der oberen Blattkante, 4mm breit, 0.5mm hoch -->
+    <rect x="0" y="105" width="4" height="0.5" fill="#636363"/>
+    
+    <!-- Lochmarke: 148.5mm von der oberen Blattkante, 4mm breit, 0.5mm hoch -->
+    <rect x="0" y="148.5" width="4" height="0.5" fill="#636363"/>
+    
+    <!-- Falzmarke 2: 210mm von der oberen Blattkante, 4mm breit, 0.5mm hoch -->
+    <rect x="0" y="210" width="4" height="0.5" fill="#636363"/>
+</svg>

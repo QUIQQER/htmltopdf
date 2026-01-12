@@ -1,13 +1,16 @@
 <style>
-    body {
+    * {
+        font-size: 16px;
+    }
+
+    header {
         padding: 20px;
     }
 </style>
 
-
-<div class="header">
-    <div style="text-align: right;">
-        <img src="{$headerImg}" style="max-height: 90px;"/>
-    </div>
+<div style="float: left; width: 200px;">
     === HEADER ===
+</div>
+<div style="float: right; width: 120px;">
+    <img src="{imageBase64 image=$headerImg}" style="max-width: 100%;"/>
 </div>
