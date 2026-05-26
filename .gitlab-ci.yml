@@ -24,7 +24,7 @@ phpunit-php8.2:
     - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
     - sudo apt-get install -yq imagemagick
     # Remove incompatible package (is part of default QUIQQER installation template)
-    - ./console composer remove quiqqer/gdpr
+    - cd /var/www/html; ./console composer remove quiqqer/gdpr
 
 phpunit-php8.3:
   extends: .prepare-image
