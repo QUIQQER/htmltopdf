@@ -16,10 +16,21 @@ phpunit-php8.2:
   rules:
     - when: never
 
-# Install convert (imagemagick) and chrome (for chrome-headless)
-phpunit-php8.3:
+.prepare-image:
   before_script:
+    # Install convert (imagemagick) and chrome (for chrome-headless)
     - sudo apt-get update
     - sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -qO /tmp/google-chrome-stable_current_amd64.deb
     - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
     - sudo apt-get install -yq imagemagick
+    # Remove incompatible package (is part of default QUIQQER installation template)
+    - ./console composer remove quiqqer/gdpr
+
+phpunit-php8.3:
+  extends: .prepare-image
+
+phpunit-php8.4:
+  extends: .prepare-image
+
+phpunit-php8.5:
+  extends: .prepare-image
