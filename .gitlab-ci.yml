@@ -1,6 +1,16 @@
 include:
   - component: dev.quiqqer.com/quiqqer/stabilization/ci-cd-components/quiqqer-package-bundle/quiqqer-package-bundle@main
 
+.prepare-image:
+  before_script:
+    # Install convert (imagemagick) and chrome (for chrome-headless)
+    - sudo apt-get update
+    - sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -qO /tmp/google-chrome-stable_current_amd64.deb
+    - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
+    - sudo apt-get install -yq imagemagick
+    # Remove incompatible package (is part of default QUIQQER installation template)
+    - cd /var/www/html; ./console composer remove quiqqer/gdpr
+
 # Package requires PHP 8.2 at least
 php-syntax-check-8.1:
     rules:
@@ -16,15 +26,8 @@ phpunit-php8.2:
   rules:
     - when: never
 
-.prepare-image:
-  before_script:
-    # Install convert (imagemagick) and chrome (for chrome-headless)
-    - sudo apt-get update
-    - sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -qO /tmp/google-chrome-stable_current_amd64.deb
-    - sudo apt-get install -yq /tmp/google-chrome-stable_current_amd64.deb
-    - sudo apt-get install -yq imagemagick
-    # Remove incompatible package (is part of default QUIQQER installation template)
-    - cd /var/www/html; ./console composer remove quiqqer/gdpr
+phpstan:
+  extends: .prepare-image
 
 phpunit-php8.3:
   extends: .prepare-image
