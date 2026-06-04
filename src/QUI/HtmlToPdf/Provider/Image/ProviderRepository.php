@@ -89,7 +89,6 @@ class ProviderRepository implements ProviderRepositoryInterface
 
                     try {
                         $providers[] = new $class();
-                        // @phpstan-ignore catch.neverThrown (wo don't know what the provider constructor does or throws)
                     } catch (Throwable $e) {
                         QUI\System\Log::writeException($e);
                     }
