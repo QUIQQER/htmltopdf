@@ -1,5 +1,5 @@
 include:
-   - component: $CI_SERVER_FQDN/quiqqer/stabilization/ci-cd-components/php-tooling-bundle/php-tooling-bundle@1
+  - component: $CI_SERVER_FQDN/quiqqer/stabilization/ci-cd-components/quiqqer-package-bundle/quiqqer-package-bundle@main
     inputs:
         php-81: false
 
