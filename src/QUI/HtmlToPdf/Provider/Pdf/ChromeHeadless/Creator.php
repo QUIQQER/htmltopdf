@@ -21,6 +21,8 @@ class Creator implements HtmlToPdfCreatorInterface
     public function createPdf(Document $document): string
     {
         try {
+            $document->setAttribute('data-renderer', 'chrome');
+
             // Get package var directory
             $Package = QUI::getPackage('quiqqer/htmltopdf');
             $varDir = $Package->getVarDir();
@@ -63,7 +65,7 @@ class Creator implements HtmlToPdfCreatorInterface
     private function buildCompleteHtml(Document $document): string
     {
         $html = '<!DOCTYPE html>
-<html>
+<html class="renderer-chrome" data-renderer="chrome">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

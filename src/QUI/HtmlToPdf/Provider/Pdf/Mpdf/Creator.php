@@ -28,6 +28,7 @@ class Creator implements HtmlToPdfCreatorInterface
     {
         try {
             $this->initWriteHtml = true;
+            $document->setAttribute('data-renderer', 'mpdf');
 
             // Get package var directory
             $Package = QUI::getPackage('quiqqer/htmltopdf');

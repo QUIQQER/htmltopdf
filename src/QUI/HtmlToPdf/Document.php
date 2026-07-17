@@ -419,11 +419,14 @@ class Document extends QUI\QDOM
         }
 
         $content = str_replace(['<header>', '</header>'], ['<div', '</div>'], $header['content']);
-        $content = '<header class="' . $this->options->cssClassHeaderContainer . '">' . $content . '</header>';
+        $content = '<header class="' . $this->options->cssClassHeaderContainer . ' renderer-'
+            . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">' . $content . '</header>';
 
         if ($fullHtml) {
             $head = '<!DOCTYPE html>
-                        <html>
+                        <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">
                          <head>
                             <meta charset="UTF - 8">';
 
@@ -459,7 +462,8 @@ class Document extends QUI\QDOM
         $hd = $this->body;
 
         $header = '<!DOCTYPE html>
-                        <html>
+                        <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">
                          <head>
                             <meta charset="UTF - 8">';
 
@@ -478,7 +482,9 @@ class Document extends QUI\QDOM
 
         $header .= '</head>';
 
-        $body = '<body class="' . $this->options->cssClassBodyContainer . '">' . $hd['content'] . '</body></html>';
+        $body = '<body class="' . $this->options->cssClassBodyContainer . ' renderer-'
+            . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">' . $hd['content'] . '</body></html>';
 
         return $this->parseRelativeLinks($header . $body);
     }
@@ -501,11 +507,14 @@ class Document extends QUI\QDOM
         }
 
         $content = str_replace(['<footer', '</footer>'], ['<div', '</div>'], $footer['content']);
-        $content = '<footer class="' . $this->options->cssClassFooterContainer . '">' . $content . '</footer>';
+        $content = '<footer class="' . $this->options->cssClassFooterContainer . ' renderer-'
+            . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">' . $content . '</footer>';
 
         if ($fullHtml) {
             $head = '<!DOCTYPE html>
-                        <html>
+                        <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
+            . $this->getAttribute('data-renderer') . '">
                          <head>
                             <meta charset="UTF - 8">';
 
