@@ -89,7 +89,7 @@ class Provider implements PdfToImageConverterProviderInterface
         }
 
         if (empty($executablePath)) {
-            $executablePath = `which convert`;
+            $executablePath = shell_exec('which convert') ?: '';
 
             if (empty($executablePath)) {
                 QUI\System\Log::addWarning(
