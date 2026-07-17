@@ -9,8 +9,10 @@ use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use Throwable;
 
+use function file_put_contents;
 use function preg_match_all;
 use function str_replace;
+use function uniqid;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
