@@ -3,7 +3,6 @@
 namespace QUI\HtmlToPdf\Provider\Image;
 
 use QUI;
-use Throwable;
 
 use function class_exists;
 use function is_a;
@@ -87,11 +86,7 @@ class ProviderRepository implements ProviderRepositoryInterface
                         continue;
                     }
 
-                    try {
-                        $providers[] = new $class();
-                    } catch (Throwable $e) {
-                        QUI\System\Log::writeException($e);
-                    }
+                    $providers[] = new $class();
                 }
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);

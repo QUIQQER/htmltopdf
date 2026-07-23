@@ -87,7 +87,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         }
 
         if (empty($executablePath)) {
-            $executablePath = `which google-chrome`;
+            $executablePath = shell_exec('which google-chrome') ?: '';
 
             if (empty($executablePath)) {
                 QUI\System\Log::addWarning(
