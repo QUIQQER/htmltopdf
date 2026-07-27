@@ -50,7 +50,7 @@ class Handler
 
         $this->pdfCreator = new PdfCreator(
             $this->htmlToPdfCreatorProviderRepository->getCurrentProvider()->getHtmlToPdfCreator(),
-            $this->pdfToImageConverterProviderRepository->getCurrentProvider()->getPdfToImageConverter()
+            pdfToImageConverterProvider: $this->pdfToImageConverterProviderRepository->getCurrentProvider()
         );
         return $this->pdfCreator;
     }
