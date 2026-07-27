@@ -49,12 +49,12 @@ class Creator implements HtmlToPdfCreatorInterface
             }
 
             // Set header if content exists (must be BEFORE content for mPDF)
-            if (!empty($document->getHeaderHTML())) {
+            if ($document->hasHeaderContent()) {
                 $this->setHeader($mpdf, $document);
             }
 
             // Set footer if content exists or page numbers are enabled
-            if (!empty($document->getFooterHTML()) || $document->options->showPageNumbers) {
+            if ($document->hasFooterContent() || $document->options->showPageNumbers) {
                 $this->setFooter($mpdf, $document);
             }
 

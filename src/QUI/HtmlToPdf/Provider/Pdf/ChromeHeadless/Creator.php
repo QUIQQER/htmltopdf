@@ -322,12 +322,11 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function buildHeaderTemplate(Document $document): string
     {
-//        return $document->getHeaderHTML();
-        $headerHtml = $document->getHeaderHTML();
-
-        if (empty($headerHtml)) {
+        if (!$document->hasHeaderContent() && !$document->options->foldingMarks) {
             return '<div></div>';  // Empty template required by Chrome
         }
+
+        $headerHtml = $document->getHeaderHTML();
 
         // Add folding marks if enabled
         if ($document->options->foldingMarks) {
@@ -361,12 +360,13 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function buildFooterTemplate(Document $document): string
     {
-        $footerHtml = $document->getFooterHTML();
         $showPageNumbers = $document->options->showPageNumbers;
 
-        if (empty($footerHtml) && $showPageNumbers === false) {
+        if (!$document->hasFooterContent() && $showPageNumbers === false) {
             return '<div></div>';  // Empty template required by Chrome
         }
+
+        $footerHtml = $document->getFooterHTML();
 
         // Add page numbers if enabled
         if ($showPageNumbers) {

@@ -9,6 +9,7 @@ use function file_get_contents;
 use function gettype;
 use function is_array;
 use function property_exists;
+use function trim;
 use function trigger_error;
 
 use const E_USER_DEPRECATED;
@@ -111,6 +112,11 @@ class Document extends QUI\QDOM
     public function setHeaderHTML(string $html): void
     {
         $this->header['content'] = $html;
+    }
+
+    public function hasHeaderContent(): bool
+    {
+        return trim($this->header['content']) !== '';
     }
 
     /**
@@ -240,6 +246,11 @@ class Document extends QUI\QDOM
     public function setFooterHTML(string $html): void
     {
         $this->footer['content'] = $html;
+    }
+
+    public function hasFooterContent(): bool
+    {
+        return trim($this->footer['content']) !== '';
     }
 
     /**

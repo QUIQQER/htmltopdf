@@ -86,4 +86,29 @@ class CreatePdfTest extends TestCase
 
         $this->addToAssertionCount(1);
     }
+
+    #[Test]
+    public function emptyDocumentCanBeCreatedWithoutHeaderOrFooter(): void
+    {
+        $document = new Document([
+            'showPageNumbers' => false
+        ]);
+        $providers = [
+            new ProviderMpdf(),
+            new ProviderChromeHeadless()
+        ];
+
+        foreach ($providers as $provider) {
+            $pdfFile = $provider->getHtmlToPdfCreator()->createPdf($document);
+
+            try {
+                $this->assertFileExists($pdfFile);
+                $this->assertGreaterThan(0, filesize($pdfFile));
+            } finally {
+                if (file_exists($pdfFile)) {
+                    unlink($pdfFile);
+                }
+            }
+        }
+    }
 }
