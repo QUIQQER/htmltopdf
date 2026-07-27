@@ -49,13 +49,13 @@ The provider requirements check starts Chrome with `--version`. If execution
 is blocked, the settings test reports the executable path, exit code, and a
 hint to check AppArmor, SELinux, or PHP-FPM service restrictions.
 
-Chrome's sandbox and TLS certificate validation are enabled by default. If a
-restricted server or container cannot start Chrome with its sandbox, the
-`Disable Chrome sandbox` setting adds `--no-sandbox`. This weakens process
-isolation and should only be enabled when the surrounding runtime provides an
-equivalent security boundary. The separate `Ignore TLS certificate errors`
-setting should only be used for controlled internal resources with certificates
-that cannot be validated normally.
+For compatibility with restricted PHP-FPM and container environments, the
+`Disable Chrome sandbox` setting is enabled by default. It adds `--no-sandbox`,
+which weakens process isolation. Disable this setting whenever the runtime
+allows Chrome to create its sandbox namespaces or provides a compatible SUID
+sandbox. TLS certificate validation remains enabled by default. The separate
+`Ignore TLS certificate errors` setting should only be used for controlled
+internal resources with certificates that cannot be validated normally.
 
 Usage
 ----------

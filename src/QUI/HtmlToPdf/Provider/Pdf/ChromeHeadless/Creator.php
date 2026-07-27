@@ -20,7 +20,7 @@ class Creator implements HtmlToPdfCreatorInterface
 {
     public function __construct(
         private readonly ?string $chromeExecutable = null,
-        private readonly bool $noSandbox = false,
+        private readonly bool $noSandbox = true,
         private readonly bool $ignoreCertificateErrors = false
     ) {
     }

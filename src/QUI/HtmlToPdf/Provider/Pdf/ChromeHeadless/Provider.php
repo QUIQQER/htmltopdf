@@ -48,7 +48,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
 
         return new Creator(
             $chromePath,
-            $this->getConfigFlag('no_sandbox'),
+            $this->getConfigFlag('no_sandbox', true),
             $this->getConfigFlag('ignore_certificate_errors')
         );
     }
@@ -186,23 +186,29 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         return empty($executablePath) ? null : $executablePath;
     }
 
-    private function getConfigFlag(string $name): bool
+    private function getConfigFlag(string $name, bool $default = false): bool
     {
         try {
             $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
 
             if (is_null($conf)) {
                 QUI\System\Log::addError("Cannot read / build config for quiqqer/htmltopdf.");
-                return false;
+                return $default;
+            }
+
+            $value = $conf->get('chrome_headless', $name);
+
+            if ($value === false || $value === null || $value === '') {
+                return $default;
             }
 
             return filter_var(
-                $conf->get('chrome_headless', $name),
+                $value,
                 FILTER_VALIDATE_BOOLEAN
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
-            return false;
+            return $default;
         }
     }
 }

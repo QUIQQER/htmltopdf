@@ -20,7 +20,7 @@
                 </conf>
                 <conf name="no_sandbox">
                     <type><![CDATA[boolean]]></type>
-                    <defaultvalue>0</defaultvalue>
+                    <defaultvalue>1</defaultvalue>
                 </conf>
                 <conf name="ignore_certificate_errors">
                     <type><![CDATA[boolean]]></type>

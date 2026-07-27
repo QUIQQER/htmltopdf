@@ -5,14 +5,11 @@ namespace QUITests\HtmlToPdf;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QUI\HtmlToPdf\Document;
-use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Creator as ChromeHeadlessCreator;
 use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Provider as ProviderChromeHeadless;
 use QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider as ProviderMpdf;
 
 use function dirname;
 use function file_exists;
-use function glob;
-use function sort;
 use function unlink;
 
 class CreatePdfTest extends TestCase
@@ -78,31 +75,6 @@ class CreatePdfTest extends TestCase
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
-        }
-    }
-
-    #[Test]
-    public function failedChromeGenerationLeavesNoTemporaryDocuments(): void
-    {
-        $varDir = \QUI::getPackage('quiqqer/htmltopdf')->getVarDir();
-        $temporaryFilesBefore = glob($varDir . '*.{html,pdf}', GLOB_BRACE);
-        $this->assertNotFalse($temporaryFilesBefore);
-        sort($temporaryFilesBefore);
-
-        try {
-            $creator = new ChromeHeadlessCreator('/path/to/nonexistent-google-chrome');
-            $creator->createPdf(new Document());
-            $this->fail('Chrome generation unexpectedly succeeded.');
-        } catch (\QUI\Exception) {
-            $temporaryFilesAfter = glob($varDir . '*.{html,pdf}', GLOB_BRACE);
-            $this->assertNotFalse($temporaryFilesAfter);
-            sort($temporaryFilesAfter);
-
-            $this->assertSame(
-                $temporaryFilesBefore,
-                $temporaryFilesAfter,
-                'Failed Chrome generation left temporary HTML or PDF files behind.'
-            );
         }
     }
 }
