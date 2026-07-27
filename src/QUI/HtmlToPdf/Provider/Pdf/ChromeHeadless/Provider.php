@@ -8,7 +8,6 @@ use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorProviderInterface;
 use QUI\Locale;
 use QUI\Utils\System\File;
-use Symfony\Component\Process\Process;
 use Throwable;
 
 use function file_exists;
@@ -44,7 +43,7 @@ class Provider implements HtmlToPdfCreatorProviderInterface
             ]);
         }
 
-        $this->checkExecutableRequirements($chromePath);
+        $this->checkExecutableAccess($chromePath);
 
         return new Creator(
             $chromePath,
@@ -67,13 +66,34 @@ class Provider implements HtmlToPdfCreatorProviderInterface
             ]);
         }
 
-        $this->checkExecutableRequirements($executablePath);
+        $this->checkExecutableAccess($executablePath);
+
+        $creator = new Creator(
+            $executablePath,
+            $this->getConfigFlag('no_sandbox', true),
+            $this->getConfigFlag('ignore_certificate_errors')
+        );
+
+        try {
+            $creator->checkBrowserStartup();
+        } catch (Throwable $exception) {
+            QUI\System\Log::writeDebugException($exception);
+
+            throw new HtmlToPdfRequirementsNotMetException([
+                'quiqqer/htmltopdf',
+                'exception.Provider.GoogleChrome.checkRequirements.start_failed',
+                [
+                    'path' => $executablePath,
+                    'exitCode' => $exception->getCode() ?: 'unknown'
+                ]
+            ]);
+        }
     }
 
     /**
      * @throws HtmlToPdfRequirementsNotMetException
      */
-    private function checkExecutableRequirements(string $executablePath): void
+    private function checkExecutableAccess(string $executablePath): void
     {
         if (!file_exists($executablePath)) {
             throw new HtmlToPdfRequirementsNotMetException([
@@ -103,48 +123,6 @@ class Provider implements HtmlToPdfCreatorProviderInterface
                 ]
             ]);
         }
-
-        $process = new Process(
-            [$executablePath, '--version'],
-            null,
-            [
-                'HOME' => $chromeHome,
-                'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-                'XDG_CACHE_HOME' => $chromeHome . '.cache',
-                'XDG_CONFIG_HOME' => $chromeHome . '.config',
-                'XDG_DATA_HOME' => $chromeHome . '.local/share'
-            ],
-            null,
-            10
-        );
-
-        try {
-            $process->run();
-        } catch (Throwable $exception) {
-            QUI\System\Log::writeDebugException($exception);
-
-            throw new HtmlToPdfRequirementsNotMetException([
-                'quiqqer/htmltopdf',
-                'exception.Provider.GoogleChrome.checkRequirements.start_failed',
-                [
-                    'path' => $executablePath,
-                    'exitCode' => 'unknown'
-                ]
-            ]);
-        }
-
-        if ($process->isSuccessful()) {
-            return;
-        }
-
-        throw new HtmlToPdfRequirementsNotMetException([
-            'quiqqer/htmltopdf',
-            'exception.Provider.GoogleChrome.checkRequirements.start_failed',
-            [
-                'path' => $executablePath,
-                'exitCode' => $process->getExitCode() ?? 'unknown'
-            ]
-        ]);
     }
 
     private function getGoogleChromeExecutablePath(): ?string

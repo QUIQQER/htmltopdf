@@ -77,4 +77,13 @@ class CreatePdfTest extends TestCase
             unlink($pdfFile);
         }
     }
+
+    #[Test]
+    public function chromeHeadlessRequirementsUseARealBrowserStartup(): void
+    {
+        $provider = new ProviderChromeHeadless();
+        $provider->checkRequirements();
+
+        $this->addToAssertionCount(1);
+    }
 }

@@ -82,6 +82,38 @@ class Creator implements HtmlToPdfCreatorInterface
         }
     }
 
+    /**
+     * Verify that Chrome can start with the configured runtime options.
+     *
+     * @throws \Exception
+     */
+    public function checkBrowserStartup(): void
+    {
+        $chromeHome = QUI::getPackage('quiqqer/htmltopdf')->getVarDir() . 'chrome-home/';
+
+        if (!File::mkdir($chromeHome) || !is_writable($chromeHome)) {
+            throw new RuntimeException(
+                'Chrome home directory could not be created or is not writable: ' . $chromeHome
+            );
+        }
+
+        $userDataDir = $this->createUserDataDir($chromeHome);
+        $browser = null;
+
+        try {
+            $browserFactory = new BrowserFactory($this->chromeExecutable);
+            $browser = $browserFactory->createBrowser(
+                $this->getBrowserOptions($chromeHome, $userDataDir)
+            );
+        } finally {
+            if ($browser !== null) {
+                $browser->close();
+            }
+
+            File::deleteDir($userDataDir);
+        }
+    }
+
     private function removeTemporaryFile(?string $file): void
     {
         if ($file === null || !file_exists($file)) {
@@ -168,36 +200,15 @@ class Creator implements HtmlToPdfCreatorInterface
         Document $document,
         string $chromeHome
     ): void {
-        $userDataDir = $chromeHome . 'profiles/' . uniqid('profile-', true) . '/';
-
-        if (!File::mkdir($userDataDir) || !is_writable($userDataDir)) {
-            throw new RuntimeException(
-                'Chrome user data directory could not be created or is not writable: ' . $userDataDir
-            );
-        }
+        $userDataDir = $this->createUserDataDir($chromeHome);
 
         $browserFactory = new BrowserFactory($this->chromeExecutable);
         $browser = null;
 
         try {
-            // Configure Chrome options
-            $browser = $browserFactory->createBrowser([
-                'headless' => true,
-                'noSandbox' => $this->noSandbox,
-                'ignoreCertificateErrors' => $this->ignoreCertificateErrors,
-                'userDataDir' => $userDataDir,
-                'envVariables' => [
-                    'HOME' => $chromeHome,
-                    'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-                    'XDG_CACHE_HOME' => $chromeHome . '.cache',
-                    'XDG_CONFIG_HOME' => $chromeHome . '.config',
-                    'XDG_DATA_HOME' => $chromeHome . '.local/share'
-                ],
-
-                'headers' => [
-                    'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
-                ]
-            ]);
+            $browser = $browserFactory->createBrowser(
+                $this->getBrowserOptions($chromeHome, $userDataDir)
+            );
 
             $page = $browser->createPage();
 
@@ -254,6 +265,42 @@ class Creator implements HtmlToPdfCreatorInterface
 
             File::deleteDir($userDataDir);
         }
+    }
+
+    private function createUserDataDir(string $chromeHome): string
+    {
+        $userDataDir = $chromeHome . 'profiles/' . uniqid('profile-', true) . '/';
+
+        if (!File::mkdir($userDataDir) || !is_writable($userDataDir)) {
+            throw new RuntimeException(
+                'Chrome user data directory could not be created or is not writable: ' . $userDataDir
+            );
+        }
+
+        return $userDataDir;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getBrowserOptions(string $chromeHome, string $userDataDir): array
+    {
+        return [
+            'headless' => true,
+            'noSandbox' => $this->noSandbox,
+            'ignoreCertificateErrors' => $this->ignoreCertificateErrors,
+            'userDataDir' => $userDataDir,
+            'envVariables' => [
+                'HOME' => $chromeHome,
+                'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+                'XDG_CACHE_HOME' => $chromeHome . '.cache',
+                'XDG_CONFIG_HOME' => $chromeHome . '.config',
+                'XDG_DATA_HOME' => $chromeHome . '.local/share'
+            ],
+            'headers' => [
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
+            ]
+        ];
     }
 
     /**
