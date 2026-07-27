@@ -52,6 +52,11 @@ class CreateImageTest extends TestCase
         $this->assertNotEmpty($imageFiles, 'Image files not found.');
         $this->assertFileExists($imageFiles[0], 'First image file not found.');
         $this->assertGreaterThan(0, filesize($imageFiles[0]), 'First image file is empty.');
+        $this->assertSame(
+            dirname($pdfFile),
+            dirname($imageFiles[0]),
+            'Image file was not created next to its source PDF.'
+        );
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
