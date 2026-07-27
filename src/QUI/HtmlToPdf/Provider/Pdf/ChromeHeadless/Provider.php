@@ -17,8 +17,12 @@ use function is_null;
 use function is_writable;
 use function trim;
 
+use const PHP_OS_FAMILY;
+
 class Provider implements HtmlToPdfCreatorProviderInterface
 {
+    private const MACOS_DEFAULT_EXECUTABLE = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
     public function getTitle(?Locale $locale = null): string
     {
         if (is_null($locale)) {
@@ -152,25 +156,44 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         }
 
         if (empty($executablePath)) {
-            $executablePath = shell_exec('which google-chrome') ?: '';
+            $executablePath = trim(shell_exec('which google-chrome') ?: '');
 
             if (empty($executablePath)) {
-                QUI\System\Log::addWarning(
-                    "Google Chrome exectuable path not set in config. `which google-chrome` produced empty result."
-                    . " Google Chrome seems to be not installed."
-                );
-                return null;
-            }
+                $executablePath = $this->getMacOsChromeExecutablePath();
 
-            QUI\System\Log::addWarning(
-                "Google Chrome executable path not set in config."
-                . " Using `which google-chrome` (= $executablePath) instead."
-            );
+                if (is_null($executablePath)) {
+                    QUI\System\Log::addWarning(
+                        "Google Chrome executable path not set in config and no system executable was found."
+                    );
+                    return null;
+                }
+
+                QUI\System\Log::addWarning(
+                    "Google Chrome executable path not set in config."
+                    . " Using the macOS default (= $executablePath) instead."
+                );
+            } else {
+                QUI\System\Log::addWarning(
+                    "Google Chrome executable path not set in config."
+                    . " Using `which google-chrome` (= $executablePath) instead."
+                );
+            }
         }
 
         $executablePath = trim($executablePath);
 
         return empty($executablePath) ? null : $executablePath;
+    }
+
+    private function getMacOsChromeExecutablePath(
+        string $osFamily = PHP_OS_FAMILY,
+        string $defaultExecutable = self::MACOS_DEFAULT_EXECUTABLE
+    ): ?string {
+        if ($osFamily !== 'Darwin' || !file_exists($defaultExecutable)) {
+            return null;
+        }
+
+        return $defaultExecutable;
     }
 
     private function getConfigFlag(string $name, bool $default = false): bool

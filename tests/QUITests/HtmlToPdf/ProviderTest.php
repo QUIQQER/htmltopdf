@@ -13,6 +13,7 @@ use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Creator as ChromeHeadlessCreator;
 use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Provider as ChromeHeadlessProvider;
 use QUI\HtmlToPdf\Provider\Pdf\Mpdf\Creator as MpdfCreator;
 use QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider as MpdfProvider;
+use ReflectionMethod;
 
 use function chmod;
 use function tempnam;
@@ -108,6 +109,34 @@ class ProviderTest extends TestCase
             }
         } finally {
             $config->set('chrome_headless', 'executable', $originalExecutable);
+        }
+    }
+
+    #[Test]
+    public function macOsChromeApplicationIsUsedAsPlatformFallback(): void
+    {
+        $executable = tempnam(sys_get_temp_dir(), 'htmltopdf-macos-chrome-');
+        $this->assertNotFalse($executable);
+
+        $method = new ReflectionMethod(
+            ChromeHeadlessProvider::class,
+            'getMacOsChromeExecutablePath'
+        );
+        $provider = new ChromeHeadlessProvider();
+
+        try {
+            $this->assertSame(
+                $executable,
+                $method->invoke($provider, 'Darwin', $executable)
+            );
+            $this->assertNull(
+                $method->invoke($provider, 'Linux', $executable)
+            );
+            $this->assertNull(
+                $method->invoke($provider, 'Darwin', $executable . '-missing')
+            );
+        } finally {
+            unlink($executable);
         }
     }
 
