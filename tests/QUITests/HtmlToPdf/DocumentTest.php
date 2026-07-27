@@ -27,4 +27,22 @@ class DocumentTest extends TestCase
             $document->getFooterHTML()
         );
     }
+
+    #[Test]
+    public function nestedHeaderElementsAreConvertedToValidDivElements(): void
+    {
+        $document = new Document();
+        $document->setHeaderHTML(
+            '<header>Plain header</header><header class="source-header">Attributed header</header>'
+        );
+
+        $headerHtml = $document->getHeaderHTML(false);
+
+        $this->assertStringContainsString('<div>Plain header</div>', $headerHtml);
+        $this->assertStringContainsString(
+            '<div class="source-header">Attributed header</div>',
+            $headerHtml
+        );
+        $this->assertStringNotContainsString('<divPlain header', $headerHtml);
+    }
 }

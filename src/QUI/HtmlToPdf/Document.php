@@ -418,7 +418,7 @@ class Document extends QUI\QDOM
             $css = file_get_contents(dirname(__FILE__) . '/default/header.css');
         }
 
-        $content = str_replace(['<header>', '</header>'], ['<div', '</div>'], $header['content']);
+        $content = str_replace(['<header', '</header>'], ['<div', '</div>'], $header['content']);
         $content = '<header class="' . $this->options->cssClassHeaderContainer . ' renderer-'
             . $this->getAttribute('data-renderer') . '" data-renderer="'
             . $this->getAttribute('data-renderer') . '">' . $content . '</header>';
@@ -428,13 +428,13 @@ class Document extends QUI\QDOM
                         <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
             . $this->getAttribute('data-renderer') . '">
                          <head>
-                            <meta charset="UTF - 8">';
+                            <meta charset="UTF-8">';
 
             // add css
             $head .= '<style>' . $css . '</style>';
 
             foreach ($header['cssFiles'] as $file) {
-                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
 
             $head .= '</head>';
@@ -443,7 +443,7 @@ class Document extends QUI\QDOM
             $body = '<style>' . $css . '</style>';
 
             foreach ($header['cssFiles'] as $file) {
-                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
 
             $body .= $content;
@@ -465,7 +465,7 @@ class Document extends QUI\QDOM
                         <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
             . $this->getAttribute('data-renderer') . '">
                          <head>
-                            <meta charset="UTF - 8">';
+                            <meta charset="UTF-8">';
 
         // add css
         $css = $hd['css'];
@@ -477,7 +477,7 @@ class Document extends QUI\QDOM
         $header .= '<style>' . $css . '</style>';
 
         foreach ($hd['cssFiles'] as $file) {
-            $header .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+            $header .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
         }
 
         $header .= '</head>';
@@ -516,13 +516,13 @@ class Document extends QUI\QDOM
                         <html class="renderer-' . $this->getAttribute('data-renderer') . '" data-renderer="'
             . $this->getAttribute('data-renderer') . '">
                          <head>
-                            <meta charset="UTF - 8">';
+                            <meta charset="UTF-8">';
 
             // add css
             $head .= '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $head .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+                $head .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
 
             $head .= '</head>';
@@ -531,7 +531,7 @@ class Document extends QUI\QDOM
             $body = '<style>' . $css . '</style>';
 
             foreach ($footer['cssFiles'] as $file) {
-                $body .= '<link href="' . $file . '" rel="stylesheet" type="text / css">';
+                $body .= '<link href="' . $file . '" rel="stylesheet" type="text/css">';
             }
         }
 
