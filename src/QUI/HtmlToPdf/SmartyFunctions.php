@@ -116,6 +116,7 @@ class SmartyFunctions
 
             if (file_exists($pngImage)) {
                 $src = $pngImage;
+                $mimeType = 'image/png';
             } elseif (class_exists('\Imagick')) {
                 $svg = file_get_contents($fullImgPath);
 
