@@ -23,6 +23,8 @@ class CreatePdfTest extends TestCase
         $document->setContentCSS('.body-test { color: #ABC123; }');
         $document->setFooterHTML('<div class="footer-test">Ich bin ein Footer</div>');
         $document->setFooterCSS('.footer-test { color: #CFE123; }');
+        $document->options->enableForms = true;
+        $document->options->foldingMarks = true;
         // dateien hinzufügen
         try {
             $document->addHeaderCSSFile(dirname(__FILE__) . '/files/header.css');
@@ -55,6 +57,7 @@ class CreatePdfTest extends TestCase
         $document->setContentCSS('.body-test { color: #ABC123; }');
         $document->setFooterHTML('<div class="footer-test">Ich bin ein Footer</div>');
         $document->setFooterCSS('.footer-test { color: #CFE123; }');
+        $document->options->foldingMarks = true;
         // dateien hinzufügen
         try {
             $document->addHeaderCSSFile(dirname(__FILE__) . '/files/header.css');

@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\PdfCreator;
+use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageConversionFailedException;
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterInterface;
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterProviderInterface;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
@@ -15,8 +16,24 @@ use function file_exists;
 use function tempnam;
 use function unlink;
 
+require_once __DIR__ . '/LogIsolationTrait.php';
+
 class PdfCreatorTest extends TestCase
 {
+    use LogIsolationTrait;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->isolateQuiqqerLog();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->restoreQuiqqerLog();
+        parent::tearDown();
+    }
+
     #[Test]
     public function imageConverterIsNotCreatedForPdfGeneration(): void
     {
@@ -108,5 +125,53 @@ class PdfCreatorTest extends TestCase
                 unlink($pdfFile);
             }
         }
+    }
+
+    #[Test]
+    public function imageConversionRequiresAConfiguredConverter(): void
+    {
+        $htmlToPdfCreator = $this->createMock(HtmlToPdfCreatorInterface::class);
+        $htmlToPdfCreator->expects($this->never())
+            ->method('createPdf');
+
+        $pdfCreator = new PdfCreator($htmlToPdfCreator);
+
+        $this->expectException(PdfToImageConversionFailedException::class);
+        $pdfCreator->createPdfAndConvertToImage(new Document());
+    }
+
+    #[Test]
+    public function downloadedPdfIsDeletedUnlessItShallBeKept(): void
+    {
+        $pdfFile = tempnam(sys_get_temp_dir(), 'htmltopdf-download-');
+        $this->assertNotFalse($pdfFile);
+        file_put_contents($pdfFile, 'PDF content');
+
+        $htmlToPdfCreator = $this->createMock(HtmlToPdfCreatorInterface::class);
+        $htmlToPdfCreator->method('createPdf')
+            ->willReturn($pdfFile);
+
+        $document = new Document();
+        $document->options->filename = 'document.pdf';
+        $pdfCreator = new PdfCreator($htmlToPdfCreator);
+
+        $this->expectOutputString('PDF content');
+        $this->assertNull($pdfCreator->createAndDownloadPdf($document));
+        $this->assertFileDoesNotExist($pdfFile);
+    }
+
+    #[Test]
+    public function downloadFailureIsWrappedInPublicException(): void
+    {
+        $missingPdf = sys_get_temp_dir() . '/htmltopdf-missing-' . uniqid() . '.pdf';
+
+        $htmlToPdfCreator = $this->createMock(HtmlToPdfCreatorInterface::class);
+        $htmlToPdfCreator->method('createPdf')
+            ->willReturn($missingPdf);
+
+        $pdfCreator = new PdfCreator($htmlToPdfCreator);
+
+        $this->expectException(\QUI\Exception::class);
+        $pdfCreator->createAndDownloadPdf(new Document());
     }
 }

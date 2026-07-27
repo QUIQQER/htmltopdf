@@ -65,4 +65,19 @@ class UtilsTest extends TestCase
             Utils::prependStringInHtmlElement($html, 'body', 'New')
         );
     }
+
+    #[Test]
+    public function elementAndItsContentCanBeRemoved(): void
+    {
+        $html = '<html><head><style>body { color: red; }</style></head><body>Content</body></html>';
+
+        $this->assertSame(
+            '<html><head></head><body>Content</body></html>',
+            Utils::removeElementFromHtml($html, 'style')
+        );
+        $this->assertSame(
+            $html,
+            Utils::removeElementFromHtml($html, 'script')
+        );
+    }
 }
