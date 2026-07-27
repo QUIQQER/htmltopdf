@@ -18,6 +18,14 @@
                 <conf name="executable">
                     <type><![CDATA[string]]></type>
                 </conf>
+                <conf name="no_sandbox">
+                    <type><![CDATA[boolean]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+                <conf name="ignore_certificate_errors">
+                    <type><![CDATA[boolean]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
             </section>
             <section name="image_magick">
                 <conf name="convert_executable">
@@ -90,6 +98,27 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.executable.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="chrome_headless.no_sandbox" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/htmltopdf" var="settings.chrome_headless.no_sandbox.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.chrome_headless.no_sandbox.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="chrome_headless.ignore_certificate_errors" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.chrome_headless.ignore_certificate_errors.title"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/htmltopdf"
+                                        var="settings.chrome_headless.ignore_certificate_errors.description"/>
                             </description>
                         </input>
                     </settings>

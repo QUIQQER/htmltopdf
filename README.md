@@ -25,6 +25,38 @@ Installation
 ------------
 The Package Name is: quiqqer/htmltopdf
 
+### Chrome and AppArmor
+
+The Chrome executable must be runnable by the PHP-FPM process. A filesystem
+permission check alone is not sufficient because mandatory access control
+systems such as AppArmor or SELinux can still deny process execution.
+
+On Ubuntu systems using the AppArmor profiles `php-fpm` and `chrome`, the
+following local rule permits PHP-FPM to start the Google Chrome wrapper and
+transition to the dedicated Chrome profile:
+
+```text
+/opt/google/chrome/google-chrome Px -> chrome,
+```
+
+Add the rule to `/etc/apparmor.d/local/php-fpm` and reload the profile:
+
+```bash
+sudo apparmor_parser -r /etc/apparmor.d/php-fpm
+```
+
+The provider requirements check starts Chrome with `--version`. If execution
+is blocked, the settings test reports the executable path, exit code, and a
+hint to check AppArmor, SELinux, or PHP-FPM service restrictions.
+
+For compatibility with restricted PHP-FPM and container environments, the
+`Disable Chrome sandbox` setting is enabled by default. It adds `--no-sandbox`,
+which weakens process isolation. Disable this setting whenever the runtime
+allows Chrome to create its sandbox namespaces or provides a compatible SUID
+sandbox. TLS certificate validation remains enabled by default. The separate
+`Ignore TLS certificate errors` setting should only be used for controlled
+internal resources with certificates that cannot be validated normally.
+
 Usage
 ----------
 

@@ -168,6 +168,22 @@
             <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
         </locale>
+        <locale name="settings.chrome_headless.no_sandbox.title">
+            <de><![CDATA[Chrome-Sandbox deaktivieren]]></de>
+            <en><![CDATA[Disable Chrome sandbox]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.no_sandbox.description">
+            <de><![CDATA[Startet Chrome mit <code>--no-sandbox</code>. Nur aktivieren, wenn Chrome in der Serverumgebung andernfalls nicht startet. Das Deaktivieren der Sandbox reduziert die Prozessisolation.]]></de>
+            <en><![CDATA[Starts Chrome with <code>--no-sandbox</code>. Enable only if Chrome cannot start in the server environment otherwise. Disabling the sandbox reduces process isolation.]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.ignore_certificate_errors.title">
+            <de><![CDATA[TLS-Zertifikatsfehler ignorieren]]></de>
+            <en><![CDATA[Ignore TLS certificate errors]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.ignore_certificate_errors.description">
+            <de><![CDATA[Akzeptiert beim Laden externer PDF-Ressourcen ungültige TLS-Zertifikate. Nur für kontrollierte interne Ressourcen aktivieren; die Zertifikatsprüfung wird dadurch umgangen.]]></de>
+            <en><![CDATA[Accepts invalid TLS certificates while loading external PDF resources. Enable only for controlled internal resources; this bypasses certificate validation.]]></en>
+        </locale>
         <locale name="settings.image_magick.convert_executable.title">
             <de><![CDATA[convert executable]]></de>
             <en><![CDATA[convert executable]]></en>
@@ -192,12 +208,20 @@
             <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.executable_not_found">
-            <de><![CDATA[Das Programm "google-chrome" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "google-chrome" (Google Chrome Web-Browser).]]></de>
-            <en><![CDATA[The executable "google-chrome" could not be found on the system. Please install "google-chrome" (Google Chrome web browser).]]></en>
+            <de><![CDATA[Das Chrome-Programm "[path]" konnte auf dem System nicht gefunden werden. Bitte prüfen Sie die Einstellung "Chrome Executable" oder installieren Sie Google Chrome.]]></de>
+            <en><![CDATA[The Chrome executable "[path]" could not be found on the system. Please check the "Chrome Executable" setting or install Google Chrome.]]></en>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.not_executable">
-            <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "google-chrome" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
-            <en><![CDATA[The PHP process has no access to the executable "google-chrome" ([path]). Please configure your system so that PHP can execute it.]]></en>
+            <de><![CDATA[Der PHP-Prozess kann das Chrome-Programm "[path]" nicht ausführen. Bitte prüfen Sie den konfigurierten Pfad und die Dateiberechtigungen.]]></de>
+            <en><![CDATA[The PHP process cannot execute the Chrome executable "[path]". Please check the configured path and file permissions.]]></en>
+        </locale>
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.home_not_writable">
+            <de><![CDATA[Das Chrome-Arbeitsverzeichnis ist nicht beschreibbar ([path]). Bitte korrigieren Sie die Dateisystemberechtigungen.]]></de>
+            <en><![CDATA[The Chrome working directory is not writable ([path]). Please correct the filesystem permissions.]]></en>
+        </locale>
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.start_failed">
+            <de><![CDATA[Google Chrome ist vorhanden, konnte aber vom PHP-Prozess nicht gestartet werden ([path], Exit-Code [exitCode]). Prüfen Sie insbesondere AppArmor, SELinux und die Sicherheitsrichtlinien des PHP-FPM-Dienstes. Bei AppArmor muss das Profil "php-fpm" den Start von Google Chrome erlauben.]]></de>
+            <en><![CDATA[Google Chrome is installed but could not be started by the PHP process ([path], exit code [exitCode]). In particular, check AppArmor, SELinux, and the security policies of the PHP-FPM service. With AppArmor, the "php-fpm" profile must permit Google Chrome to start.]]></en>
         </locale>
         <locale name="exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up">
             <de><![CDATA[Aus PDF-Dateien können aktuell keine Bilder generiert werden, da kein PDF-zu-Bild Provider konfiguriert ist.]]></de>
