@@ -12,6 +12,7 @@ use Symfony\Component\Process\Process;
 use Throwable;
 
 use function file_exists;
+use function filter_var;
 use function is_executable;
 use function is_null;
 use function is_writable;
@@ -45,7 +46,11 @@ class Provider implements HtmlToPdfCreatorProviderInterface
 
         $this->checkExecutableRequirements($chromePath);
 
-        return new Creator($chromePath);
+        return new Creator(
+            $chromePath,
+            $this->getConfigFlag('no_sandbox'),
+            $this->getConfigFlag('ignore_certificate_errors')
+        );
     }
 
     /**
@@ -179,5 +184,25 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         $executablePath = trim($executablePath);
 
         return empty($executablePath) ? null : $executablePath;
+    }
+
+    private function getConfigFlag(string $name): bool
+    {
+        try {
+            $conf = QUI::getPackage('quiqqer/htmltopdf')->getConfig();
+
+            if (is_null($conf)) {
+                QUI\System\Log::addError("Cannot read / build config for quiqqer/htmltopdf.");
+                return false;
+            }
+
+            return filter_var(
+                $conf->get('chrome_headless', $name),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return false;
+        }
     }
 }

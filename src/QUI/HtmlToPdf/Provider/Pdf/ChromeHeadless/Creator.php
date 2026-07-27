@@ -18,7 +18,9 @@ use function uniqid;
 class Creator implements HtmlToPdfCreatorInterface
 {
     public function __construct(
-        private readonly ?string $chromeExecutable = null
+        private readonly ?string $chromeExecutable = null,
+        private readonly bool $noSandbox = false,
+        private readonly bool $ignoreCertificateErrors = false
     ) {
     }
 
@@ -157,8 +159,8 @@ class Creator implements HtmlToPdfCreatorInterface
             // Configure Chrome options
             $browser = $browserFactory->createBrowser([
                 'headless' => true,
-                'noSandbox' => true,
-                'ignoreCertificateErrors' => true,
+                'noSandbox' => $this->noSandbox,
+                'ignoreCertificateErrors' => $this->ignoreCertificateErrors,
                 'userDataDir' => $userDataDir,
                 'envVariables' => [
                     'HOME' => $chromeHome,

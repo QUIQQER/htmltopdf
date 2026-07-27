@@ -168,6 +168,22 @@
             <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
         </locale>
+        <locale name="settings.chrome_headless.no_sandbox.title">
+            <de><![CDATA[Chrome-Sandbox deaktivieren]]></de>
+            <en><![CDATA[Disable Chrome sandbox]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.no_sandbox.description">
+            <de><![CDATA[Startet Chrome mit <code>--no-sandbox</code>. Nur aktivieren, wenn Chrome in der Serverumgebung andernfalls nicht startet. Das Deaktivieren der Sandbox reduziert die Prozessisolation.]]></de>
+            <en><![CDATA[Starts Chrome with <code>--no-sandbox</code>. Enable only if Chrome cannot start in the server environment otherwise. Disabling the sandbox reduces process isolation.]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.ignore_certificate_errors.title">
+            <de><![CDATA[TLS-Zertifikatsfehler ignorieren]]></de>
+            <en><![CDATA[Ignore TLS certificate errors]]></en>
+        </locale>
+        <locale name="settings.chrome_headless.ignore_certificate_errors.description">
+            <de><![CDATA[Akzeptiert beim Laden externer PDF-Ressourcen ungültige TLS-Zertifikate. Nur für kontrollierte interne Ressourcen aktivieren; die Zertifikatsprüfung wird dadurch umgangen.]]></de>
+            <en><![CDATA[Accepts invalid TLS certificates while loading external PDF resources. Enable only for controlled internal resources; this bypasses certificate validation.]]></en>
+        </locale>
         <locale name="settings.image_magick.convert_executable.title">
             <de><![CDATA[convert executable]]></de>
             <en><![CDATA[convert executable]]></en>
