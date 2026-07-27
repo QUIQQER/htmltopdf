@@ -39,7 +39,10 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         if (empty($chromePath)) {
             throw new HtmlToPdfRequirementsNotMetException([
                 'quiqqer/htmltopdf',
-                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found'
+                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found',
+                [
+                    'path' => 'google-chrome'
+                ]
             ]);
         }
 
@@ -62,7 +65,10 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         if (is_null($executablePath)) {
             throw new HtmlToPdfRequirementsNotMetException([
                 'quiqqer/htmltopdf',
-                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found'
+                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found',
+                [
+                    'path' => 'google-chrome'
+                ]
             ]);
         }
 
@@ -98,7 +104,10 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         if (!file_exists($executablePath)) {
             throw new HtmlToPdfRequirementsNotMetException([
                 'quiqqer/htmltopdf',
-                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found'
+                'exception.Provider.GoogleChrome.checkRequirements.executable_not_found',
+                [
+                    'path' => $executablePath
+                ]
             ]);
         }
 

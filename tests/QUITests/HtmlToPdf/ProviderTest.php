@@ -93,11 +93,19 @@ class ProviderTest extends TestCase
     {
         $config = $this->getPackageConfig();
         $originalExecutable = $config->get('chrome_headless', 'executable');
-        $config->set('chrome_headless', 'executable', '/path/to/missing-google-chrome');
+        $missingExecutable = '/path/to/configured-but-missing-chrome';
+        $config->set('chrome_headless', 'executable', $missingExecutable);
 
         try {
-            $this->expectException(HtmlToPdfRequirementsNotMetException::class);
-            (new ChromeHeadlessProvider())->getHtmlToPdfCreator();
+            try {
+                (new ChromeHeadlessProvider())->getHtmlToPdfCreator();
+                $this->fail('A missing Chrome executable was accepted.');
+            } catch (HtmlToPdfRequirementsNotMetException $exception) {
+                $this->assertSame(
+                    $missingExecutable,
+                    $exception->getContext()['locale'][2]['path']
+                );
+            }
         } finally {
             $config->set('chrome_headless', 'executable', $originalExecutable);
         }
