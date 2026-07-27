@@ -5,11 +5,13 @@ namespace QUI\HtmlToPdf;
 use QUI;
 use QUI\Exception;
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterInterface;
+use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterProviderInterface;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\Utils\System\File;
 use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageConversionFailedException;
 
 use function date;
+use function file_exists;
 use function unlink;
 
 readonly class PdfCreator
@@ -18,10 +20,13 @@ readonly class PdfCreator
      * @param HtmlToPdfCreatorInterface $pdfCreator
      * @param PdfToImageConverterInterface|null $pdfToImageConverter (optional) - Only required if PDF to image
      * conversion shall be available.
+     * @param PdfToImageConverterProviderInterface|null $pdfToImageConverterProvider (optional) - Lazily creates the
+     * PDF-to-image converter when image conversion is requested.
      */
     public function __construct(
         private HtmlToPdfCreatorInterface $pdfCreator,
-        private ?PdfToImageConverterInterface $pdfToImageConverter = null
+        private ?PdfToImageConverterInterface $pdfToImageConverter = null,
+        private ?PdfToImageConverterProviderInterface $pdfToImageConverterProvider = null
     ) {
     }
 
@@ -67,10 +72,13 @@ readonly class PdfCreator
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.download.failed'
             ]);
+        } finally {
+            if ($keepPdfFile === false) {
+                $this->removeTemporaryFile($pdfFile);
+            }
         }
 
         if ($keepPdfFile === false) {
-            unlink($pdfFile);
             return null;
         }
 
@@ -84,7 +92,13 @@ readonly class PdfCreator
      */
     public function createPdfAndConvertToImage(Document $document): array
     {
-        if ($this->pdfToImageConverter === null) {
+        $pdfToImageConverter = $this->pdfToImageConverter;
+
+        if ($pdfToImageConverter === null && $this->pdfToImageConverterProvider !== null) {
+            $pdfToImageConverter = $this->pdfToImageConverterProvider->getPdfToImageConverter();
+        }
+
+        if ($pdfToImageConverter === null) {
             throw new PdfToImageConversionFailedException([
                 'quiqqer/htmltopdf',
                 'exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up'
@@ -92,9 +106,26 @@ readonly class PdfCreator
         }
 
         $pdfFilePath = $this->createPdf($document);
-        $images = $this->pdfToImageConverter->convertPdfToImage($pdfFilePath);
 
-        unlink($pdfFilePath);
-        return $images;
+        try {
+            return $pdfToImageConverter->convertPdfToImage($pdfFilePath);
+        } finally {
+            $this->removeTemporaryFile($pdfFilePath);
+        }
+    }
+
+    private function removeTemporaryFile(string $file): void
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        try {
+            if (!unlink($file)) {
+                QUI\System\Log::addWarning('Could not delete temporary HTML-to-PDF file: ' . $file);
+            }
+        } catch (\Throwable $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 }

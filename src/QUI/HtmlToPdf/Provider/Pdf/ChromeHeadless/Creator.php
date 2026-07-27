@@ -7,8 +7,10 @@ use QUI;
 use QUI\Exception;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
-use Throwable;
+use QUI\Utils\System\File;
+use RuntimeException;
 
+use function file_exists;
 use function file_put_contents;
 use function preg_match_all;
 use function str_replace;
@@ -16,18 +18,36 @@ use function uniqid;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
+    public function __construct(
+        private readonly ?string $chromeExecutable = null,
+        private readonly bool $noSandbox = true,
+        private readonly bool $ignoreCertificateErrors = false
+    ) {
+    }
+
     /**
      * @inheritDoc
      * @throws Exception
      */
     public function createPdf(Document $document): string
     {
+        $htmlFile = null;
+        $pdfFile = null;
+        $pdfCreated = false;
+
         try {
             $document->setAttribute('data-renderer', 'chrome');
 
             // Get package var directory
             $Package = QUI::getPackage('quiqqer/htmltopdf');
             $varDir = $Package->getVarDir();
+            $chromeHome = $varDir . 'chrome-home/';
+
+            if (!File::mkdir($chromeHome) || !is_writable($chromeHome)) {
+                throw new RuntimeException(
+                    'Chrome home directory could not be created or is not writable: ' . $chromeHome
+                );
+            }
 
             // Build complete HTML document
             $html = $this->buildCompleteHtml($document);
@@ -37,24 +57,75 @@ class Creator implements HtmlToPdfCreatorInterface
             $htmlFile = $varDir . $documentId . '.html';
             $pdfFile = $varDir . $documentId . '.pdf';
 
-            file_put_contents($htmlFile, $html);
-
-            // Create PDF using Chrome Headless
-            $this->generatePdfWithChrome($htmlFile, $pdfFile, $document);
-
-            // Clean up temporary HTML file
-            if (file_exists($htmlFile)) {
-                unlink($htmlFile);
+            if (file_put_contents($htmlFile, $html) === false) {
+                throw new RuntimeException('Could not write temporary HTML file: ' . $htmlFile);
             }
 
+            // Create PDF using Chrome Headless
+            $this->generatePdfWithChrome($htmlFile, $pdfFile, $document, $chromeHome);
+            $pdfCreated = true;
+
             return $pdfFile;
-        } catch (\Exception $Exception) {
+        } catch (\Throwable $Exception) {
             QUI\System\Log::writeException($Exception);
 
             throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.conversion.failed'
             ]);
+        } finally {
+            $this->removeTemporaryFile($htmlFile);
+
+            if ($pdfCreated === false) {
+                $this->removeTemporaryFile($pdfFile);
+            }
+        }
+    }
+
+    /**
+     * Verify that Chrome can start with the configured runtime options.
+     *
+     * @throws \Exception
+     */
+    public function checkBrowserStartup(): void
+    {
+        $chromeHome = QUI::getPackage('quiqqer/htmltopdf')->getVarDir() . 'chrome-home/';
+
+        if (!File::mkdir($chromeHome) || !is_writable($chromeHome)) {
+            throw new RuntimeException(
+                'Chrome home directory could not be created or is not writable: ' . $chromeHome
+            );
+        }
+
+        $userDataDir = $this->createUserDataDir($chromeHome);
+        $browser = null;
+
+        try {
+            $browserFactory = new BrowserFactory($this->chromeExecutable);
+            $browser = $browserFactory->createBrowser(
+                $this->getBrowserOptions($chromeHome, $userDataDir)
+            );
+        } finally {
+            if ($browser !== null) {
+                $browser->close();
+            }
+
+            File::deleteDir($userDataDir);
+        }
+    }
+
+    private function removeTemporaryFile(?string $file): void
+    {
+        if ($file === null || !file_exists($file)) {
+            return;
+        }
+
+        try {
+            if (!unlink($file)) {
+                QUI\System\Log::addWarning('Could not delete temporary HTML-to-PDF file: ' . $file);
+            }
+        } catch (\Throwable $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 
@@ -123,22 +194,22 @@ class Creator implements HtmlToPdfCreatorInterface
      *
      * @throws \Exception
      */
-    private function generatePdfWithChrome(string $htmlFile, string $pdfFile, Document $document): void
-    {
-        $browserFactory = new BrowserFactory();
+    private function generatePdfWithChrome(
+        string $htmlFile,
+        string $pdfFile,
+        Document $document,
+        string $chromeHome
+    ): void {
+        $userDataDir = $this->createUserDataDir($chromeHome);
 
-        // Configure Chrome options
-        $browser = $browserFactory->createBrowser([
-            'headless' => true,
-            'noSandbox' => true,
-            'ignoreCertificateErrors' => true,
-
-            'headers' => [
-                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
-            ]
-        ]);
+        $browserFactory = new BrowserFactory($this->chromeExecutable);
+        $browser = null;
 
         try {
+            $browser = $browserFactory->createBrowser(
+                $this->getBrowserOptions($chromeHome, $userDataDir)
+            );
+
             $page = $browser->createPage();
 
             // Navigate and wait for page to load
@@ -187,11 +258,49 @@ class Creator implements HtmlToPdfCreatorInterface
 
             // Save to file
             $pdf->saveToFile($pdfFile);
-        } catch (Throwable $exception) {
-            QUI\System\Log::writeException($exception);
         } finally {
-            $browser->close();
+            if ($browser !== null) {
+                $browser->close();
+            }
+
+            File::deleteDir($userDataDir);
         }
+    }
+
+    private function createUserDataDir(string $chromeHome): string
+    {
+        $userDataDir = $chromeHome . 'profiles/' . uniqid('profile-', true) . '/';
+
+        if (!File::mkdir($userDataDir) || !is_writable($userDataDir)) {
+            throw new RuntimeException(
+                'Chrome user data directory could not be created or is not writable: ' . $userDataDir
+            );
+        }
+
+        return $userDataDir;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getBrowserOptions(string $chromeHome, string $userDataDir): array
+    {
+        return [
+            'headless' => true,
+            'noSandbox' => $this->noSandbox,
+            'ignoreCertificateErrors' => $this->ignoreCertificateErrors,
+            'userDataDir' => $userDataDir,
+            'envVariables' => [
+                'HOME' => $chromeHome,
+                'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+                'XDG_CACHE_HOME' => $chromeHome . '.cache',
+                'XDG_CONFIG_HOME' => $chromeHome . '.config',
+                'XDG_DATA_HOME' => $chromeHome . '.local/share'
+            ],
+            'headers' => [
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
+            ]
+        ];
     }
 
     /**
@@ -213,12 +322,11 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function buildHeaderTemplate(Document $document): string
     {
-//        return $document->getHeaderHTML();
-        $headerHtml = $document->getHeaderHTML();
-
-        if (empty($headerHtml)) {
+        if (!$document->hasHeaderContent() && !$document->options->foldingMarks) {
             return '<div></div>';  // Empty template required by Chrome
         }
+
+        $headerHtml = $document->getHeaderHTML();
 
         // Add folding marks if enabled
         if ($document->options->foldingMarks) {
@@ -252,12 +360,13 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     private function buildFooterTemplate(Document $document): string
     {
-        $footerHtml = $document->getFooterHTML();
         $showPageNumbers = $document->options->showPageNumbers;
 
-        if (empty($footerHtml) && $showPageNumbers === false) {
+        if (!$document->hasFooterContent() && $showPageNumbers === false) {
             return '<div></div>';  // Empty template required by Chrome
         }
+
+        $footerHtml = $document->getFooterHTML();
 
         // Add page numbers if enabled
         if ($showPageNumbers) {

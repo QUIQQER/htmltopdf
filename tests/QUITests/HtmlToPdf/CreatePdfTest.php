@@ -23,6 +23,8 @@ class CreatePdfTest extends TestCase
         $document->setContentCSS('.body-test { color: #ABC123; }');
         $document->setFooterHTML('<div class="footer-test">Ich bin ein Footer</div>');
         $document->setFooterCSS('.footer-test { color: #CFE123; }');
+        $document->options->enableForms = true;
+        $document->options->foldingMarks = true;
         // dateien hinzufügen
         try {
             $document->addHeaderCSSFile(dirname(__FILE__) . '/files/header.css');
@@ -55,6 +57,7 @@ class CreatePdfTest extends TestCase
         $document->setContentCSS('.body-test { color: #ABC123; }');
         $document->setFooterHTML('<div class="footer-test">Ich bin ein Footer</div>');
         $document->setFooterCSS('.footer-test { color: #CFE123; }');
+        $document->options->foldingMarks = true;
         // dateien hinzufügen
         try {
             $document->addHeaderCSSFile(dirname(__FILE__) . '/files/header.css');
@@ -75,6 +78,40 @@ class CreatePdfTest extends TestCase
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
+        }
+    }
+
+    #[Test]
+    public function chromeHeadlessRequirementsUseARealBrowserStartup(): void
+    {
+        $provider = new ProviderChromeHeadless();
+        $provider->checkRequirements();
+
+        $this->addToAssertionCount(1);
+    }
+
+    #[Test]
+    public function emptyDocumentCanBeCreatedWithoutHeaderOrFooter(): void
+    {
+        $document = new Document([
+            'showPageNumbers' => false
+        ]);
+        $providers = [
+            new ProviderMpdf(),
+            new ProviderChromeHeadless()
+        ];
+
+        foreach ($providers as $provider) {
+            $pdfFile = $provider->getHtmlToPdfCreator()->createPdf($document);
+
+            try {
+                $this->assertFileExists($pdfFile);
+                $this->assertGreaterThan(0, filesize($pdfFile));
+            } finally {
+                if (file_exists($pdfFile)) {
+                    unlink($pdfFile);
+                }
+            }
         }
     }
 }

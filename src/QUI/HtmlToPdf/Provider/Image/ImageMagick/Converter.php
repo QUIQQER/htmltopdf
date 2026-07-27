@@ -7,7 +7,7 @@ use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageConversionFailedException;
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterInterface;
 use Symfony\Component\Process\Process;
 
-use function basename;
+use function dirname;
 use function file_exists;
 use function pathinfo;
 
@@ -23,7 +23,10 @@ readonly class Converter implements PdfToImageConverterInterface
      */
     public function convertPdfToImage(string $pdfFile): array
     {
-        $imageFile = basename($pdfFile, '.pdf') . '.jpg';
+        $imageFile = dirname($pdfFile)
+            . DIRECTORY_SEPARATOR
+            . pathinfo($pdfFile, PATHINFO_FILENAME)
+            . '.jpg';
 
         $command = [
             $this->convertExecutable,

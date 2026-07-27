@@ -4,7 +4,9 @@ namespace QUI\HtmlToPdf\Provider\Pdf;
 
 use function is_string;
 use function preg_match;
+use function preg_quote;
 use function preg_replace;
+use function preg_replace_callback;
 
 class Utils
 {
@@ -19,7 +21,7 @@ class Utils
     {
         // Extract content between <$element> tags if present
         if (preg_match('/<' . $element . '[^>]*>(.*?)<\/' . $element . '>/is', $html, $matches)) {
-            return !empty($matches[1]) ? $matches[1] : $html;
+            return $matches[1];
         }
 
         return $html;
@@ -54,23 +56,18 @@ class Utils
      */
     public static function appendStringInHtmlElement(string $html, string $element, string $string): string
     {
-        $matches = [];
-        preg_match('/<(' . $element . '[^>]*)>(.*?)<\/' . $element . '>/', $html, $matches);
-        if (count($matches) > 0) {
-            $replaced = str_replace(
-                $matches[0],
-                '<' . $element . ' ' . $matches[1] . '>' . $string . '</' . $element . '>',
-                $html
-            );
+        $element = preg_quote($element, '/');
+        $replaced = preg_replace_callback(
+            '/(<' . $element . '\b[^>]*>)(.*?)(<\/' . $element . '\s*>)/is',
+            static fn(array $matches): string => $matches[1] . $matches[2] . $string . $matches[3],
+            $html
+        );
 
-            if (!is_string($replaced)) {
-                return $html;
-            }
-
-            return $replaced;
-        } else {
+        if (!is_string($replaced)) {
             return $html;
         }
+
+        return $replaced;
     }
 
     /**
@@ -83,9 +80,10 @@ class Utils
      */
     public static function prependStringInHtmlElement(string $html, string $element, string $string): string
     {
-        $replaced = preg_replace(
-            '/<(' . $element . '[^>]*)>(.*?)<\/' . $element . '>/',
-            '<${1}>${2}' . $string . '</' . $element . '>',
+        $element = preg_quote($element, '/');
+        $replaced = preg_replace_callback(
+            '/(<' . $element . '\b[^>]*>)(.*?)(<\/' . $element . '\s*>)/is',
+            static fn(array $matches): string => $matches[1] . $string . $matches[2] . $matches[3],
             $html
         );
 
