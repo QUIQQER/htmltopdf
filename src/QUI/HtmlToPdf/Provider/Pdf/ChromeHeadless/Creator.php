@@ -7,7 +7,8 @@ use QUI;
 use QUI\Exception;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
-use Throwable;
+use QUI\Utils\System\File;
+use RuntimeException;
 
 use function file_put_contents;
 use function preg_match_all;
@@ -16,6 +17,11 @@ use function uniqid;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
+    public function __construct(
+        private readonly ?string $chromeExecutable = null
+    ) {
+    }
+
     /**
      * @inheritDoc
      * @throws Exception
@@ -28,6 +34,13 @@ class Creator implements HtmlToPdfCreatorInterface
             // Get package var directory
             $Package = QUI::getPackage('quiqqer/htmltopdf');
             $varDir = $Package->getVarDir();
+            $chromeHome = $varDir . 'chrome-home/';
+
+            if (!File::mkdir($chromeHome) || !is_writable($chromeHome)) {
+                throw new RuntimeException(
+                    'Chrome home directory could not be created or is not writable: ' . $chromeHome
+                );
+            }
 
             // Build complete HTML document
             $html = $this->buildCompleteHtml($document);
@@ -40,7 +53,7 @@ class Creator implements HtmlToPdfCreatorInterface
             file_put_contents($htmlFile, $html);
 
             // Create PDF using Chrome Headless
-            $this->generatePdfWithChrome($htmlFile, $pdfFile, $document);
+            $this->generatePdfWithChrome($htmlFile, $pdfFile, $document, $chromeHome);
 
             // Clean up temporary HTML file
             if (file_exists($htmlFile)) {
@@ -123,22 +136,43 @@ class Creator implements HtmlToPdfCreatorInterface
      *
      * @throws \Exception
      */
-    private function generatePdfWithChrome(string $htmlFile, string $pdfFile, Document $document): void
-    {
-        $browserFactory = new BrowserFactory();
+    private function generatePdfWithChrome(
+        string $htmlFile,
+        string $pdfFile,
+        Document $document,
+        string $chromeHome
+    ): void {
+        $userDataDir = $chromeHome . 'profiles/' . uniqid('profile-', true) . '/';
 
-        // Configure Chrome options
-        $browser = $browserFactory->createBrowser([
-            'headless' => true,
-            'noSandbox' => true,
-            'ignoreCertificateErrors' => true,
+        if (!File::mkdir($userDataDir) || !is_writable($userDataDir)) {
+            throw new RuntimeException(
+                'Chrome user data directory could not be created or is not writable: ' . $userDataDir
+            );
+        }
 
-            'headers' => [
-                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
-            ]
-        ]);
+        $browserFactory = new BrowserFactory($this->chromeExecutable);
+        $browser = null;
 
         try {
+            // Configure Chrome options
+            $browser = $browserFactory->createBrowser([
+                'headless' => true,
+                'noSandbox' => true,
+                'ignoreCertificateErrors' => true,
+                'userDataDir' => $userDataDir,
+                'envVariables' => [
+                    'HOME' => $chromeHome,
+                    'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+                    'XDG_CACHE_HOME' => $chromeHome . '.cache',
+                    'XDG_CONFIG_HOME' => $chromeHome . '.config',
+                    'XDG_DATA_HOME' => $chromeHome . '.local/share'
+                ],
+
+                'headers' => [
+                    'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0'
+                ]
+            ]);
+
             $page = $browser->createPage();
 
             // Navigate and wait for page to load
@@ -187,10 +221,12 @@ class Creator implements HtmlToPdfCreatorInterface
 
             // Save to file
             $pdf->saveToFile($pdfFile);
-        } catch (Throwable $exception) {
-            QUI\System\Log::writeException($exception);
         } finally {
-            $browser->close();
+            if ($browser !== null) {
+                $browser->close();
+            }
+
+            File::deleteDir($userDataDir);
         }
     }
 

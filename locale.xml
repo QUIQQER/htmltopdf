@@ -199,6 +199,14 @@
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "google-chrome" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "google-chrome" ([path]). Please configure your system so that PHP can execute it.]]></en>
         </locale>
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.home_not_writable">
+            <de><![CDATA[Das Chrome-Arbeitsverzeichnis ist nicht beschreibbar ([path]). Bitte korrigieren Sie die Dateisystemberechtigungen.]]></de>
+            <en><![CDATA[The Chrome working directory is not writable ([path]). Please correct the filesystem permissions.]]></en>
+        </locale>
+        <locale name="exception.Provider.GoogleChrome.checkRequirements.start_failed">
+            <de><![CDATA[Google Chrome ist vorhanden, konnte aber vom PHP-Prozess nicht gestartet werden ([path], Exit-Code [exitCode]). Prüfen Sie insbesondere AppArmor, SELinux und die Sicherheitsrichtlinien des PHP-FPM-Dienstes. Bei AppArmor muss das Profil "php-fpm" den Start von Google Chrome erlauben.]]></de>
+            <en><![CDATA[Google Chrome is installed but could not be started by the PHP process ([path], exit code [exitCode]). In particular, check AppArmor, SELinux, and the security policies of the PHP-FPM service. With AppArmor, the "php-fpm" profile must permit Google Chrome to start.]]></en>
+        </locale>
         <locale name="exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up">
             <de><![CDATA[Aus PDF-Dateien können aktuell keine Bilder generiert werden, da kein PDF-zu-Bild Provider konfiguriert ist.]]></de>
             <en><![CDATA[Currently, images cannot be created from PDF files, since no PDF-to-image provider is configured.]]></en>
