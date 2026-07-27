@@ -10,6 +10,7 @@ use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\Utils\System\File;
 use RuntimeException;
 
+use function file_exists;
 use function file_put_contents;
 use function preg_match_all;
 use function str_replace;
@@ -30,6 +31,10 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     public function createPdf(Document $document): string
     {
+        $htmlFile = null;
+        $pdfFile = null;
+        $pdfCreated = false;
+
         try {
             $document->setAttribute('data-renderer', 'chrome');
 
@@ -52,24 +57,43 @@ class Creator implements HtmlToPdfCreatorInterface
             $htmlFile = $varDir . $documentId . '.html';
             $pdfFile = $varDir . $documentId . '.pdf';
 
-            file_put_contents($htmlFile, $html);
+            if (file_put_contents($htmlFile, $html) === false) {
+                throw new RuntimeException('Could not write temporary HTML file: ' . $htmlFile);
+            }
 
             // Create PDF using Chrome Headless
             $this->generatePdfWithChrome($htmlFile, $pdfFile, $document, $chromeHome);
-
-            // Clean up temporary HTML file
-            if (file_exists($htmlFile)) {
-                unlink($htmlFile);
-            }
+            $pdfCreated = true;
 
             return $pdfFile;
-        } catch (\Exception $Exception) {
+        } catch (\Throwable $Exception) {
             QUI\System\Log::writeException($Exception);
 
             throw new QUI\Exception([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.conversion.failed'
             ]);
+        } finally {
+            $this->removeTemporaryFile($htmlFile);
+
+            if ($pdfCreated === false) {
+                $this->removeTemporaryFile($pdfFile);
+            }
+        }
+    }
+
+    private function removeTemporaryFile(?string $file): void
+    {
+        if ($file === null || !file_exists($file)) {
+            return;
+        }
+
+        try {
+            if (!unlink($file)) {
+                QUI\System\Log::addWarning('Could not delete temporary HTML-to-PDF file: ' . $file);
+            }
+        } catch (\Throwable $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 

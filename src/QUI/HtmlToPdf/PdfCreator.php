@@ -11,6 +11,7 @@ use QUI\Utils\System\File;
 use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageConversionFailedException;
 
 use function date;
+use function file_exists;
 use function unlink;
 
 readonly class PdfCreator
@@ -71,10 +72,13 @@ readonly class PdfCreator
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.download.failed'
             ]);
+        } finally {
+            if ($keepPdfFile === false) {
+                $this->removeTemporaryFile($pdfFile);
+            }
         }
 
         if ($keepPdfFile === false) {
-            unlink($pdfFile);
             return null;
         }
 
@@ -102,9 +106,26 @@ readonly class PdfCreator
         }
 
         $pdfFilePath = $this->createPdf($document);
-        $images = $pdfToImageConverter->convertPdfToImage($pdfFilePath);
 
-        unlink($pdfFilePath);
-        return $images;
+        try {
+            return $pdfToImageConverter->convertPdfToImage($pdfFilePath);
+        } finally {
+            $this->removeTemporaryFile($pdfFilePath);
+        }
+    }
+
+    private function removeTemporaryFile(string $file): void
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        try {
+            if (!unlink($file)) {
+                QUI\System\Log::addWarning('Could not delete temporary HTML-to-PDF file: ' . $file);
+            }
+        } catch (\Throwable $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 }

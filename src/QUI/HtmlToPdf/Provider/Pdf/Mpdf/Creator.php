@@ -11,8 +11,10 @@ use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\HtmlToPdf\Provider\Pdf\Exception\HtmlToPdfCreationFailedException;
 
+use function file_exists;
 use function preg_replace_callback;
 use function str_replace;
+use function unlink;
 
 class Creator implements HtmlToPdfCreatorInterface
 {
@@ -26,6 +28,8 @@ class Creator implements HtmlToPdfCreatorInterface
      */
     public function createPdf(Document $document): string
     {
+        $pdfFile = null;
+
         try {
             $this->initWriteHtml = true;
             $document->setAttribute('data-renderer', 'mpdf');
@@ -65,13 +69,30 @@ class Creator implements HtmlToPdfCreatorInterface
             $mpdf->Output($pdfFile, Destination::FILE);
 
             return $pdfFile;
-        } catch (\Exception $Exception) {
+        } catch (\Throwable $Exception) {
             QUI\System\Log::writeException($Exception);
+
+            $this->removeFailedPdf($pdfFile);
 
             throw new HtmlToPdfCreationFailedException([
                 'quiqqer/htmltopdf',
                 'exception.document.pdf.conversion.failed'
             ]);
+        }
+    }
+
+    private function removeFailedPdf(?string $pdfFile): void
+    {
+        if ($pdfFile === null || !file_exists($pdfFile)) {
+            return;
+        }
+
+        try {
+            if (!unlink($pdfFile)) {
+                QUI\System\Log::addWarning('Could not delete incomplete mPDF file: ' . $pdfFile);
+            }
+        } catch (\Throwable $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 
