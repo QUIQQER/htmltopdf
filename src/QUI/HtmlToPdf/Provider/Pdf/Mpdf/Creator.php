@@ -13,6 +13,7 @@ use QUI\HtmlToPdf\Provider\Pdf\Exception\HtmlToPdfCreationFailedException;
 
 use function file_exists;
 use function preg_replace_callback;
+use function rtrim;
 use function str_replace;
 use function unlink;
 
@@ -39,7 +40,7 @@ class Creator implements HtmlToPdfCreatorInterface
             $varDir = $Package->getVarDir();
 
             // Create mpdf instance with document settings
-            $mpdf = $this->createMpdfInstance($document);
+            $mpdf = $this->createMpdfInstance($document, $varDir);
             $mpdf->shrink_tables_to_fit = '1'; // see https://mpdf.github.io/troubleshooting/resizing.html [13.11.2025]
             $mpdf->shrink_this_table_to_fit = false;
 
@@ -100,10 +101,11 @@ class Creator implements HtmlToPdfCreatorInterface
      * Create and configure mPDF instance based on document attributes
      *
      * @param Document $document
+     * @param string $tempDir
      * @return Mpdf
      * @throws MpdfException
      */
-    private function createMpdfInstance(Document $document): Mpdf
+    private function createMpdfInstance(Document $document, string $tempDir): Mpdf
     {
         $config = [
             'mode' => 'utf-8',
@@ -116,7 +118,7 @@ class Creator implements HtmlToPdfCreatorInterface
             'margin_header' => 0, //(float)$document->options->headerSpacing,
             'margin_footer' => 0, //(float)$document->options->footerSpacing,
             'orientation' => 'P',
-            'tempDir' => sys_get_temp_dir()
+            'tempDir' => rtrim($tempDir, '/\\')
         ];
 
         // Apply DPI setting

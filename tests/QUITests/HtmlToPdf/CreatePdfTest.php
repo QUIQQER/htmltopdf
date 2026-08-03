@@ -4,6 +4,7 @@ namespace QUITests\HtmlToPdf;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use QUI;
 use QUI\HtmlToPdf\Document;
 use QUI\HtmlToPdf\Provider\Pdf\ChromeHeadless\Provider as ProviderChromeHeadless;
 use QUI\HtmlToPdf\Provider\Pdf\Mpdf\Provider as ProviderMpdf;
@@ -42,6 +43,10 @@ class CreatePdfTest extends TestCase
         }
 
         $this->assertFileExists($pdfFile, 'PDF file not found.');
+        $this->assertDirectoryIsWritable(
+            QUI::getPackage('quiqqer/htmltopdf')->getVarDir() . 'mpdf',
+            'mPDF cache directory is not writable.'
+        );
 
         if (file_exists($pdfFile)) {
             unlink($pdfFile);
