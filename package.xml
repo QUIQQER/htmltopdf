@@ -8,6 +8,22 @@
             <locale group="quiqqer/htmltopdf" var="package.description"/>
         </description>
 
+        <capabilities schemaVersion="1">
+            <capability id="documents.html-to-pdf">
+                <title>HTML-to-PDF generation</title>
+                <description>
+                    Generates styled PDF documents from HTML with configurable headers, footers and output options.
+                </description>
+            </capability>
+
+            <capability id="media.pdf-to-image-conversion">
+                <title>PDF-to-image conversion</title>
+                <description>
+                    Converts single-page and multi-page PDF documents into image files through a configurable provider.
+                </description>
+            </capability>
+        </capabilities>
+
         <image src="URL_OPT_DIR/quiqqer/htmltopdf/bin/images/Logo.jpg"/>
 
         <support>
