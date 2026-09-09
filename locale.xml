@@ -4,24 +4,49 @@
         <locale name="package.title">
             <de><![CDATA[QUIQQER - HTML2PDF]]></de>
             <en><![CDATA[QUIQQER - HTML2PDF]]></en>
+            <es><![CDATA[QUIQQER - HTML2PDF]]></es>
+            <pt><![CDATA[QUIQQER - HTML2PDF]]></pt>
+            <fr><![CDATA[QUIQQER - HTML2PDF]]></fr>
+            <it><![CDATA[QUIQQER - HTML2PDF]]></it>
+            <pl><![CDATA[QUIQQER - HTML2PDF]]></pl>
         </locale>
         <locale name="package.description" html="true">
-            <de><![CDATA[Bibliothek um HTML-Code in PDF-Dateien umzuwandeln.]]></de>
+            <de><![CDATA[Bibliothek, um HTML-Code in PDF-Dateien umzuwandeln.]]></de>
             <en><![CDATA[Library to convert HTML code to PDF files.]]></en>
+            <es><![CDATA[Biblioteca para convertir código HTML en archivos PDF.]]></es>
+            <pt><![CDATA[Biblioteca para converter código HTML em ficheiros PDF.]]></pt>
+            <fr><![CDATA[Bibliothèque permettant de convertir du code HTML en fichiers PDF.]]></fr>
+            <it><![CDATA[Libreria per convertire codice HTML in file PDF.]]></it>
+            <pl><![CDATA[Biblioteka do konwersji kodu HTML na pliki PDF.]]></pl>
         </locale>
 
         <!-- Cron -->
         <locale name="cron.cleanFiles.title">
-            <de><![CDATA[HTML2PDF Dateien aufräumen]]></de>
-            <en><![CDATA[HTML2PDF clean files]]></en>
+            <de><![CDATA[HTML2PDF-Dateien aufräumen]]></de>
+            <en><![CDATA[Clean up HTML2PDF files]]></en>
+            <es><![CDATA[Limpiar archivos de HTML2PDF]]></es>
+            <pt><![CDATA[Limpar ficheiros do HTML2PDF]]></pt>
+            <fr><![CDATA[Nettoyer les fichiers HTML2PDF]]></fr>
+            <it><![CDATA[Pulisci i file di HTML2PDF]]></it>
+            <pl><![CDATA[Usuń stare pliki HTML2PDF]]></pl>
         </locale>
         <locale name="cron.cleanFiles.description">
-            <de><![CDATA[Löscht PDF- und HTML-Dateien aus dem var-Ordner des quiqqer/htmltopdf-Pakets die älter als die festgelegte Anzahl an Tagen sind.]]></de>
+            <de><![CDATA[Löscht PDF- und HTML-Dateien aus dem var-Ordner des quiqqer/htmltopdf-Pakets, die älter als die festgelegte Anzahl an Tagen sind.]]></de>
             <en><![CDATA[Deletes PDF and HTML files from the var folder of the quiqqer/htmltopdf package that are older than the specified number of days.]]></en>
+            <es><![CDATA[Elimina de la carpeta var del paquete quiqqer/htmltopdf los archivos PDF y HTML cuya antigüedad supera el número de días indicado.]]></es>
+            <pt><![CDATA[Elimina da pasta var do pacote quiqqer/htmltopdf os ficheiros PDF e HTML cuja antiguidade excede o número de dias definido.]]></pt>
+            <fr><![CDATA[Supprime du dossier var du paquet quiqqer/htmltopdf les fichiers PDF et HTML dont l'ancienneté dépasse le nombre de jours indiqué.]]></fr>
+            <it><![CDATA[Elimina dalla cartella var del pacchetto quiqqer/htmltopdf i file PDF e HTML più vecchi del numero di giorni specificato.]]></it>
+            <pl><![CDATA[Usuwa z folderu var pakietu quiqqer/htmltopdf pliki PDF i HTML starsze niż określona liczba dni.]]></pl>
         </locale>
         <locale name="cron.cleanFiles.param.days">
             <de><![CDATA[Dateien älter als]]></de>
             <en><![CDATA[Files older than]]></en>
+            <es><![CDATA[Archivos con más de]]></es>
+            <pt><![CDATA[Ficheiros com mais de]]></pt>
+            <fr><![CDATA[Fichiers datant de plus de]]></fr>
+            <it><![CDATA[File più vecchi di]]></it>
+            <pl><![CDATA[Pliki starsze niż]]></pl>
         </locale>
 
     </groups>
@@ -32,6 +57,11 @@
         <locale name="mail.warning.executable_missing.subject">
             <de><![CDATA[[host] - PDF-Dokumente können nicht erstellt werden]]></de>
             <en><![CDATA[[host] - PDF documents cannot be created]]></en>
+            <es><![CDATA[[host] - No se pueden crear documentos PDF]]></es>
+            <pt><![CDATA[[host] - Não é possível criar documentos PDF]]></pt>
+            <fr><![CDATA[[host] - Impossible de créer des documents PDF]]></fr>
+            <it><![CDATA[[host] - Impossibile creare documenti PDF]]></it>
+            <pl><![CDATA[[host] - Nie można utworzyć dokumentów PDF]]></pl>
         </locale>
         <locale name="mail.warning.executable_missing.body" html="true">
             <de><![CDATA[
@@ -45,187 +75,437 @@
             <en><![CDATA[
 <p>PDF documents on your QUIQQER system [host] may not be generated correctly or at all. The following error occurs:</p>
 <p><b>[error]</b></p>
-<p>Please check if the program <b>wkhtmltopdf</b> is installed on your system and executable by PHP. The following error occurs:</p>
-<p>If the program should already be installed, check that the correct path is entered under <b>Settings -> HTML to PDF conversion -> wkhtmltopdf executable</b>.</p>
-<p>wkhtmltopdf is required in least version <b>0.12.5 (with patched qt)</b>.</p>
+<p>Please check if the program <b>wkhtmltopdf</b> is installed on your system and executable by PHP.</p>
+<p>If the program is already installed, check that the correct path is entered under <b>Settings -> HTML to PDF Converter -> wkhtmltopdf executable</b>.</p>
+<p>wkhtmltopdf version <b>0.12.5 (with patched qt)</b> or later is required.</p>
 <p>For further information, see <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
 ]]></en>
+            <es><![CDATA[
+<p>Los documentos PDF de tu sistema QUIQQER [host] podrían generarse de forma incorrecta o no generarse. Se produce el siguiente error:</p>
+<p><b>[error]</b></p>
+<p>Comprueba que el programa <b>wkhtmltopdf</b> está instalado en el sistema y que PHP puede ejecutarlo.</p>
+<p>Si ya está instalado, comprueba que la ruta indicada en <b>Configuración -> Conversión de HTML a PDF -> Ejecutable de wkhtmltopdf</b> es correcta.</p>
+<p>Se requiere wkhtmltopdf en la versión <b>0.12.5 (with patched qt)</b> o posterior.</p>
+<p>Para más información, consulta <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
+]]></es>
+            <pt><![CDATA[
+<p>Os documentos PDF no teu sistema QUIQQER [host] podem não ser gerados corretamente ou não ser gerados de todo. Ocorre o seguinte erro:</p>
+<p><b>[error]</b></p>
+<p>Verifica se o programa <b>wkhtmltopdf</b> está instalado no sistema e se pode ser executado pelo PHP.</p>
+<p>Se já estiver instalado, verifica se o caminho indicado em <b>Definições -> Conversão de HTML para PDF -> Executável do wkhtmltopdf</b> está correto.</p>
+<p>É necessária a versão <b>0.12.5 (with patched qt)</b> ou posterior do wkhtmltopdf.</p>
+<p>Para mais informações, consulta <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
+]]></pt>
+            <fr><![CDATA[
+<p>Les documents PDF de votre système QUIQQER [host] peuvent être générés de manière incorrecte ou ne pas être générés du tout. L'erreur suivante se produit :</p>
+<p><b>[error]</b></p>
+<p>Vérifiez que le programme <b>wkhtmltopdf</b> est installé sur votre système et que PHP peut l'exécuter.</p>
+<p>S'il est déjà installé, vérifiez que le chemin indiqué dans <b>Paramètres -> Conversion HTML en PDF -> Exécutable wkhtmltopdf</b> est correct.</p>
+<p>La version <b>0.12.5 (with patched qt)</b> ou ultérieure de wkhtmltopdf est requise.</p>
+<p>Pour plus d'informations, consultez <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
+]]></fr>
+            <it><![CDATA[
+<p>I documenti PDF nel tuo sistema QUIQQER [host] potrebbero non essere generati correttamente o non essere generati affatto. Si verifica il seguente errore:</p>
+<p><b>[error]</b></p>
+<p>Verifica che il programma <b>wkhtmltopdf</b> sia installato nel sistema e che PHP possa eseguirlo.</p>
+<p>Se è già installato, verifica che il percorso indicato in <b>Impostazioni -> Conversione da HTML a PDF -> Eseguibile di wkhtmltopdf</b> sia corretto.</p>
+<p>È richiesta la versione <b>0.12.5 (with patched qt)</b> o successiva di wkhtmltopdf.</p>
+<p>Per ulteriori informazioni, consulta <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
+]]></it>
+            <pl><![CDATA[
+<p>Dokumenty PDF w Twoim systemie QUIQQER [host] mogą być generowane nieprawidłowo lub nie być generowane wcale. Występuje następujący błąd:</p>
+<p><b>[error]</b></p>
+<p>Sprawdź, czy program <b>wkhtmltopdf</b> jest zainstalowany w systemie i czy PHP może go uruchomić.</p>
+<p>Jeśli jest już zainstalowany, sprawdź, czy w sekcji <b>Ustawienia -> Konwersja HTML na PDF -> Plik wykonywalny wkhtmltopdf</b> podano prawidłową ścieżkę.</p>
+<p>Wymagany jest wkhtmltopdf w wersji <b>0.12.5 (with patched qt)</b> lub nowszej.</p>
+<p>Więcej informacji znajdziesz na stronie <a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>.</p>
+]]></pl>
         </locale>
 
         <locale name="footer.page.prefix">
             <de><![CDATA[Seite]]></de>
             <en><![CDATA[Page]]></en>
+            <es><![CDATA[Página]]></es>
+            <pt><![CDATA[Página]]></pt>
+            <fr><![CDATA[Page]]></fr>
+            <it><![CDATA[Pagina]]></it>
+            <pl><![CDATA[Strona]]></pl>
         </locale>
         <locale name="exception.document.pdf.conversion.failed">
             <de><![CDATA[Bei der Konvertierung von HTML zu PDF ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
             <en><![CDATA[An unexpected error occurred while converting from HTML to PDF. Please contact an administrator.]]></en>
+            <es><![CDATA[Se ha producido un error inesperado al convertir HTML a PDF. Contacta con un administrador.]]></es>
+            <pt><![CDATA[Ocorreu um erro inesperado ao converter HTML em PDF. Contacta um administrador.]]></pt>
+            <fr><![CDATA[Une erreur inattendue s'est produite lors de la conversion HTML en PDF. Veuillez contacter un administrateur.]]></fr>
+            <it><![CDATA[Si è verificato un errore imprevisto durante la conversione da HTML a PDF. Contatta un amministratore.]]></it>
+            <pl><![CDATA[Wystąpił nieoczekiwany błąd podczas konwersji HTML na PDF. Skontaktuj się z administratorem.]]></pl>
         </locale>
         <locale name="exception.document.pdf.download.failed">
             <de><![CDATA[Beim Download des PDF-Dokuments ist ein unerwarteter Fehler aufgetreten. Bitte wenden Sie sich an einen Administrator.]]></de>
             <en><![CDATA[An unexpected error occurred while downloading the PDF document. Please contact an administrator.]]></en>
+            <es><![CDATA[Se ha producido un error inesperado al descargar el documento PDF. Contacta con un administrador.]]></es>
+            <pt><![CDATA[Ocorreu um erro inesperado ao descarregar o documento PDF. Contacta um administrador.]]></pt>
+            <fr><![CDATA[Une erreur inattendue s'est produite lors du téléchargement du document PDF. Veuillez contacter un administrateur.]]></fr>
+            <it><![CDATA[Si è verificato un errore imprevisto durante il download del documento PDF. Contatta un amministratore.]]></it>
+            <pl><![CDATA[Wystąpił nieoczekiwany błąd podczas pobierania dokumentu PDF. Skontaktuj się z administratorem.]]></pl>
         </locale>
         <locale name="exception.document.html.file.does.not.exist">
             <de><![CDATA[Die HTML-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
-            <en><![CDATA[The HTML file can not be added because it does not exist.]]></en>
+            <en><![CDATA[The HTML file cannot be added because it does not exist.]]></en>
+            <es><![CDATA[No se puede añadir el archivo HTML porque no existe.]]></es>
+            <pt><![CDATA[Não é possível adicionar o ficheiro HTML porque não existe.]]></pt>
+            <fr><![CDATA[Le fichier HTML ne peut pas être ajouté, car il n'existe pas.]]></fr>
+            <it><![CDATA[Impossibile aggiungere il file HTML perché non esiste.]]></it>
+            <pl><![CDATA[Nie można dodać pliku HTML, ponieważ nie istnieje.]]></pl>
         </locale>
         <locale name="exception.document.css.file.does.not.exist">
             <de><![CDATA[Die CSS-Datei kann nicht hinzugefügt werden, da sie nicht existiert.]]></de>
-            <en><![CDATA[The CSS file can not be added because it does not exist.]]></en>
+            <en><![CDATA[The CSS file cannot be added because it does not exist.]]></en>
+            <es><![CDATA[No se puede añadir el archivo CSS porque no existe.]]></es>
+            <pt><![CDATA[Não é possível adicionar o ficheiro CSS porque não existe.]]></pt>
+            <fr><![CDATA[Le fichier CSS ne peut pas être ajouté, car il n'existe pas.]]></fr>
+            <it><![CDATA[Impossibile aggiungere il file CSS perché non esiste.]]></it>
+            <pl><![CDATA[Nie można dodać pliku CSS, ponieważ nie istnieje.]]></pl>
         </locale>
         <locale name="exception.events.onpackagesetup.missing.wkhtmltopdf">
             <de><![CDATA[Das Programm "wkhtmltopdf" wurde nicht gefunden. Bitte prüfen Sie, ob es im /lib/-Ordner des Pakets vorhanden ist.]]></de>
             <en><![CDATA[The program "wkhtmltopdf" was not found. Please check if it exists in the /lib/ folder of the package.]]></en>
+            <es><![CDATA[No se ha encontrado el programa «wkhtmltopdf». Comprueba que existe en la carpeta /lib/ del paquete.]]></es>
+            <pt><![CDATA[O programa «wkhtmltopdf» não foi encontrado. Verifica se existe na pasta /lib/ do pacote.]]></pt>
+            <fr><![CDATA[Le programme « wkhtmltopdf » est introuvable. Vérifiez qu'il se trouve dans le dossier /lib/ du paquet.]]></fr>
+            <it><![CDATA[Il programma «wkhtmltopdf» non è stato trovato. Verifica che sia presente nella cartella /lib/ del pacchetto.]]></it>
+            <pl><![CDATA[Nie znaleziono programu „wkhtmltopdf”. Sprawdź, czy znajduje się w folderze /lib/ pakietu.]]></pl>
         </locale>
         <locale name="exception.events.onpackagesetup.wkhtmltopdf.not.executable" html="true">
             <de><![CDATA[Das Programm "wkhtmltopdf" ist nicht ausführbar und konnte auch nicht ausführbar gemacht werden. Bitte sorgen Sie dafür, dass die Datei <b>[path]</b> ausführbar ist.]]></de>
             <en><![CDATA[The program "wkhtmltopdf" is not executable and could not be made executable. Please make sure that the file <b>[path]</b> is executable.]]></en>
+            <es><![CDATA[El programa «wkhtmltopdf» no es ejecutable y no se le han podido conceder permisos de ejecución. Asegúrate de que el archivo <b>[path]</b> se pueda ejecutar.]]></es>
+            <pt><![CDATA[O programa «wkhtmltopdf» não é executável e não foi possível atribuir-lhe permissões de execução. Garante que o ficheiro <b>[path]</b> pode ser executado.]]></pt>
+            <fr><![CDATA[Le programme « wkhtmltopdf » n'est pas exécutable et les droits d'exécution n'ont pas pu lui être attribués. Assurez-vous que le fichier <b>[path]</b> est exécutable.]]></fr>
+            <it><![CDATA[Il programma «wkhtmltopdf» non è eseguibile e non è stato possibile assegnargli i permessi di esecuzione. Assicurati che il file <b>[path]</b> sia eseguibile.]]></it>
+            <pl><![CDATA[Program „wkhtmltopdf” nie jest wykonywalny i nie udało się nadać mu uprawnień do wykonania. Upewnij się, że plik <b>[path]</b> można uruchomić.]]></pl>
         </locale>
 
         <!-- Settings -->
         <locale name="settings.menu.title">
             <de><![CDATA[HTML zu PDF Konvertierung]]></de>
             <en><![CDATA[HTML to PDF Converter]]></en>
+            <es><![CDATA[Conversión de HTML a PDF]]></es>
+            <pt><![CDATA[Conversão de HTML para PDF]]></pt>
+            <fr><![CDATA[Conversion HTML en PDF]]></fr>
+            <it><![CDATA[Conversione da HTML a PDF]]></it>
+            <pl><![CDATA[Konwersja HTML na PDF]]></pl>
         </locale>
         <locale name="settings.category.title">
             <de><![CDATA[Einstellungen]]></de>
             <en><![CDATA[Settings]]></en>
+            <es><![CDATA[Configuración]]></es>
+            <pt><![CDATA[Definições]]></pt>
+            <fr><![CDATA[Paramètres]]></fr>
+            <it><![CDATA[Impostazioni]]></it>
+            <pl><![CDATA[Ustawienia]]></pl>
         </locale>
         <locale name="settings.title">
             <de><![CDATA[Allgemeine Einstellungen]]></de>
             <en><![CDATA[General settings]]></en>
+            <es><![CDATA[Configuración general]]></es>
+            <pt><![CDATA[Definições gerais]]></pt>
+            <fr><![CDATA[Paramètres généraux]]></fr>
+            <it><![CDATA[Impostazioni generali]]></it>
+            <pl><![CDATA[Ustawienia ogólne]]></pl>
         </locale>
         <locale name="settings.lib_path.title">
             <de><![CDATA[System lib Pfad]]></de>
             <en><![CDATA[System lib path]]></en>
+            <es><![CDATA[Ruta de las bibliotecas del sistema]]></es>
+            <pt><![CDATA[Caminho das bibliotecas do sistema]]></pt>
+            <fr><![CDATA[Chemin des bibliothèques système]]></fr>
+            <it><![CDATA[Percorso delle librerie di sistema]]></it>
+            <pl><![CDATA[Ścieżka do bibliotek systemowych]]></pl>
         </locale>
         <locale name="settings.lib_path.description">
             <de><![CDATA[Ordner im Dateisystem (absoluter Pfad), in dem sich die Bibliotheks-Dateien befinden, die bei der Generierung von PDF-Dokumenten verwendet werden sollen. Leerlassen für die Verwendung der Standard-Betriebssystem-Einstellung.]]></de>
             <en><![CDATA[Folder in the file system (absolute path) containing the library files to be used when generating PDF documents. Leave empty to use the default operating system setting.]]></en>
+            <es><![CDATA[Carpeta del sistema de archivos (ruta absoluta) que contiene las bibliotecas que se utilizarán para generar documentos PDF. Deja este campo vacío para usar la configuración predeterminada del sistema operativo.]]></es>
+            <pt><![CDATA[Pasta no sistema de ficheiros (caminho absoluto) que contém as bibliotecas a utilizar na criação de documentos PDF. Deixa em branco para usar a predefinição do sistema operativo.]]></pt>
+            <fr><![CDATA[Dossier du système de fichiers (chemin absolu) contenant les bibliothèques à utiliser pour générer les documents PDF. Laissez ce champ vide pour utiliser le paramètre par défaut du système d'exploitation.]]></fr>
+            <it><![CDATA[Cartella del file system (percorso assoluto) contenente le librerie da usare per generare i documenti PDF. Lascia vuoto per usare l'impostazione predefinita del sistema operativo.]]></it>
+            <pl><![CDATA[Folder w systemie plików (ścieżka bezwzględna) zawierający biblioteki używane do generowania dokumentów PDF. Pozostaw puste, aby użyć domyślnego ustawienia systemu operacyjnego.]]></pl>
         </locale>
         <locale name="settings.executable.title">
             <de><![CDATA[wkhtmltopdf executable]]></de>
             <en><![CDATA[wkhtmltopdf executable]]></en>
+            <es><![CDATA[Ejecutable de wkhtmltopdf]]></es>
+            <pt><![CDATA[Executável do wkhtmltopdf]]></pt>
+            <fr><![CDATA[Exécutable wkhtmltopdf]]></fr>
+            <it><![CDATA[Eseguibile di wkhtmltopdf]]></it>
+            <pl><![CDATA[Plik wykonywalny wkhtmltopdf]]></pl>
         </locale>
         <locale name="settings.executable.description" html="true">
             <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>wkhtmltopdf</b> executable. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>wkhtmltopdf</b> executable. Has to executable by the executing PHP process.]]></en>
+            <en><![CDATA[Absolute filesystem path to the <b>wkhtmltopdf</b> executable. Must be executable by the PHP process.]]></en>
+            <es><![CDATA[Ruta absoluta al ejecutable de <b>wkhtmltopdf</b> en el sistema de archivos. El proceso PHP debe tener permisos para ejecutarlo.]]></es>
+            <pt><![CDATA[Caminho absoluto no sistema de ficheiros para o executável do <b>wkhtmltopdf</b>. O processo PHP deve ter permissão para o executar.]]></pt>
+            <fr><![CDATA[Chemin absolu de l'exécutable <b>wkhtmltopdf</b> dans le système de fichiers. Le processus PHP doit pouvoir l'exécuter.]]></fr>
+            <it><![CDATA[Percorso assoluto dell'eseguibile di <b>wkhtmltopdf</b> nel file system. Il processo PHP deve poterlo eseguire.]]></it>
+            <pl><![CDATA[Bezwzględna ścieżka w systemie plików do pliku wykonywalnego <b>wkhtmltopdf</b>. Proces PHP musi mieć uprawnienia do jego uruchomienia.]]></pl>
         </locale>
         <locale name="settings.testDocument.title">
             <de><![CDATA[Einstellungen testen]]></de>
             <en><![CDATA[Test settings]]></en>
+            <es><![CDATA[Probar la configuración]]></es>
+            <pt><![CDATA[Testar definições]]></pt>
+            <fr><![CDATA[Tester les paramètres]]></fr>
+            <it><![CDATA[Verifica le impostazioni]]></it>
+            <pl><![CDATA[Sprawdź ustawienia]]></pl>
         </locale>
         <locale name="settings.testDocument.description" html="true">
             <de><![CDATA[Generiert ein Test-Dokument basierend auf den aktuellen Einstellungen (<b>Einstellungen sollten vorher gespeichert werden!</b>).]]></de>
             <en><![CDATA[Generates a test document based on the current settings (<b>settings should be saved beforehand!</b>).]]></en>
+            <es><![CDATA[Genera un documento de prueba con la configuración actual (<b>¡guarda la configuración antes de realizar la prueba!</b>).]]></es>
+            <pt><![CDATA[Gera um documento de teste com base nas definições atuais (<b>guarda as definições antes de efetuar o teste!</b>).]]></pt>
+            <fr><![CDATA[Génère un document de test à partir des paramètres actuels (<b>enregistrez les paramètres avant de lancer le test !</b>).]]></fr>
+            <it><![CDATA[Genera un documento di prova in base alle impostazioni attuali (<b>salva le impostazioni prima di avviare la prova!</b>).]]></it>
+            <pl><![CDATA[Generuje dokument testowy na podstawie bieżących ustawień (<b>najpierw zapisz ustawienia!</b>).]]></pl>
         </locale>
         <locale name="settings.executable_convert.title">
             <de><![CDATA[convert executable (ImageMagick)]]></de>
             <en><![CDATA[convert executable (ImageMagick)]]></en>
+            <es><![CDATA[Ejecutable de convert (ImageMagick)]]></es>
+            <pt><![CDATA[Executável do convert (ImageMagick)]]></pt>
+            <fr><![CDATA[Exécutable convert (ImageMagick)]]></fr>
+            <it><![CDATA[Eseguibile di convert (ImageMagick)]]></it>
+            <pl><![CDATA[Plik wykonywalny convert (ImageMagick)]]></pl>
         </locale>
         <locale name="settings.executable_convert.description">
             <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> executable. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Must be executable by the PHP process.]]></en>
+            <es><![CDATA[Ruta absoluta al ejecutable de <b>convert</b> en el sistema de archivos. Este programa forma parte de <b>ImageMagick</b> y permite convertir archivos PDF en imágenes. El proceso PHP debe tener permisos para ejecutarlo.]]></es>
+            <pt><![CDATA[Caminho absoluto no sistema de ficheiros para o executável do <b>convert</b>. Este programa faz parte do <b>ImageMagick</b> e permite converter ficheiros PDF em imagens. O processo PHP deve ter permissão para o executar.]]></pt>
+            <fr><![CDATA[Chemin absolu de l'exécutable <b>convert</b> dans le système de fichiers. Ce programme fait partie d'<b>ImageMagick</b> et permet de convertir des fichiers PDF en images. Le processus PHP doit pouvoir l'exécuter.]]></fr>
+            <it><![CDATA[Percorso assoluto dell'eseguibile di <b>convert</b> nel file system. Il programma fa parte di <b>ImageMagick</b> e consente di convertire i file PDF in immagini. Il processo PHP deve poterlo eseguire.]]></it>
+            <pl><![CDATA[Bezwzględna ścieżka w systemie plików do pliku wykonywalnego <b>convert</b>. Program jest częścią <b>ImageMagick</b> i służy do konwersji plików PDF na obrazy. Proces PHP musi mieć uprawnienia do jego uruchomienia.]]></pl>
         </locale>
         <locale name="settings.html_to_pdf_creator_provider.title">
             <de><![CDATA[Provider zur PDF-Erzeugung]]></de>
             <en><![CDATA[PDF creation provider]]></en>
+            <es><![CDATA[Motor de generación de PDF]]></es>
+            <pt><![CDATA[Motor de criação de PDF]]></pt>
+            <fr><![CDATA[Moteur de création de PDF]]></fr>
+            <it><![CDATA[Motore di generazione PDF]]></it>
+            <pl><![CDATA[Mechanizm generowania PDF]]></pl>
         </locale>
         <locale name="settings.html_to_pdf_creator_provider.description">
             <de><![CDATA[Provider, welcher PDF-Dateien (aus HTML) erzeugt.]]></de>
             <en><![CDATA[Provider that creates PDF files (from HTML).]]></en>
+            <es><![CDATA[Motor que genera archivos PDF a partir de HTML.]]></es>
+            <pt><![CDATA[Motor que cria ficheiros PDF a partir de HTML.]]></pt>
+            <fr><![CDATA[Moteur qui crée des fichiers PDF à partir de HTML.]]></fr>
+            <it><![CDATA[Motore che genera file PDF a partire da HTML.]]></it>
+            <pl><![CDATA[Mechanizm tworzący pliki PDF na podstawie HTML.]]></pl>
         </locale>
         <locale name="image_magick.title">
             <de><![CDATA[ImageMagick]]></de>
             <en><![CDATA[ImageMagick]]></en>
+            <es><![CDATA[ImageMagick]]></es>
+            <pt><![CDATA[ImageMagick]]></pt>
+            <fr><![CDATA[ImageMagick]]></fr>
+            <it><![CDATA[ImageMagick]]></it>
+            <pl><![CDATA[ImageMagick]]></pl>
         </locale>
         <locale name="settings.pdf_to_image_converter_provider.description">
             <de><![CDATA[Provider, welcher Bilder aus PDF-Dateien erzeugt.]]></de>
             <en><![CDATA[Provider that creates images from PDF files.]]></en>
+            <es><![CDATA[Motor que genera imágenes a partir de archivos PDF.]]></es>
+            <pt><![CDATA[Motor que cria imagens a partir de ficheiros PDF.]]></pt>
+            <fr><![CDATA[Moteur qui crée des images à partir de fichiers PDF.]]></fr>
+            <it><![CDATA[Motore che genera immagini a partire da file PDF.]]></it>
+            <pl><![CDATA[Mechanizm tworzący obrazy na podstawie plików PDF.]]></pl>
         </locale>
         <locale name="settings.pdf_to_image_converter_provider.title">
             <de><![CDATA[PDF-zu-Bild Provider]]></de>
             <en><![CDATA[PDF-to-image provider]]></en>
+            <es><![CDATA[Motor de conversión de PDF a imagen]]></es>
+            <pt><![CDATA[Motor de conversão de PDF para imagem]]></pt>
+            <fr><![CDATA[Moteur de conversion PDF en image]]></fr>
+            <it><![CDATA[Motore di conversione da PDF a immagine]]></it>
+            <pl><![CDATA[Mechanizm konwersji PDF na obrazy]]></pl>
         </locale>
 
         <!-- Provider -->
         <locale name="provider.Mpdf.title">
             <de><![CDATA[mpdf]]></de>
             <en><![CDATA[mpdf]]></en>
+            <es><![CDATA[mpdf]]></es>
+            <pt><![CDATA[mpdf]]></pt>
+            <fr><![CDATA[mpdf]]></fr>
+            <it><![CDATA[mpdf]]></it>
+            <pl><![CDATA[mpdf]]></pl>
         </locale>
         <locale name="provider.ChromeHeadless.title">
             <de><![CDATA[Chrome headless (setzt "Chrome executable" voraus)]]></de>
             <en><![CDATA[Chrome headless (requires "Chrome executable")]]></en>
+            <es><![CDATA[Chrome headless (requiere «Ejecutable de Chrome»)]]></es>
+            <pt><![CDATA[Chrome headless (requer «Executável do Chrome»)]]></pt>
+            <fr><![CDATA[Chrome headless (nécessite « Exécutable Chrome »)]]></fr>
+            <it><![CDATA[Chrome headless (richiede «Eseguibile di Chrome»)]]></it>
+            <pl><![CDATA[Chrome headless (wymaga ustawienia „Plik wykonywalny Chrome”)]]></pl>
         </locale>
         <locale name="chrome_headless.title">
             <de><![CDATA[Chrome headless]]></de>
             <en><![CDATA[Chrome headless]]></en>
+            <es><![CDATA[Chrome headless]]></es>
+            <pt><![CDATA[Chrome headless]]></pt>
+            <fr><![CDATA[Chrome headless]]></fr>
+            <it><![CDATA[Chrome headless]]></it>
+            <pl><![CDATA[Chrome headless]]></pl>
         </locale>
         <locale name="settings.chrome_headless.executable.title">
             <de><![CDATA[Chrome executable]]></de>
             <en><![CDATA[Chrome executable]]></en>
+            <es><![CDATA[Ejecutable de Chrome]]></es>
+            <pt><![CDATA[Executável do Chrome]]></pt>
+            <fr><![CDATA[Exécutable Chrome]]></fr>
+            <it><![CDATA[Eseguibile di Chrome]]></it>
+            <pl><![CDATA[Plik wykonywalny Chrome]]></pl>
         </locale>
         <locale name="settings.chrome_headless.executable.description">
             <de><![CDATA[Vollständiger Pfad zur executable von Chrome (Version 65+). Muss vom PHP-Prozess ausführbar sein.]]></de>
             <en><![CDATA[Full path to Chrome executable (version 65+). Must be executable by the PHP process.]]></en>
+            <es><![CDATA[Ruta completa al ejecutable de Chrome (versión 65+). El proceso PHP debe tener permisos para ejecutarlo.]]></es>
+            <pt><![CDATA[Caminho completo para o executável do Chrome (versão 65+). O processo PHP deve ter permissão para o executar.]]></pt>
+            <fr><![CDATA[Chemin complet de l'exécutable Chrome (version 65+). Le processus PHP doit pouvoir l'exécuter.]]></fr>
+            <it><![CDATA[Percorso completo dell'eseguibile di Chrome (versione 65+). Il processo PHP deve poterlo eseguire.]]></it>
+            <pl><![CDATA[Pełna ścieżka do pliku wykonywalnego Chrome (wersja 65+). Proces PHP musi mieć uprawnienia do jego uruchomienia.]]></pl>
         </locale>
         <locale name="settings.chrome_headless.no_sandbox.title">
             <de><![CDATA[Chrome-Sandbox deaktivieren]]></de>
             <en><![CDATA[Disable Chrome sandbox]]></en>
+            <es><![CDATA[Desactivar la sandbox de Chrome]]></es>
+            <pt><![CDATA[Desativar a sandbox do Chrome]]></pt>
+            <fr><![CDATA[Désactiver le bac à sable de Chrome]]></fr>
+            <it><![CDATA[Disattiva la sandbox di Chrome]]></it>
+            <pl><![CDATA[Wyłącz piaskownicę Chrome]]></pl>
         </locale>
         <locale name="settings.chrome_headless.no_sandbox.description">
             <de><![CDATA[Startet Chrome mit <code>--no-sandbox</code>. Nur aktivieren, wenn Chrome in der Serverumgebung andernfalls nicht startet. Das Deaktivieren der Sandbox reduziert die Prozessisolation.]]></de>
             <en><![CDATA[Starts Chrome with <code>--no-sandbox</code>. Enable only if Chrome cannot start in the server environment otherwise. Disabling the sandbox reduces process isolation.]]></en>
+            <es><![CDATA[Inicia Chrome con <code>--no-sandbox</code>. Activa esta opción solo si Chrome no puede iniciarse de otro modo en el entorno del servidor. Desactivar la sandbox reduce el aislamiento de los procesos.]]></es>
+            <pt><![CDATA[Inicia o Chrome com <code>--no-sandbox</code>. Ativa apenas se o Chrome não conseguir iniciar no ambiente do servidor de outra forma. Desativar a sandbox reduz o isolamento dos processos.]]></pt>
+            <fr><![CDATA[Lance Chrome avec <code>--no-sandbox</code>. Activez cette option uniquement si Chrome ne peut pas démarrer autrement dans l'environnement du serveur. La désactivation du bac à sable réduit l'isolation des processus.]]></fr>
+            <it><![CDATA[Avvia Chrome con <code>--no-sandbox</code>. Attiva questa opzione solo se Chrome non riesce ad avviarsi altrimenti nell'ambiente del server. Disattivare la sandbox riduce l'isolamento dei processi.]]></it>
+            <pl><![CDATA[Uruchamia Chrome z opcją <code>--no-sandbox</code>. Włącz tylko wtedy, gdy Chrome nie może inaczej uruchomić się w środowisku serwera. Wyłączenie piaskownicy ogranicza izolację procesów.]]></pl>
         </locale>
         <locale name="settings.chrome_headless.ignore_certificate_errors.title">
             <de><![CDATA[TLS-Zertifikatsfehler ignorieren]]></de>
             <en><![CDATA[Ignore TLS certificate errors]]></en>
+            <es><![CDATA[Ignorar errores de certificados TLS]]></es>
+            <pt><![CDATA[Ignorar erros de certificados TLS]]></pt>
+            <fr><![CDATA[Ignorer les erreurs de certificat TLS]]></fr>
+            <it><![CDATA[Ignora gli errori dei certificati TLS]]></it>
+            <pl><![CDATA[Ignoruj błędy certyfikatów TLS]]></pl>
         </locale>
         <locale name="settings.chrome_headless.ignore_certificate_errors.description">
             <de><![CDATA[Akzeptiert beim Laden externer PDF-Ressourcen ungültige TLS-Zertifikate. Nur für kontrollierte interne Ressourcen aktivieren; die Zertifikatsprüfung wird dadurch umgangen.]]></de>
             <en><![CDATA[Accepts invalid TLS certificates while loading external PDF resources. Enable only for controlled internal resources; this bypasses certificate validation.]]></en>
+            <es><![CDATA[Acepta certificados TLS no válidos al cargar recursos externos para los PDF. Activa esta opción solo para recursos internos controlados, ya que omite la validación de certificados.]]></es>
+            <pt><![CDATA[Aceita certificados TLS inválidos ao carregar recursos externos para os PDF. Ativa apenas para recursos internos controlados, pois esta opção ignora a validação dos certificados.]]></pt>
+            <fr><![CDATA[Accepte les certificats TLS non valides lors du chargement de ressources externes pour les PDF. Activez cette option uniquement pour des ressources internes contrôlées, car elle contourne la validation des certificats.]]></fr>
+            <it><![CDATA[Accetta certificati TLS non validi durante il caricamento di risorse esterne per i PDF. Attiva questa opzione solo per risorse interne controllate, poiché aggira la verifica dei certificati.]]></it>
+            <pl><![CDATA[Akceptuje nieprawidłowe certyfikaty TLS podczas ładowania zewnętrznych zasobów do plików PDF. Włącz tylko dla kontrolowanych zasobów wewnętrznych, ponieważ opcja pomija weryfikację certyfikatów.]]></pl>
         </locale>
         <locale name="settings.image_magick.convert_executable.title">
             <de><![CDATA[convert executable]]></de>
             <en><![CDATA[convert executable]]></en>
+            <es><![CDATA[Ejecutable de convert]]></es>
+            <pt><![CDATA[Executável do convert]]></pt>
+            <fr><![CDATA[Exécutable convert]]></fr>
+            <it><![CDATA[Eseguibile di convert]]></it>
+            <pl><![CDATA[Plik wykonywalny convert]]></pl>
         </locale>
         <locale name="settings.image_magick.convert_executable.description">
             <de><![CDATA[Absoluter Dateisystem-Pfad zur <b>convert</b> executable. Dieses Programm ist Teil von <b>ImageMagick</b> und wird dazu verwendet, PDF-Dateien in Bild-Dateien umzuwandeln. Muss vom ausführenden PHP-Prozess ausführbar sein.]]></de>
-            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Has to executable by the executing PHP process.]]></en>
+            <en><![CDATA[Absolute filesystem path to the <b>convert</b> executable. This application is part of <b>ImageMagick</b> and is used to convert PDF files to image files. Must be executable by the PHP process.]]></en>
+            <es><![CDATA[Ruta absoluta al ejecutable de <b>convert</b> en el sistema de archivos. Este programa forma parte de <b>ImageMagick</b> y permite convertir archivos PDF en imágenes. El proceso PHP debe tener permisos para ejecutarlo.]]></es>
+            <pt><![CDATA[Caminho absoluto no sistema de ficheiros para o executável do <b>convert</b>. Este programa faz parte do <b>ImageMagick</b> e permite converter ficheiros PDF em imagens. O processo PHP deve ter permissão para o executar.]]></pt>
+            <fr><![CDATA[Chemin absolu de l'exécutable <b>convert</b> dans le système de fichiers. Ce programme fait partie d'<b>ImageMagick</b> et permet de convertir des fichiers PDF en images. Le processus PHP doit pouvoir l'exécuter.]]></fr>
+            <it><![CDATA[Percorso assoluto dell'eseguibile di <b>convert</b> nel file system. Il programma fa parte di <b>ImageMagick</b> e consente di convertire i file PDF in immagini. Il processo PHP deve poterlo eseguire.]]></it>
+            <pl><![CDATA[Bezwzględna ścieżka w systemie plików do pliku wykonywalnego <b>convert</b>. Program jest częścią <b>ImageMagick</b> i służy do konwersji plików PDF na obrazy. Proces PHP musi mieć uprawnienia do jego uruchomienia.]]></pl>
         </locale>
 
         <locale name="provider.ImageMagick.title">
             <de><![CDATA[ImageMagick (convert; setzt "convert executable" voraus)]]></de>
             <en><![CDATA[ImageMagick (convert; requires "convert executable")]]></en>
+            <es><![CDATA[ImageMagick (convert; requiere «Ejecutable de convert»)]]></es>
+            <pt><![CDATA[ImageMagick (convert; requer «Executável do convert»)]]></pt>
+            <fr><![CDATA[ImageMagick (convert ; nécessite « Exécutable convert »)]]></fr>
+            <it><![CDATA[ImageMagick (convert; richiede «Eseguibile di convert»)]]></it>
+            <pl><![CDATA[ImageMagick (convert; wymaga ustawienia „Plik wykonywalny convert”)]]></pl>
         </locale>
 
         <!-- Class: Handler -->
         <locale name="exception.Provider.ImageMagick.checkRequirements.convert_executable_not_found">
             <de><![CDATA[Das Programm "convert" konnte auf dem System nicht gefunden werden. Bitte installieren Sie "convert" (Teil von ImageMagick).]]></de>
             <en><![CDATA[The executable "convert" could not be found on the system. Please install "convert" (part of ImageMagick).]]></en>
+            <es><![CDATA[No se ha encontrado el ejecutable «convert» en el sistema. Instala «convert» (parte de ImageMagick).]]></es>
+            <pt><![CDATA[O executável «convert» não foi encontrado no sistema. Instala o «convert» (parte do ImageMagick).]]></pt>
+            <fr><![CDATA[L'exécutable « convert » est introuvable sur le système. Installez « convert » (qui fait partie d'ImageMagick).]]></fr>
+            <it><![CDATA[L'eseguibile «convert» non è stato trovato nel sistema. Installa «convert» (parte di ImageMagick).]]></it>
+            <pl><![CDATA[Nie znaleziono pliku wykonywalnego „convert” w systemie. Zainstaluj „convert” (część ImageMagick).]]></pl>
         </locale>
         <locale name="exception.Provider.ImageMagick.checkRequirements.convert_executable_not_executable">
             <de><![CDATA[Der PHP-Prozess hat keinen Zugriff auf das Programm "convert" ([path]). Bitte konfigurieren Sie Ihr System so, dass PHP es ausführen kann.]]></de>
             <en><![CDATA[The PHP process has no access to the executable "convert" ([path]). Please configure your system so that PHP can execute it.]]></en>
+            <es><![CDATA[El proceso PHP no tiene acceso al ejecutable «convert» ([path]). Configura el sistema para que PHP pueda ejecutarlo.]]></es>
+            <pt><![CDATA[O processo PHP não tem acesso ao executável «convert» ([path]). Configura o sistema para que o PHP o possa executar.]]></pt>
+            <fr><![CDATA[Le processus PHP n'a pas accès à l'exécutable « convert » ([path]). Configurez le système pour que PHP puisse l'exécuter.]]></fr>
+            <it><![CDATA[Il processo PHP non ha accesso all'eseguibile «convert» ([path]). Configura il sistema affinché PHP possa eseguirlo.]]></it>
+            <pl><![CDATA[Proces PHP nie ma dostępu do pliku wykonywalnego „convert” ([path]). Skonfiguruj system tak, aby PHP mógł go uruchomić.]]></pl>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.executable_not_found">
-            <de><![CDATA[Das Chrome-Programm "[path]" konnte auf dem System nicht gefunden werden. Bitte prüfen Sie die Einstellung "Chrome Executable" oder installieren Sie Google Chrome.]]></de>
-            <en><![CDATA[The Chrome executable "[path]" could not be found on the system. Please check the "Chrome Executable" setting or install Google Chrome.]]></en>
+            <de><![CDATA[Das Chrome-Programm "[path]" konnte auf dem System nicht gefunden werden. Bitte prüfen Sie die Einstellung "Chrome executable" oder installieren Sie Google Chrome.]]></de>
+            <en><![CDATA[The Chrome executable "[path]" could not be found on the system. Please check the "Chrome executable" setting or install Google Chrome.]]></en>
+            <es><![CDATA[No se ha encontrado el ejecutable de Chrome «[path]» en el sistema. Comprueba la opción «Ejecutable de Chrome» o instala Google Chrome.]]></es>
+            <pt><![CDATA[O executável do Chrome «[path]» não foi encontrado no sistema. Verifica a definição «Executável do Chrome» ou instala o Google Chrome.]]></pt>
+            <fr><![CDATA[L'exécutable Chrome « [path] » est introuvable sur le système. Vérifiez le paramètre « Exécutable Chrome » ou installez Google Chrome.]]></fr>
+            <it><![CDATA[L'eseguibile di Chrome «[path]» non è stato trovato nel sistema. Verifica l'impostazione «Eseguibile di Chrome» o installa Google Chrome.]]></it>
+            <pl><![CDATA[Nie znaleziono w systemie pliku wykonywalnego Chrome „[path]”. Sprawdź ustawienie „Plik wykonywalny Chrome” lub zainstaluj Google Chrome.]]></pl>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.not_executable">
             <de><![CDATA[Der PHP-Prozess kann das Chrome-Programm "[path]" nicht ausführen. Bitte prüfen Sie den konfigurierten Pfad und die Dateiberechtigungen.]]></de>
             <en><![CDATA[The PHP process cannot execute the Chrome executable "[path]". Please check the configured path and file permissions.]]></en>
+            <es><![CDATA[El proceso PHP no puede ejecutar el programa de Chrome «[path]». Comprueba la ruta configurada y los permisos del archivo.]]></es>
+            <pt><![CDATA[O processo PHP não consegue executar o programa do Chrome «[path]». Verifica o caminho configurado e as permissões do ficheiro.]]></pt>
+            <fr><![CDATA[Le processus PHP ne peut pas exécuter le programme Chrome « [path] ». Vérifiez le chemin configuré et les droits d'accès au fichier.]]></fr>
+            <it><![CDATA[Il processo PHP non riesce a eseguire il programma Chrome «[path]». Verifica il percorso configurato e i permessi del file.]]></it>
+            <pl><![CDATA[Proces PHP nie może uruchomić programu Chrome „[path]”. Sprawdź skonfigurowaną ścieżkę i uprawnienia pliku.]]></pl>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.home_not_writable">
             <de><![CDATA[Das Chrome-Arbeitsverzeichnis ist nicht beschreibbar ([path]). Bitte korrigieren Sie die Dateisystemberechtigungen.]]></de>
             <en><![CDATA[The Chrome working directory is not writable ([path]). Please correct the filesystem permissions.]]></en>
+            <es><![CDATA[No se puede escribir en el directorio de trabajo de Chrome ([path]). Corrige los permisos del sistema de archivos.]]></es>
+            <pt><![CDATA[Não é possível escrever no diretório de trabalho do Chrome ([path]). Corrige as permissões do sistema de ficheiros.]]></pt>
+            <fr><![CDATA[Le répertoire de travail de Chrome n'est pas accessible en écriture ([path]). Corrigez les droits d'accès du système de fichiers.]]></fr>
+            <it><![CDATA[La directory di lavoro di Chrome non è scrivibile ([path]). Correggi i permessi del file system.]]></it>
+            <pl><![CDATA[Brak uprawnień do zapisu w katalogu roboczym Chrome ([path]). Popraw uprawnienia w systemie plików.]]></pl>
         </locale>
         <locale name="exception.Provider.GoogleChrome.checkRequirements.start_failed">
             <de><![CDATA[Google Chrome ist vorhanden, konnte aber vom PHP-Prozess nicht gestartet werden ([path], Exit-Code [exitCode]). Prüfen Sie insbesondere AppArmor, SELinux und die Sicherheitsrichtlinien des PHP-FPM-Dienstes. Bei AppArmor muss das Profil "php-fpm" den Start von Google Chrome erlauben.]]></de>
             <en><![CDATA[Google Chrome is installed but could not be started by the PHP process ([path], exit code [exitCode]). In particular, check AppArmor, SELinux, and the security policies of the PHP-FPM service. With AppArmor, the "php-fpm" profile must permit Google Chrome to start.]]></en>
+            <es><![CDATA[Google Chrome está instalado, pero el proceso PHP no ha podido iniciarlo ([path], código de salida [exitCode]). Revisa especialmente AppArmor, SELinux y las políticas de seguridad del servicio PHP-FPM. En AppArmor, el perfil «php-fpm» debe permitir el inicio de Google Chrome.]]></es>
+            <pt><![CDATA[O Google Chrome está instalado, mas o processo PHP não o conseguiu iniciar ([path], código de saída [exitCode]). Verifica em particular o AppArmor, o SELinux e as políticas de segurança do serviço PHP-FPM. No AppArmor, o perfil «php-fpm» tem de permitir o arranque do Google Chrome.]]></pt>
+            <fr><![CDATA[Google Chrome est installé, mais le processus PHP n'a pas pu le démarrer ([path], code de sortie [exitCode]). Vérifiez en particulier AppArmor, SELinux et les politiques de sécurité du service PHP-FPM. Dans AppArmor, le profil « php-fpm » doit autoriser le démarrage de Google Chrome.]]></fr>
+            <it><![CDATA[Google Chrome è installato, ma il processo PHP non è riuscito ad avviarlo ([path], codice di uscita [exitCode]). Verifica in particolare AppArmor, SELinux e le politiche di sicurezza del servizio PHP-FPM. In AppArmor, il profilo «php-fpm» deve consentire l'avvio di Google Chrome.]]></it>
+            <pl><![CDATA[Google Chrome jest zainstalowany, ale proces PHP nie mógł go uruchomić ([path], kod wyjścia [exitCode]). Sprawdź przede wszystkim AppArmor, SELinux i zasady bezpieczeństwa usługi PHP-FPM. W AppArmor profil „php-fpm” musi zezwalać na uruchomienie Google Chrome.]]></pl>
         </locale>
         <locale name="exception.PdfCreator.createPdfAndConvertToImage.no_image_converter_set_up">
             <de><![CDATA[Aus PDF-Dateien können aktuell keine Bilder generiert werden, da kein PDF-zu-Bild Provider konfiguriert ist.]]></de>
             <en><![CDATA[Currently, images cannot be created from PDF files, since no PDF-to-image provider is configured.]]></en>
+            <es><![CDATA[Actualmente no se pueden generar imágenes a partir de archivos PDF porque no hay ningún motor de conversión de PDF a imagen configurado.]]></es>
+            <pt><![CDATA[Atualmente não é possível criar imagens a partir de ficheiros PDF porque não está configurado nenhum motor de conversão de PDF para imagem.]]></pt>
+            <fr><![CDATA[Impossible de créer des images à partir de fichiers PDF pour le moment, car aucun moteur de conversion PDF en image n'est configuré.]]></fr>
+            <it><![CDATA[Al momento non è possibile generare immagini da file PDF perché non è configurato alcun motore di conversione da PDF a immagine.]]></it>
+            <pl><![CDATA[Obecnie nie można tworzyć obrazów z plików PDF, ponieważ nie skonfigurowano mechanizmu konwersji PDF na obrazy.]]></pl>
         </locale>
     </groups>
 
@@ -234,32 +514,77 @@
         <locale name="controls.TestGeneration.btn_pdf.text">
             <de><![CDATA[Test PDF-Dokument erstellen]]></de>
             <en><![CDATA[Create test PDF document]]></en>
+            <es><![CDATA[Crear un documento PDF de prueba]]></es>
+            <pt><![CDATA[Criar documento PDF de teste]]></pt>
+            <fr><![CDATA[Créer un document PDF de test]]></fr>
+            <it><![CDATA[Crea un documento PDF di prova]]></it>
+            <pl><![CDATA[Utwórz testowy dokument PDF]]></pl>
         </locale>
         <locale name="controls.TestGeneration.btn_image.text">
             <de><![CDATA[Test-Bild aus PDF erstellen]]></de>
             <en><![CDATA[Create test image from PDF document]]></en>
+            <es><![CDATA[Crear una imagen de prueba a partir de un PDF]]></es>
+            <pt><![CDATA[Criar imagem de teste a partir de um PDF]]></pt>
+            <fr><![CDATA[Créer une image de test à partir d'un PDF]]></fr>
+            <it><![CDATA[Crea un'immagine di prova da un PDF]]></it>
+            <pl><![CDATA[Utwórz obraz testowy z dokumentu PDF]]></pl>
         </locale>
         <locale name="controls.TestGeneration.error.information" html="true">
             <de><![CDATA[
             <b>Fehler</b>:<br/><br/>[error]<br/><br/><p>Sollte der Fehler weiterhin bestehen, kontaktieren Sie bitte einen Administrator!</p><br/>
-            <p><b>Hint:</b> Bitte schauen Sie auch auf der <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">"Common problems" Wiki-Seite</a> für weitere Informationen.</p>
+            <p><b>Hinweis:</b> Weitere Informationen finden Sie auch auf der <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">"Common problems" Wiki-Seite</a>.</p>
 ]]></de>
             <en><![CDATA[
             <b>Error</b>:<br/><br/>[error]<br/><br/><p>Should the error persist, please contact an administrator!</p><br/>
             <p><b>Hint:</b> Please also consult the <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">"Common problems" wiki page</a> for more information.</p>
 ]]></en>
+            <es><![CDATA[
+<b>Error</b>:<br/><br/>[error]<br/><br/><p>Si el error persiste, contacta con un administrador.</p><br/>
+<p><b>Nota:</b> Consulta también la <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">página «Common problems» de la wiki</a> para obtener más información.</p>
+]]></es>
+            <pt><![CDATA[
+<b>Erro</b>:<br/><br/>[error]<br/><br/><p>Se o erro persistir, contacta um administrador.</p><br/>
+<p><b>Nota:</b> Consulta também a <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">página «Common problems» da wiki</a> para mais informações.</p>
+]]></pt>
+            <fr><![CDATA[
+<b>Erreur</b> :<br/><br/>[error]<br/><br/><p>Si l'erreur persiste, veuillez contacter un administrateur.</p><br/>
+<p><b>Remarque :</b> Consultez également la <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">page « Common problems » du wiki</a> pour plus d'informations.</p>
+]]></fr>
+            <it><![CDATA[
+<b>Errore</b>:<br/><br/>[error]<br/><br/><p>Se l'errore persiste, contatta un amministratore.</p><br/>
+<p><b>Nota:</b> Per ulteriori informazioni, consulta anche la <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">pagina «Common problems» del wiki</a>.</p>
+]]></it>
+            <pl><![CDATA[
+<b>Błąd</b>:<br/><br/>[error]<br/><br/><p>Jeśli błąd nadal występuje, skontaktuj się z administratorem.</p><br/>
+<p><b>Wskazówka:</b> Więcej informacji znajdziesz również na <a href="https://dev.quiqqer.com/quiqqer/htmltopdf/-/wikis/common-problems" target="_blank">stronie „Common problems” w wiki</a>.</p>
+]]></pl>
         </locale>
         <locale name="controls.TestGeneration.error.title">
             <de><![CDATA[Fehler bei Test-Dokument]]></de>
             <en><![CDATA[Error with test document]]></en>
+            <es><![CDATA[Error con el documento de prueba]]></es>
+            <pt><![CDATA[Erro no documento de teste]]></pt>
+            <fr><![CDATA[Erreur avec le document de test]]></fr>
+            <it><![CDATA[Errore nel documento di prova]]></it>
+            <pl><![CDATA[Błąd dokumentu testowego]]></pl>
         </locale>
         <locale name="controls.TestGeneration.error.text">
             <de><![CDATA[Das Test-Dokument kann nicht erzeugt werden!]]></de>
-            <en><![CDATA[The test document can not be generated!]]></en>
+            <en><![CDATA[The test document cannot be generated!]]></en>
+            <es><![CDATA[¡No se puede generar el documento de prueba!]]></es>
+            <pt><![CDATA[Não é possível gerar o documento de teste!]]></pt>
+            <fr><![CDATA[Impossible de générer le document de test !]]></fr>
+            <it><![CDATA[Impossibile generare il documento di prova!]]></it>
+            <pl><![CDATA[Nie można wygenerować dokumentu testowego!]]></pl>
         </locale>
         <locale name="controls.TestGeneration.error.btn_submit">
             <de><![CDATA[OK]]></de>
             <en><![CDATA[OK]]></en>
+            <es><![CDATA[Aceptar]]></es>
+            <pt><![CDATA[OK]]></pt>
+            <fr><![CDATA[OK]]></fr>
+            <it><![CDATA[OK]]></it>
+            <pl><![CDATA[OK]]></pl>
         </locale>
         
     </groups>
