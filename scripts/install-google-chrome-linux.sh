@@ -99,7 +99,7 @@ if [[ "$package_architecture" != "$CHROME_PACKAGE_ARCHITECTURE" ]]; then
 fi
 
 echo 'Installing Google Chrome and its dependencies...'
-apt-get install --yes "$package_file"
+apt-get install --no-install-recommends --yes "$package_file"
 
 if [[ ! -x "$CHROME_BINARY" ]]; then
     fail "Installation completed without creating $CHROME_BINARY."
