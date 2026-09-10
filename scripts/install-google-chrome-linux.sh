@@ -4,7 +4,6 @@ set -Eeuo pipefail
 
 export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
-readonly CHROME_PACKAGE_URL='https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
 readonly CHROME_BINARY='/usr/bin/google-chrome'
 
 fail()
@@ -32,9 +31,18 @@ if ! command -v dpkg >/dev/null 2>&1; then
     fail 'The dpkg command is required.'
 fi
 
-if [[ "$(dpkg --print-architecture)" != 'amd64' ]]; then
-    fail 'Google Chrome for Linux requires the amd64 architecture.'
-fi
+CHROME_PACKAGE_ARCHITECTURE="$(dpkg --print-architecture)"
+readonly CHROME_PACKAGE_ARCHITECTURE
+
+case "$CHROME_PACKAGE_ARCHITECTURE" in
+    amd64 | arm64)
+        ;;
+    *)
+        fail "Google Chrome for Linux requires the amd64 or arm64 architecture (detected: $CHROME_PACKAGE_ARCHITECTURE)."
+        ;;
+esac
+
+readonly CHROME_PACKAGE_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_${CHROME_PACKAGE_ARCHITECTURE}.deb"
 
 if [[ -x "$CHROME_BINARY" ]]; then
     echo "Google Chrome is already installed:"
@@ -58,7 +66,7 @@ apt-get update
 apt-get install --yes ca-certificates curl
 
 temporary_directory="$(mktemp -d -t quiqqer-google-chrome.XXXXXXXX)"
-package_file="$temporary_directory/google-chrome-stable_current_amd64.deb"
+package_file="$temporary_directory/google-chrome-stable_current_${CHROME_PACKAGE_ARCHITECTURE}.deb"
 
 cleanup()
 {
@@ -86,7 +94,7 @@ if [[ "$package_name" != 'google-chrome-stable' ]]; then
     fail "Unexpected Debian package name: $package_name"
 fi
 
-if [[ "$package_architecture" != 'amd64' ]]; then
+if [[ "$package_architecture" != "$CHROME_PACKAGE_ARCHITECTURE" ]]; then
     fail "Unexpected Debian package architecture: $package_architecture"
 fi
 
