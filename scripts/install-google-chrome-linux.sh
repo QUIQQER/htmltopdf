@@ -14,7 +14,7 @@ fail()
 }
 
 if [[ "$(uname -s)" != 'Linux' ]]; then
-    fail 'This installer only supports Ubuntu Linux.'
+    fail 'This installer only supports Ubuntu or Debian Linux.'
 fi
 
 if [[ ! -r /etc/os-release ]]; then
@@ -24,8 +24,8 @@ fi
 # shellcheck disable=SC1091
 source /etc/os-release
 
-if [[ "${ID:-}" != 'ubuntu' ]]; then
-    fail "This installer only supports Ubuntu (detected: ${ID:-unknown})."
+if [[ "${ID:-}" != 'ubuntu' && "${ID:-}" != 'debian' ]]; then
+    fail "This installer only supports Ubuntu or Debian (detected: ${ID:-unknown})."
 fi
 
 if ! command -v dpkg >/dev/null 2>&1; then
