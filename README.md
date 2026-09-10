@@ -35,9 +35,10 @@ installer from the package directory:
 ```
 
 The installer requests administrator privileges through `sudo`, downloads the
-official Google Chrome `amd64` Debian package, installs its dependencies, and
-verifies that `/usr/bin/google-chrome` is executable. It is only executed
-manually and is never invoked by the QUIQQER package setup.
+official Google Chrome Debian package for the detected `amd64` or `arm64`
+architecture, installs its dependencies, and verifies that
+`/usr/bin/google-chrome` is executable. It is only executed manually and is
+never invoked by the QUIQQER package setup.
 
 ### Chrome and AppArmor
 
