@@ -1,6 +1,6 @@
 {
     "name": "quiqqer/htmltopdf",
-    "type": "quiqqer-plugin",
+    "type": "quiqqer-module",
     "description": "HTML to PDF converter based on wkhtmltopdf",
     "license": [
         "PCSG QL-1.0",
