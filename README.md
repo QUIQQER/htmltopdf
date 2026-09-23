@@ -25,19 +25,20 @@ Installation
 ------------
 The Package Name is: quiqqer/htmltopdf
 
-### Install Google Chrome on Ubuntu
+### Install Google Chrome on Linux
 
-After connecting to the target Ubuntu server via SSH, run the included
+After connecting to the target Ubuntu or Debian server via SSH, run the included
 installer from the package directory:
 
 ```bash
-./scripts/install-google-chrome-ubuntu.sh
+./scripts/install-google-chrome-linux.sh
 ```
 
 The installer requests administrator privileges through `sudo`, downloads the
-official Google Chrome `amd64` Debian package, installs its dependencies, and
-verifies that `/usr/bin/google-chrome` is executable. It is only executed
-manually and is never invoked by the QUIQQER package setup.
+official Google Chrome Debian package for the detected `amd64` or `arm64`
+architecture, installs its dependencies, and verifies that
+`/usr/bin/google-chrome` is executable. It is only executed manually and is
+never invoked by the QUIQQER package setup.
 
 ### Chrome and AppArmor
 
