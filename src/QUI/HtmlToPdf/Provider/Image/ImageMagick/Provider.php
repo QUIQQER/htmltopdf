@@ -7,6 +7,8 @@ use QUI\HtmlToPdf\Provider\Image\Exception\PdfToImageRequirementsNotMetException
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterInterface;
 use QUI\HtmlToPdf\Provider\Image\PdfToImageConverterProviderInterface;
 use QUI\Locale;
+use Symfony\Component\Process\Exception\ExceptionInterface as ProcessException;
+use Symfony\Component\Process\Process;
 
 use function file_exists;
 use function is_executable;
@@ -89,7 +91,18 @@ class Provider implements PdfToImageConverterProviderInterface
         }
 
         if (empty($executablePath)) {
-            $executablePath = shell_exec('which convert') ?: '';
+            $executablePath = '';
+
+            try {
+                $process = new Process(['which', 'convert'], timeout: 5);
+                $process->run();
+
+                if ($process->isSuccessful()) {
+                    $executablePath = trim($process->getOutput());
+                }
+            } catch (ProcessException $exception) {
+                QUI\System\Log::writeDebugException($exception);
+            }
 
             if (empty($executablePath)) {
                 QUI\System\Log::addWarning(
