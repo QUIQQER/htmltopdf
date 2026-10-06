@@ -8,6 +8,8 @@ use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorInterface;
 use QUI\HtmlToPdf\Provider\Pdf\HtmlToPdfCreatorProviderInterface;
 use QUI\Locale;
 use QUI\Utils\System\File;
+use Symfony\Component\Process\Exception\ExceptionInterface as ProcessException;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 use function file_exists;
@@ -156,7 +158,18 @@ class Provider implements HtmlToPdfCreatorProviderInterface
         }
 
         if (empty($executablePath)) {
-            $executablePath = trim(shell_exec('which google-chrome') ?: '');
+            $executablePath = '';
+
+            try {
+                $process = new Process(['which', 'google-chrome'], timeout: 5);
+                $process->run();
+
+                if ($process->isSuccessful()) {
+                    $executablePath = trim($process->getOutput());
+                }
+            } catch (ProcessException $exception) {
+                QUI\System\Log::writeDebugException($exception);
+            }
 
             if (empty($executablePath)) {
                 $executablePath = $this->getMacOsChromeExecutablePath();
